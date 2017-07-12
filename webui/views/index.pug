@@ -1,0 +1,28 @@
+mixin style(href)
+    link(rel='stylesheet' type='text/css' href=href)
+
+mixin script(href)
+    script(src=href)
+
+head
+    title Apply to Tuskegee University Stem Academy online!
+    +style('/semantic/dist/semantic.min.css')
+body
+    block scripts
+    div(class='ui container')
+        div(class='ui very padded basic segment')
+            h1(class='ui centered header') Online Tuskegee University Summer STEM Academy Application Forms
+        div(class='ui horizontal segments')
+            div(class='ui segment')
+                h2(class='ui centered dividing header') Students Apply Here
+                div(class='ui center aligned container')
+                    a(href='/app/student')
+                        div(class='ui center floated button') Student Application
+            div(class='ui segment')
+                h2(class='ui centered dividing header') Instructors Apply Here
+                div(class='ui center aligned container')
+                    a(href='/app/instructor')
+                        div(class='ui center floated button') Instructor Application
+    div(class='ui bottom fixed inverted menu')
+        div(class='ui right aligned container')
+            a(class='item') Admin Login

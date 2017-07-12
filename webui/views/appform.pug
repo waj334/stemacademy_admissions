@@ -1,0 +1,30 @@
+mixin step(title, desc, ico, tab, button)
+    - var attr = 'step item ' + attributes.class;
+    a(class=attr data-tab=tab next-tab=attributes.next btype=button)
+        i(class='#{ico} icon')
+        div(class='content')
+            div(class='title') #{title}
+            div(class='description') #{desc}
+
+mixin style(href)
+    link(rel='stylesheet' type='text/css' href=href)
+
+mixin script(href)
+    script(src=href)  
+head
+    block title
+    +style('/semantic/dist/semantic.min.css')
+    block styles
+body
+    block scripts
+    div(class='ui basic segments')
+        div(class='ui very padded basic segment')
+            div(class='ui center aligned content')
+                block header
+        div(class='ui basic segment')    
+            div(class='ui container')
+                block steps
+                block forms
+        div(class='ui very padded basic segment')
+            div(class='ui container')
+                a(class='ui right floated button') Next

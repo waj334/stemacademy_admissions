@@ -1,0 +1,20 @@
+extends appform
+block title
+    title Instructor Application Form
+block forms
+    div(class='ui basic segment tab active' data-tab='scontact')
+    form#scontact(class='ui form')
+        div(class='ui two fields')
+            div(class='ui field')
+                label First Name
+                input(type='text' name='firstname' placeholder='First Name')
+            div(class='ui field')
+                label Last Name
+                input(type='text' name='lastname' placeholder='Last Name')
+        div(class='ui field')
+            label Email
+            input(type='text' name='email' placeholder='Email')
+        div(class='ui field')
+            label Phone Number
+            input(type='text' name="phone_no" placeholder="Phone Number")
+        div(class="ui error message")

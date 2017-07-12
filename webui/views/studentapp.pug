@@ -1,0 +1,67 @@
+extends appform
+block title
+    title Student Application Form
+block header
+    h1(class='ui centered header') Student Application Form
+block steps
+    div#steps(class='ui five steps menu')
+        +step('Your Contact Information', 'Please provide a valid contact.', 'user', 'scontact', 'next')(class='active' next='sguardian')
+        +step('Parent/Guardian Contact Information', 'Please provide your parent/guardian information.', 'info', 'sguardian', 'next')(class='disabled' next='sschool')
+        +step('High School Information', 'Where do you attend school?', 'university ', 'sschool', 'next')(class='disabled' next='sconfirm')
+        +step('Confirm', 'Is this correct?', 'help', 'sconfirm', 'submit')(class='disabled' next='ssubmitted')
+        +step('Submitted', 'Your application has been submitted', 'checked calendar', 'ssubmitted', 'close')(class='disabled')
+block forms
+    div(class='ui basic segment tab active' data-tab='scontact')
+    form#scontact(class='ui form')
+        div(class='ui three fields')
+            div(class='ui field')
+                label First Name
+                input(type='text' name='firstname' placeholder='First Name')
+            div(class='ui field')
+                label Last Name
+                input(type='text' name='lastname' placeholder='Last Name')
+            div(class='ui two wide field')
+                label Age
+                input(type='text' name='age' placeholder='Age')
+        div(class='ui three fields')
+            div(class='ui three wide field')
+                label Gender
+                select(class='ui search dropdown' name='gender')
+                        option(value='') Choose One
+                        option(value='MALE') Male
+                        option(value="FEMALE") Female
+            div(class='ui field')
+                label Race/Ethnicity
+                select(class='ui search dropdown' name='race_eth')
+                        option(value='') Choose One
+                        option(value='AMR_AFRICAN') African American
+                        option(value="ASIAN") Asian
+                        option(value='CAUCAISIAN') Caucaisian
+                        option(value='LAT_HISP') Hispanic/Latino
+                        option(value='AMR_NATIVE') Native American/Alaskan Native
+                        option(value='HWN_NATIVE') Native Hawaiian
+                        option(value='OTHER') Other
+            div(class='ui field')
+                label US Citizenship Status
+                select(class='ui search dropdown' name='citizenship')
+                        option(value='') Choose One
+                        option(value='CITIZEN') US Citizen
+                        option(value='DUAL') Dual Citizenship
+                        option(value='NON_CITIZEN') Non US Citizen
+        div(class='ui field')
+            label Email
+            input(type='text' name='email' placeholder='Email')
+        div(class='ui field')
+            label Phone Number
+            input(type='text' name="phone_no" placeholder="Phone Number")
+        div(class='ui three fields')
+            div(class='ui field')
+                label Address
+                input(type='text' name='address' placeholder='Address')
+            div(class='ui two wide field')
+                label State
+                input(type='text' name='state' placeholder='ST')
+            div(class='ui six wide field')
+                label Zip Code
+                input(type='text' name='zip' placeholder='Zip Code')
+        div(class="ui error message")
