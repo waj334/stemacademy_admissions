@@ -1,0 +1,9 @@
+{
+	"dbName": "stemapps",
+	"dbUser": "postgres",
+	"dbPassword": "postgres",
+	"dbHost": "localhost",
+	"dbSSLMode": "disable",
+	"addrMemcached": "127.0.0.1:11211",
+	"httpPort": "8080"
+}

@@ -16,6 +16,10 @@ head
     +style('/semantic/dist/semantic.min.css')
     block styles
 body
+    script(src='https://code.jquery.com/jquery-3.1.1.min.js'
+               integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8='
+               crossorigin='anonymous')
+    +script('/semantic/dist/semantic.min.js')
     block scripts
     div(class='ui basic segments')
         div(class='ui very padded basic segment')
@@ -27,4 +31,6 @@ body
                 block forms
         div(class='ui very padded basic segment')
             div(class='ui container')
-                a(class='ui right floated button') Next
+                div#next(class='ui right floated button') Next
+                div#submit(class='ui right floated button') Submit
+                div#exit(class='ui right floated button') Exit

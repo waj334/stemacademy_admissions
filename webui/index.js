@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 
 var app = express();
 var router = express.Router();
+var apiUrl = 'http://localhost:8080'
 
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
@@ -29,12 +30,33 @@ router.get("/",function(req, res){
 });
 
 //Student Application
-router.get("/app/student", function(req, res) {
+router.get('/app/student', function(req, res) {
     res.render('studentapp')
 });
 
+//Student Application Confirmation Generator
+router.post('/app/student/confirm', function(req, res) {
+    var data = JSON.parse(req.body.json);
+    res.render('confstudentapp', {'data': data});
+});
+
+//Student Application submission
+//Login
+router.post('/app/student/submit', function(req, res, next) {
+    var attr = {
+        headers: {'content-type': 'application/json'},
+        url: apiUrl + '/student/submission',
+        body: JSON.stringify(req.body)
+    }
+
+    //Make API call to login
+    request.post(attr, function(error, resp, body) { 
+
+    });
+});
+
 //Student Application
-router.get("/app/instructor", function(req, res) {
+router.get('/app/instructor', function(req, res) {
     res.render('instructorapp')
 });
 

@@ -1,0 +1,99 @@
+div(class='ui basic segment')
+    h2(class='ui dividing header') Student Contact
+    form(class='ui form')
+        div(class='ui three fields')
+            div(class='ui field')
+                label First Name
+                input(type='text' readonly="" value=data.student_info.firstname)
+            div(class='ui field')
+                label Last Name
+                input(type='text' readonly="" value=data.student_info.lastname)
+            div(class='ui two wide field')
+                label Age
+                input(type='text' readonly="" value=data.student_info.age)
+        div(class='ui three fields')
+            div(class='ui three wide field')
+                label Gender
+                select(class='ui search dropdown' disabled='true' value=data.student_info.gender)
+                        option(value='') Choose One
+                        option(value='MALE') Male
+                        option(value="FEMALE") Female
+            div(class='ui field')
+                label Race/Ethnicity
+                select(class='ui search dropdown' disabled='true' value=data.student_info.eth_race)
+                        option(value='') Choose One
+                        option(value='AMR_AFRICAN') African American
+                        option(value="ASIAN") Asian
+                        option(value='CAUCAISIAN') Caucaisian
+                        option(value='LAT_HISP') Hispanic/Latino
+                        option(value='AMR_NATIVE') Native American/Alaskan Native
+                        option(value='HWN_NATIVE') Native Hawaiian
+                        option(value='OTHER') Other
+            div(class='ui field')
+                label US Citizenship Status
+                select(class='ui search dropdown' disabled='true' value=data.student_info.citizenship)
+                        option(value='') Choose One
+                        option(value='CITIZEN') US Citizen
+                        option(value='DUAL') Dual Citizenship
+                        option(value='NON_CITIZEN') Non US Citizen
+        div(class='ui field')
+            label Email
+            input(type='text' readonly="" value=data.student_info.email)
+        div(class='ui field')
+            label Phone Number
+            input(type='text' readonly="" value=data.student_info.phone_no)
+        div(class='ui three fields')
+            div(class='ui field')
+                label Address
+                input(type='text' readonly="" value=data.student_info.address)
+            div(class='ui field')
+                    label City
+                    input(type='text' readonly="" value=data.student_info.city)
+            div(class='ui two wide field')
+                label State
+                input(type='text' readonly="" value=data.student_info.state)
+            div(class='ui six wide field')
+                label Zip Code
+                input(type='text' readonly="" value=data.student_info.zip)
+
+div(class='ui basic segment')
+    h2(class='ui dividing header') Parent/Guardian Contact
+    form(class='ui form')
+        div(class='ui two fields')
+            div(class='ui field')
+                label Parent/Guardian First Name
+                input(type='text' readonly="" value=data.guardian_info.firstname)
+            div(class='ui field')
+                label Parent/Guardian Last Name
+                input(type='text' readonly="" value=data.guardian_info.lastname)
+        div(class='ui two fields')
+            div(class='ui field')
+                label Phone Number
+                input(type='text' readonly="" value=data.guardian_info.phone_no)
+            div(class='ui field')
+                label Email
+                input(type='text' readonly="" value=data.guardian_info.email)
+
+div(class='ui basic segment')
+    h2(class='ui dividing header') High School Information
+    form(class='ui form')
+        div(class='ui two fields')
+            div(class='ui field')
+                label High School Name
+                input(type='text' readonly="" value=data.hs_info.name)
+            div(class='ui field')
+                label County
+                input(type='text' readonly="" value=data.hs_info.county)
+        div(class='ui four fields')
+            div(class='ui field')
+                label Address
+                input(type='text' readonly="" value=data.hs_info.address)
+            div(class='ui field')
+                    label City
+                    input(type='text' readonly="" value=data.hs_info.city)
+            div(class='ui two wide field')
+                label State
+                input(type='text' readonly="" value=data.hs_info.state)
+            div(class='ui six wide field')
+                label Zip Code
+                input(type='text' readonly="" value=data.hs_info.zip)
