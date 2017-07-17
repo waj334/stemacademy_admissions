@@ -45,13 +45,19 @@ router.post('/app/student/confirm', function(req, res) {
 router.post('/app/student/submit', function(req, res, next) {
     var attr = {
         headers: {'content-type': 'application/json'},
-        url: apiUrl + '/student/submission',
+        url: apiUrl + '/app/student/submit',
         body: JSON.stringify(req.body)
     }
 
     //Make API call to login
     request.post(attr, function(error, resp, body) { 
-
+        if (error) {
+                if (error.errno == 'ECONNREFUSED')
+                    res.sendStatus(500);
+            } else {
+                res.sendStatus(200);
+                next();
+            }
     });
 });
 

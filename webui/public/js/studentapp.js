@@ -51,13 +51,44 @@ function actionNext() {
     nextTab.toggleClass('active');
 }
 
+function translateEthnicCode(eth){
+    if (eth === 'AMR_AFRICAN')
+        return 0;
+    else if (eth === 'ASIAN') {
+        return 1;
+    } else if (eth === 'CAUCASION') {
+        return 2;
+    } else if (eth === 'LAT_HISP') {
+        return 3;
+    } else if (eth === 'AMR_NATIVE') {
+        return 4;
+    } else if (eth === 'HWN_NATIVE') {
+        return 5;
+    }
+
+    //Other
+    return 6
+}
+
+function translateCitizenship(c) {
+    if (c === 'CITIZEN') {
+        return 0;
+    } else if (c === 'DUAL') {
+        return 1;
+    }
+
+    //Non Citizen
+    return 2;
+}
+
 function prepareJSON() {
     var data = {
         "student_info": {
+            "id": "",
             "firstname": $('input[name=s_firstname]').val(),
             "lastname": $('input[name=s_lastname]').val(),
-            "age": $('input[name=s_age]').val(),
-            "gender": $('select[name=s_gender]').val(),
+            "age": parseInt($('input[name=s_age]').val()),
+            "gender": $('select[name=s_gender]').val() === 'MALE' ? 0:1,
             "eth_race": $('select[name=s_race_eth]').val(),
             "citizenship": $('select[name=s_citizenship]').val(),
             "email": $('input[name=s_email]').val(),
@@ -68,18 +99,20 @@ function prepareJSON() {
             "zip": $('input[name=s_zip]').val()
         },
         "guardian_info": {
+            "student_id": "",
             "firstname": $('input[name=pg_firstname]').val(),
             "lastname": $('input[name=pg_lastname]').val(),
             "phone_no": $('input[name=pg_phone_no]').val(),
             "email": $('input[name=pg_email]').val()
         },
-        "hs_info": {
-            "name": $('input[name=hs_name]').val(),
-            "county": $('input[name=hs_county]').val(),
-            "address": $('input[name=hs_address]').val(),
-            "city": $('input[name=hs_city]').val(),
-            "state": $('input[name=hs_state]').val(),
-            "zip": $('input[name=hs_zip]').val()
+        "school_info": {
+            "id": "",
+            "name": $('input[name=sc_name]').val(),
+            "county": $('input[name=sc_county]').val(),
+            "address": $('input[name=sc_address]').val(),
+            "city": $('input[name=sc_city]').val(),
+            "state": $('input[name=sc_state]').val(),
+            "zip": $('input[name=sc_zip]').val()
         }
     }
 
@@ -103,7 +136,26 @@ function actionSubmit() {
     };
 }
 
+function actionProgress() {
+    $('#steps > a.step.item').removeClass('active');
+    $('#steps > a.step.item').toggleClass('disabled')
+}
+
+function actionSuccess() {
+    actionNext();
+}
+
+function actionError() {
+
+}
+
 $(document).ready(function(){
+    //API Functions
+    var api = {
+        "submit": '/app/student/submit'
+    };
+
+    $.fn.api.settings.api = api;
     //Setup buttons
     $('#next').css('display', 'inline-block');
     $('#submit').css('display', 'none');
@@ -133,13 +185,24 @@ $(document).ready(function(){
         actionNext();
     });
 
-    $('#submit').click(function(){
-        actionSubmit();
+    $('#submit').api({
+        action: 'submit',
+        method: 'POST',
+        data: prepareJSON(),
+        'onRequest': actionProgress,
+        'onSuccess': actionSuccess,
+        'onError': actionError,
+        'debug': true,
+        'verbose': true,
     });
+    
+    //click(function(){
+    //    actionSubmit();
+    //});
 
     $('#exit').click(function(){
         //Goto main page
-    })
+    });
 })
 
 
