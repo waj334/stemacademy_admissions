@@ -87,8 +87,8 @@ function prepareJSON() {
             "id": "",
             "firstname": $('input[name=s_firstname]').val(),
             "lastname": $('input[name=s_lastname]').val(),
-            "age": parseInt($('input[name=s_age]').val()),
-            "gender": $('select[name=s_gender]').val() === 'MALE' ? 0:1,
+            "age": $('input[name=s_age]').val(),
+            "gender": $('select[name=s_gender]').val(),
             "eth_race": $('select[name=s_race_eth]').val(),
             "citizenship": $('select[name=s_citizenship]').val(),
             "email": $('input[name=s_email]').val(),
@@ -149,6 +149,20 @@ function actionError() {
 
 }
 
+function packageData() {
+    var data = prepareJSON();
+    data.student_info.age = parseInt(data.student_info.age);
+    data.student_info.gender = data.student_info.gender === 'MALE' ? 0:1;
+    data.student_info.eth_race = translateEthnicCode(data.student_info.eth_race);
+    data.student_info.citizenship = translateCitizenship(data.student_info.citizenship);
+
+    var payload = {
+        "payload": data
+    };
+
+    return payload;
+}
+
 $(document).ready(function(){
     //API Functions
     var api = {
@@ -188,7 +202,10 @@ $(document).ready(function(){
     $('#submit').api({
         action: 'submit',
         method: 'POST',
-        data: prepareJSON(),
+        beforeSend: function(settings){
+            settings.data = packageData();
+            return settings;
+        },
         'onRequest': actionProgress,
         'onSuccess': actionSuccess,
         'onError': actionError,

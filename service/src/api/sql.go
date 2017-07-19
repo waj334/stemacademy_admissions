@@ -6,7 +6,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 var errUserInfoConflict = errors.New("Conflicting user data entered")
@@ -47,7 +47,8 @@ func sqlCreateTables() error {
 			county text not null,
 			address text not null,
 			state text not null,
-			zip text not null
+			city text not null,
+			zip text not null,
 			unique(id),
 			unique(address,zip),
 			primary key(id)
@@ -61,12 +62,13 @@ func sqlCreateTables() error {
 			age integer not null,
 			eth_race integer not null,
 			citizenship integer not null,
-			email string not null,
-			phone_no string not null,
-			address string not null,
-			state string not null,
-			zip string not null,
-			school_id string not null references school (id)
+			email text not null,
+			phone_no text not null,
+			address text not null,
+			state text not null,
+			city text not null,
+			zip text not null,
+			school_id text not null references school (id),
 			unique(email),
 			unique(id),
 			primary key(id)
@@ -135,7 +137,7 @@ func sqlRegisterNewUser(user *User) error {
 
 //School database actions
 
-func sqlInsertSchool(school *SchoolDB) error {
+func sqlInsertSchool(school *SchoolDB) *pq.Error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -144,12 +146,18 @@ func sqlInsertSchool(school *SchoolDB) error {
 		_, err = db.NamedExec(
 			`insert into school (id,name,county,address,city,state,zip) 
 			values (:id,:name,:county,:address,:city,:state,:zip)`, school)
+
+		if err != nil {
+			return err.(*pq.Error)
+		}
+	} else {
+		return err.(*pq.Error)
 	}
 
-	return err
+	return nil
 }
 
-func sqlGetSchoolByAddr(addr string, zip string) (*SchoolDB, error) {
+func sqlGetSchoolByAddr(addr string, zip string) (*SchoolDB, *pq.Error) {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -166,28 +174,34 @@ func sqlGetSchoolByAddr(addr string, zip string) (*SchoolDB, error) {
 		}
 	}
 
-	return nil, err
+	return nil, err.(*pq.Error)
 }
 
 //Student database actions
 
-func sqlInsertStudent(student *StudentDB) error {
+func sqlInsertStudent(student *StudentDB) *pq.Error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
 
 	if err == nil {
 		_, err = db.NamedExec(
-			`insert into student (id,firstname,lastname,age,eth_race,citizenship,email,phone_no,county,address,city,state,zip,school_id) 
-			values (:id,:firstname,:lastname,:age,:eth_race,:citizenship,:email,:phone_no,:county,:address,:city,:state,:zip,:school_id)`, student)
+			`insert into student (id,firstname,lastname,age,eth_race,citizenship,email,phone_no,address,city,state,zip,school_id) 
+			values (:id,:firstname,:lastname,:age,:eth_race,:citizenship,:email,:phone_no,:address,:city,:state,:zip,:school_id)`, student)
+
+		if err != nil {
+			return err.(*pq.Error)
+		}
+	} else {
+		return err.(*pq.Error)
 	}
 
-	return err
+	return nil
 }
 
 //Guardian database actions
 
-func sqlInsertGuardian(guardian *GuardianDB) error {
+func sqlInsertGuardian(guardian *GuardianDB) *pq.Error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -196,7 +210,13 @@ func sqlInsertGuardian(guardian *GuardianDB) error {
 		_, err = db.NamedExec(
 			`insert into guardian (student_id,firstname,lastname,email,phone_no) 
 			values (:student_id,:firstname,:lastname,:email,:phone_no)`, guardian)
+
+		if err != nil {
+			return err.(*pq.Error)
+		}
+	} else {
+		return err.(*pq.Error)
 	}
 
-	return err
+	return nil
 }

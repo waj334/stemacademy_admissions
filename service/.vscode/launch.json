@@ -10,7 +10,7 @@
             "remotePath": "",
             "port": 2345,
             "host": "127.0.0.1",
-            "program": "${workspaceRoot}/src/app/main.go",
+            "program": "${workspaceRoot}/src/api/main.go",
             "env": {},
             "args": ["-conf=${workspaceRoot}/config.json"],
             "showLog": true

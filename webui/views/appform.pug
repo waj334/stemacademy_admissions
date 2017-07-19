@@ -10,7 +10,11 @@ mixin style(href)
     link(rel='stylesheet' type='text/css' href=href)
 
 mixin script(href)
-    script(src=href)  
+    script(src=href)
+
+mixin style(href)
+    link(rel='stylesheet' type='text/css' href=href)
+
 head
     block title
     +style('/semantic/dist/semantic.min.css')

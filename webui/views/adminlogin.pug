@@ -1,0 +1,30 @@
+mixin script(href)
+    script(src=href)
+
+mixin style(href)
+    link(rel='stylesheet' type='text/css' href=href)
+
+head
+    title STEM Academy Admin Panel Login
+    +style('/semantic/dist/semantic.min.css')
+body
+    script(src='https://code.jquery.com/jquery-3.1.1.min.js'
+               integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8='
+               crossorigin='anonymous')
+    +script('/semantic/dist/semantic.min.js')
+
+    div(class='ui very padded basic segment')
+        h1(class='ui centered header') STEM Academy Admin Panel
+        div(class='ui container')
+            div(class='ui compact segments')
+                div(class='ui padded segment')
+                    h2(class='ui header') Login
+                div(class='ui compact segment')
+                    form#login(class='ui form')
+                        div(class='ui field')
+                            label Username
+                            input(type='text' name='username' placeholder='Username')
+                        div(class='ui field')
+                            label Password
+                            input(type='password' name='password' placeholder='Password')
+                    div#login(class='ui right floated button') Login

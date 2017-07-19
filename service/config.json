@@ -1,5 +1,5 @@
 {
-	"dbName": "stemapps",
+	"dbName": "stemapi",
 	"dbUser": "postgres",
 	"dbPassword": "postgres",
 	"dbHost": "localhost",

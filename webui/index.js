@@ -61,9 +61,14 @@ router.post('/app/student/submit', function(req, res, next) {
     });
 });
 
-//Student Application
+//Instructor Application
 router.get('/app/instructor', function(req, res) {
     res.render('instructorapp')
+});
+
+//Admin Panel
+router.get('/admin/login', function(req, res) {
+    res.render('adminlogin')
 });
 
 //Init router path
