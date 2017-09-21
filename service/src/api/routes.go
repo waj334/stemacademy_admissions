@@ -15,13 +15,13 @@ var routes = routeList{
 	route{
 		"Login",
 		"POST",
-		"/session/login",
-		Login,
+		"/admin/session/login",
+		AuthUser,
 	},
 	route{
 		"Signout",
 		"POST",
-		"/session/signout",
+		"/admin/session/signout",
 		Signout,
 	},
 	route{

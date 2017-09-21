@@ -1,0 +1,30 @@
+{
+  "name": "stemacademy_admissions",
+  "version": "1.0.0",
+  "description": "Admission system for TU Stem Academy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waj334/stemacademy_admissions.git"
+  },
+  "author": "Justin Wilson, Tuskegee University",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/waj334/stemacademy_admissions/issues"
+  },
+  "homepage": "https://github.com/waj334/stemacademy_admissions#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "connect-memcached": "^0.2.0",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.3",
+    "express-session": "^1.15.4",
+    "helmet": "^3.8.0",
+    "request": "^2.81.0",
+    "semantic-ui": "^2.2.10"
+  }
+}

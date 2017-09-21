@@ -1,0 +1,9 @@
+mixin style(href)
+    link(rel='stylesheet' type='text/css' href=href)
+
+mixin script(href)
+    script(src=href)
+
+head
+    title STEM Admin Panel
+    +style('/semantic/dist/semantic.min.css')

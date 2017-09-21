@@ -27,8 +27,8 @@ func main() {
 		err = sqlCreateTables()
 
 		if err == nil {
-			fmt.Println("Server running on port ", conf.HTTPPort, "...")
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", conf.HTTPPort), router))
+			fmt.Println("Server running on port ", conf.ServicePort, "...")
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", conf.ServicePort), router))
 		} else {
 			log.Fatal(err)
 		}

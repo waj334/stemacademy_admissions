@@ -14,7 +14,7 @@ type configuration struct {
 	DbPassword    string `json:"dbPassword"`
 	DbSSLMode     string `json:"dbSSLMode"`
 	AddrMemcached string `json:"addrMemcached"`
-	HTTPPort      string `json:"httpPort"`
+	ServicePort   string `json:"servicePort"`
 }
 
 func getConfig() (configuration, error) {

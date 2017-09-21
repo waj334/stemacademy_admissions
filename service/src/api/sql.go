@@ -87,7 +87,7 @@ func sqlCreateTables() error {
 	return err
 }
 
-func sqlGetUserPassword(user *LoginInfo) (string, string, error) {
+func sqlGetUserPasswordHash(user *LoginInfo) (string, string, error) {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -95,7 +95,7 @@ func sqlGetUserPassword(user *LoginInfo) (string, string, error) {
 	pwd, salt := "", ""
 
 	if err == nil {
-		rows, err := db.Query(`select pwd_hash, pwd_salt from users where id=$1`, user.Username)
+		rows, err := db.Query(`select pwd_hash, pwd_salt from users where email=$1`, user.Username)
 		if err != nil {
 			//User does not exist in database
 			return "", "", err

@@ -1,0 +1,19 @@
+//- Dashboard Page
+extends main_layout.pug
+
+block title
+    title 'Task Tool - Dashboard'
+    
+block stylesheets
+    link(rel='stylesheet' type='text/css' href='/chartist/dist/chartist.min.css')
+    link(rel='stylesheet' type='text/css' href='/dhtmlxscheduler/dhtmlxscheduler.css')
+    
+block scripts
+
+block sidebar-items
+    +itemActive('Dashboard', 'dashboard', 'dashboard')
+    +item('Settings','settings', 'settings')
+    div(class='ui horizontal inverted divider')
+    +item('Sign Out','sign out', 'signout')
+
+block content

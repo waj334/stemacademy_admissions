@@ -12,6 +12,7 @@ body
                integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8='
                crossorigin='anonymous')
     +script('/semantic/dist/semantic.min.js')
+    +script('/js/adminlogin.js')
 
     div(class='ui very padded basic segment')
         h1(class='ui centered header') STEM Academy Admin Panel
@@ -20,7 +21,7 @@ body
                 div(class='ui padded segment')
                     h2(class='ui header') Login
                 div(class='ui compact segment')
-                    form#login(class='ui form')
+                    form(class='ui form')
                         div(class='ui field')
                             label Username
                             input(type='text' name='username' placeholder='Username')

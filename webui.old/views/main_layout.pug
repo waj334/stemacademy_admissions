@@ -1,0 +1,49 @@
+//- Main layout for Application
+
+//- Sidebar menu item mixins
+mixin item(name, ico, href)
+    - var ico_class = [ico, 'icon']
+    a(class='item icon' href=href)
+        i(class=ico_class)
+        | #{name}
+        
+mixin itemActive(name, ico, href)
+    - var ico_class = [ico, 'icon']
+    a(class='active item icon' href=href)
+        i(class=ico_class)
+        | #{name}
+        
+mixin style(href)
+    link(rel='stylesheet' type='text/css' href=href)
+
+mixin script(href)
+    script(src=href)
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible' content='IE=edge')
+        meta(name='viewport' content='width=device-width, initial-scale=1')
+        block title
+            title Task Tool
+        +style('/semantic/dist/semantic.min.css')
+        +style('/css/main.css')
+        block stylesheets
+    body
+        //- Required scripts
+        script(src='https://code.jquery.com/jquery-3.1.1.min.js'
+               integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8='
+               crossorigin='anonymous')
+        +script('/semantic/dist/semantic.min.js')
+        +script('/js/main.js')
+        block scripts
+        
+        //- Sidebar
+        div#sidebar(class='ui visible inverted left vertical sidebar menu')
+            block sidebar-items
+            
+        //- Content Area
+        div#content-area(class='pusher')
+            block content
+        

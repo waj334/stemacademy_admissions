@@ -1,0 +1,163 @@
+//- Settings View
+
+extends main_layout.pug
+
+mixin serviceRemoveButton
+    button(class='ui icon button')
+        i(class='remove icon')
+
+block title
+    title 'Task Tool - Settings'
+    
+block stylesheets
+    +style('/css/settings.css')
+
+block scripts
+    +script('/js/settings.js')
+
+block sidebar-items
+    +item('Dashboard', 'dashboard', 'dashboard')
+    +item('Tasks', 'list', 'tasks')
+    +item('Reports', 'bar chart', 'reports')
+    +itemActive('Settings','settings', 'settings')
+    div(class='ui horizontal inverted divider')
+    +item('Sign Out','sign out', 'signout')
+    
+block content
+    div(class='ui segments')
+        div(class='ui segment')
+            div(class='ui container')
+                div#menu(class='ui two item stackable tabs menu')
+                    a(class='active item' data-tab='general')
+                        | General Settings
+                    a(class='item' data-tab='account')
+                        | Account Settings
+
+        div(class='ui segment tab active' data-tab='general')
+            div(class='ui horizontal segments')
+                div(class='ui padded segment')
+                    h4(class='ui header') Services
+                    table#servicesTable(class='ui celled structured collapsing table')
+                        thead
+                            tr
+                                th Service Name
+                                th Remove
+                        tbody
+                            tr
+                                td Photography
+                                td
+                                    +serviceRemoveButton
+                                    
+                            tr
+                                td Video
+                                td
+                                    +serviceRemoveButton
+                            tr
+                                td Poster Printing
+                                td
+                                    +serviceRemoveButton
+                            tr
+                                td Technical Support
+                                td
+                                    +serviceRemoveButton
+                        tfoot
+                            tr
+                                th(colspan='2')
+                                    button(class='ui icon button')
+                                        i(class='plus icon')
+                                        | Add
+            
+        div(class='ui segment tab' data-tab='account')
+            div(class='ui horizontal segments')
+                div(class='ui segment')
+                    form(class='ui form')
+                        h4(class='ui header') Change Password
+                        div(class='field')
+                            label Current Password
+                            input(name='currentPwd' type='password' placeholder='Current Password')
+                        div(class='field')
+                            label New Password
+                            input(name='newPwd' type='password' placeholder='New Password')
+                        div(class='field')
+                            label Retype New Password
+                            input(name='confirmPwd' type='password' placeholder='Retype New Password')
+                        input(class='ui button' name='submitNewPwd' type='submit' value='Change')
+                div(class='ui segment')
+                    form(class='ui form')
+                        h4(class='ui header') Update Profile
+                        div(class='ui centered card')
+                            div(class='image')
+                                img#profilepic(class='ui small circular image content' src='/img/UserProfileArt.svg')
+                            div(class='ui button') Change
+                        div(class='field')
+                            label Name
+                            div(class='two fields')
+                                div(class='field')
+                                    input(name='firstName' type='text' placeholder='First Name')
+                                div(class='field')
+                                    input(name='lastName' type='text' placeholder='Last Name')
+                        div(class='field')
+                            label Email
+                            input(name='email' type='text' placeholder='Email')
+                        input(class='ui button' name='submitProfile' type='submit' value='Update')
+            div(class='ui horizontal segments')
+                div(class='ui segment')
+                    form(class='ui form')
+                        h4(class='ui header') Add User
+                        div(class='ui two fields')
+                            div(class='field')
+                                label Username
+                                input(name='newUsername' type='text' placeholder='Username')
+                            div(class='field')
+                                label Group
+                                select(class='ui fluid dropdown')
+                                    option(value='user') User
+                                    option(value='admin') Administrator
+                        div(class='field')
+                            label Name
+                            div(class='ui two fields')
+                                div(class='field')
+                                    input(name='newFirstName' type='text' placeholder='First Name')
+                                div(class='field')
+                                    input(name='newLastName' type='text' placeholder='Last Name')
+                        div(class='field')
+                            label Email
+                            input(name='newEmail' type='text' placeholder='Email')
+                        input(class='ui button' name='submitNewUser' type='submit' value='Add')
+                div(class='ui segment')
+                    form(class='ui form')
+                        h4(class='ui header') Delete User
+                        div(class='field')
+                            label Username
+                            input(name='delUsername' type='text' placeholder='Username')
+                        div(class='field')
+                            p(class='ui text') This is permanent. Type your password below to confirm this action.
+                            input(name='confirmDelPwd' type='password' placeholder='Your Password')
+                        input(class='ui button' name='submitDelUser' type='submit' value='Delete')
+            div(class='ui horizontal segments')
+                div(class='ui segment')
+                    form(class='ui form')
+                        h4(class='ui header') Reset User Password
+                        div(class='field')
+                            label Username
+                            input(name='newUsername' type='text' placeholder='Username')
+                        div(class='field')
+                            p(class='ui t ext') Type your password below to confirm this action.
+                            input(name='confirmResetPwd' type='password' placeholder='Your Password')
+                        input(class='ui button' name='submitResetPwd' type='submit' value='reset')
+                div(class='ui segment')
+                    form(class='ui form')
+                        h4(class='ui header') Change User Group
+                        div(class='ui two fields')
+                            div(class='field')
+                                label Username
+                                input(name='grpUsername' type='text' placeholder='Username')
+                            div(class='field')
+                                    label Group
+                                    select(class='ui fluid dropdown')
+                                        option(value='user') User
+                                        option(value='admin') Administrator
+                        div(class='field')
+                            p(class='ui t ext') Type your password below to confirm this action.
+                            input(name='confirmGrpPwd' type='password' placeholder='Your Password')
+                        input(class='ui button' name='submitGrpUser' type='submit' value='Change')
