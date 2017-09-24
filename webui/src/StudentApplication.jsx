@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
 import {Segment, Container, Button, Header, Grid, Divider, Step, Icon, Form} from 'semantic-ui-react';
 
 import FormStepGroup from './FormStepGroup.jsx';
@@ -9,7 +9,7 @@ import HighSchoolInfoForm from './HighSchoolInfoForm.jsx';
 import StudentConfirmationForm from './StudentConfirmationForm.jsx';
 import ApplicationSubmittedPage from './ApplicationSubmittedPage.jsx';
 
-class ApplicationForm extends Component {
+class Application extends Component {
     constructor(props) {
         super(props);
 
@@ -122,7 +122,7 @@ const steps = [
 
 const StudentApplication = () => (
     <div>
-        <ApplicationForm steps={steps} />
+        <Application steps={steps} />
     </div>
 );
 
