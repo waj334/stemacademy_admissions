@@ -5,18 +5,18 @@ import {Link} from 'react-router-dom'
 const MainPage = () => (
   <div>
         <Segment basic>
-          <Header textAlign='center'>Drone Academy Online Application</Header>
+          <Header textAlign='center' size='huge'>Drone Academy Online Application</Header>
         </Segment>
-        <Segment>
-          <Grid columns='3'>
-            <Grid.Column>
+        <Segment basic>
+          <Grid columns='3' verticalAlign='middle'>
+            <Grid.Column textAlign='right'>
               <Button><Link to='/app/student/'>Students Application</Link></Button>
             </Grid.Column>
             <Grid.Column>
                 <Divider vertical/>
             </Grid.Column>
-            <Grid.Column>
-              <Button>Teacher Application</Button>
+            <Grid.Column textAlign='left'>
+              <Button><Link to='/app/teacher/'>Teacher Application</Link></Button>
             </Grid.Column>
           </Grid>
         </Segment>

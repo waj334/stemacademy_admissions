@@ -6,12 +6,14 @@ import logo from './logo.svg';
 import './App.css'; 
 
 import MainPage from './MainPage.jsx';
-import StudentApplication from './StudentApplication.jsx';
+import StudentApplication from './studentapp/StudentApplication.jsx';
+import TeacherApplication from './teacherapp/TeacherApplication.jsx';
 
 const Layout = () => (
   <main>
     <Switch>
       <Route path='/app/student' component={StudentApplication} />
+      <Route path='/app/teacher' component={TeacherApplication} />
       <Route path='/' component={MainPage} />
     </Switch>
   </main>

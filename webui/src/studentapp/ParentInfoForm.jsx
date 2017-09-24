@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
-import ApplicationForm from './ApplicationForm.jsx'
+import ApplicationForm from '../ApplicationForm.jsx'
 
 class ParentInfoForm extends ApplicationForm {
     constructor(props) {

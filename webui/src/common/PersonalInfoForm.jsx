@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
-import ApplicationForm from './ApplicationForm.jsx'
+import ApplicationForm from '../ApplicationForm.jsx'
 
-class StudentInfoForm extends ApplicationForm {
+class PersonalInfoForm extends ApplicationForm {
     constructor(props) {
         super(props);
     }
@@ -57,4 +57,4 @@ class StudentInfoForm extends ApplicationForm {
     )}
 }
 
-export default StudentInfoForm;
+export default PersonalInfoForm;

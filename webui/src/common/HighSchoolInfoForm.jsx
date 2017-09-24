@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
-import ApplicationForm from './ApplicationForm.jsx'
+import ApplicationForm from '../ApplicationForm.jsx'
 
 class HighSchoolInfoForm extends ApplicationForm {
     constructor(props) {

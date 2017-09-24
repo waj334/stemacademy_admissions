@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {Form, Header} from 'semantic-ui-react';
 
-import ApplicationForm from './ApplicationForm.jsx'
+import ApplicationForm from '../ApplicationForm.jsx'
 
-class StudentConfirmationForm extends ApplicationForm {
+class TeacherConfirmationForm extends ApplicationForm {
     constructor(props) {
         super(props);
 
@@ -16,6 +16,10 @@ class StudentConfirmationForm extends ApplicationForm {
 
         //Move to completion page
         this.props.onNext();
+    }
+
+    buildSubject(data, i) {
+        return <Form.Input value={data} readOnly />
     }
 
     render() {
@@ -42,7 +46,7 @@ class StudentConfirmationForm extends ApplicationForm {
 
         return (
         <Form onSubmit={this.onSubmit}>
-        <Header dividing>Your Contact Information</Header>
+        <Header dividing>Your Personal Information</Header>
         <Form.Group widths='equal'>
             <Form.Input label='First Name' value={this.props.data[0].fname} readOnly/>
             <Form.Input label='Last Name' value={this.props.data[0].lname} readOnly/>
@@ -63,14 +67,14 @@ class StudentConfirmationForm extends ApplicationForm {
             <Form.Input label='State' value={this.props.data[0].state} readOnly />
             <Form.Input label='Zip Code' value={this.props.data[0].zip} readOnly />
         </Form.Group>
-        <Header dividing>Parent/Guardian Information</Header>
+        <Header dividing>Emergency Contact</Header>
         <Form.Group widths='equal'>
-            <Form.Input label='First Name' value={this.props.data[1].pg_fname} onChange={this.onChange} readOnly />
-            <Form.Input label='Last Name' value={this.props.data[1].pg_lname} onChange={this.onChange} readOnly />
+            <Form.Input label='First Name' value={this.props.data[1].em_fname} onChange={this.onChange} readOnly />
+            <Form.Input label='Last Name' value={this.props.data[1].em_lname} onChange={this.onChange} readOnly />
         </Form.Group>
         <Form.Group widths='equal'>
-            <Form.Input label='Phone Number' value={this.props.data[1].pg_phone_no} onChange={this.onChange} readOnly />
-            <Form.Input label='Email' value={this.props.data[1].pg_email} onChange={this.onChange} readOnly />
+            <Form.Input label='Phone Number' value={this.props.data[1].em_phone_no} onChange={this.onChange} readOnly />
+            <Form.Input label='Email' value={this.props.data[1].em_email} onChange={this.onChange} readOnly />
         </Form.Group>
         <Header dividing>High School Information</Header>
         <Form.Group widths='equal'>
@@ -84,9 +88,11 @@ class StudentConfirmationForm extends ApplicationForm {
             <Form.Input label='State' value={this.props.data[2].hs_state} readOnly />
             <Form.Input label='Zip Code' value={this.props.data[2].hs_zip} readOnly />
         </Form.Group>
+        <Header dividing>Subjects Taught</Header>
+        {this.props.data[3].subjects.map(this.buildSubject, this)}
         <Form.Button content='Submit' floated='right' />
     </Form>
     )}
 }
 
-export default StudentConfirmationForm;
+export default TeacherConfirmationForm;
