@@ -8,6 +8,10 @@ class PersonalInfoForm extends ApplicationForm {
         super(props);
     }
 
+    validate(data) {
+        return true;
+    }
+
     render() {
         const gender_opts = [
             {key: 'm', text:'Male', value:'m'},

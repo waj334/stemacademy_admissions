@@ -11,14 +11,24 @@ class ApplicationForm extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
+    validate(data) {
+        return true;
+    }
+
     onChange(e, {name,value}) {
         this.setState({[name]: value});
         this.props.onCommit(this.props.id, this.state);
     }
 
     onSubmit() {
-        this.props.onCommit(this.props.id, this.state);
-        this.props.onNext();
+        console.log(this);
+        if (this.validate(this.state) == true) {
+            this.props.onCommit(this.props.id, this.state);
+            this.props.onNext();
+        } else {
+            //Enable errors
+            alert('Invalid Input');
+        }
     }
 }
 

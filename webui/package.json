@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "babel-preset-es2015": "^6.24.1",
+    "libphonenumber-js": "^0.4.32",
     "native-navigation": "^0.2.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

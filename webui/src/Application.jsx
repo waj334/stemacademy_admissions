@@ -27,7 +27,6 @@ class Application extends Component {
     }
 
     onStepToggle(id) {
-        console.log(id, 'activated');
         this.setState(prev => ({
             current: id,
             progress: prev.progress,

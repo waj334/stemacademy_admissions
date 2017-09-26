@@ -2,11 +2,20 @@ import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
 import ApplicationForm from '../ApplicationForm.jsx'
+import {checkInput, checkPhoneNo} from '../Validation.jsx';
 
 class EmergencyInfoForm extends ApplicationForm {
     constructor(props) {
         super(props);
 
+        //this.validate = this.validate.apply.bind(this);
+    }
+
+    validate(data) {
+        return checkInput(data.em_email, 'email') && 
+        checkPhoneNo(data.em_phone_no) && 
+        checkInput(data.em_fname, 'name') && 
+        checkInput(data.em_lname, 'name');
     }
 
     render() {

@@ -18,7 +18,6 @@ export default class FormStepGroup extends Component {
         const thisRect = thisDom.getBoundingClientRect()
         const stepRect = stepDom.getBoundingClientRect()
 
-        //thisDom.scrollLeft = stepRect.x - thisRect.x;
         stepDom.scrollIntoView({behavior:'smooth', block:'center'});
 
         console.log(thisRect,stepRect,stepRect.x - thisRect.x);
