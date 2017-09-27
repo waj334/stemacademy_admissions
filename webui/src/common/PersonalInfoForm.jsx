@@ -8,8 +8,57 @@ class PersonalInfoForm extends ApplicationForm {
         super(props);
     }
 
-    validate(data) {
-        return true;
+validate(data) {
+        var pass = true;
+
+        //Discard old error list
+        this.state.err = []
+
+        if (!checkInput(data.fname, 'name')) {
+            this.state.err.push('fname');
+            pass = false;
+        }
+
+        if (!checkInput(data.lname, 'name')) {
+            this.state.err.push('lname');
+            pass = false;
+        }
+
+        if (!checkInput(data.age, 'age')) {
+            this.state.err.push('age');
+            pass = false;
+        }
+
+        if (!checkInput(data.gender, 'gender')) {
+            this.state.err.push('gender');
+            pass = false;
+        }
+
+        if (!checkInput(data.ethnicity, 'ethnicity')) {
+            this.state.err.push('ethnicity');
+            pass = false;
+        }
+
+        if (!checkInput(data.citizenship, 'citizenship')) {
+            this.state.err.push('citizenship');
+            pass = false;
+        }
+
+        if (!checkInput(data.email, 'email')) {
+            this.state.err.push('email');
+            pass = false;
+        }
+
+        if (!checkPhoneNo(data.phone_no)) {
+            this.state.err.push('phone_no');
+            pass = false;
+        }
+
+        if (!pass) {
+            this.setState(this.state);
+        }
+
+        return pass;
     }
 
     render() {

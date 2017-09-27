@@ -19,8 +19,6 @@ export default class FormStepGroup extends Component {
         const stepRect = stepDom.getBoundingClientRect()
 
         stepDom.scrollIntoView({behavior:'smooth', block:'center'});
-
-        console.log(thisRect,stepRect,stepRect.x - thisRect.x);
     }
 
     build(data, i) {
@@ -31,8 +29,6 @@ export default class FormStepGroup extends Component {
     }
 
     render() {
-        console.log('steps renderd');
-
         return (
             <Step.Group fluid unstackable style={{'overflow-x':'scroll'}}>
                 {this.props.steps.map(this.build, this)}
