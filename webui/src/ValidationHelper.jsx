@@ -11,7 +11,9 @@ var regexAge = '^\d{1,3}$';
 var regexGender = '^(m|f)$';
 var regexEthnicity = '^(aa|a|c|l|na|nh|o)$';
 var regexCitizenship = '^(uc|dc|nc)$';
-var regexPassword = '^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$';
+
+//at least 1 number and capital letter. 8 to 15 characters
+var regexPassword = '^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,15}$';
 var regexUsername = '^[a-zA-z]+[a-zA-Z0-9]+$'
 
 export function checkInput(str, type) {
