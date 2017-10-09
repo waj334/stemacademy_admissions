@@ -9,9 +9,12 @@ import MainPage from './MainPage.jsx';
 import StudentApplication from './studentapp/StudentApplication.jsx';
 import TeacherApplication from './teacherapp/TeacherApplication.jsx';
 
+import LoginPage from './adminui/LoginPage.jsx';
+
 const Layout = () => (
   <main>
     <Switch>
+      <Route path='/admin/login' component={LoginPage} />
       <Route path='/app/student' component={StudentApplication} />
       <Route path='/app/teacher' component={TeacherApplication} />
       <Route path='/' component={MainPage} />
