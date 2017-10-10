@@ -1,5 +1,7 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {Form, Segment, Header, Container} from 'semantic-ui-react';
+
+import {connect} from 'react-redux';
 
 import {checkInput} from '../ValidationHelper.jsx';
 
@@ -46,6 +48,7 @@ class AdminLogin extends Component {
     }
 
     render() {
+        const {isAuthenticated, errorMessage} = this.props;
         return (
             <Form onSubmit={this.onSubmit}>
                 <Segment.Group compact>
@@ -67,4 +70,10 @@ class AdminLogin extends Component {
     }
 }
 
-export default AdminLogin;
+AdminLogin.PropTypes = {
+    login: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool.isRequired,
+    errorMessage: PropTypes.string
+}
+
+export default connect(null, {login})(AdminLogin);
