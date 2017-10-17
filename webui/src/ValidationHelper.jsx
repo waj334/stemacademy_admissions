@@ -12,8 +12,8 @@ var regexGender = '^(m|f)$';
 var regexEthnicity = '^(aa|a|c|l|na|nh|o)$';
 var regexCitizenship = '^(uc|dc|nc)$';
 
-//at least 1 number and capital letter. 8 to 15 characters
-var regexPassword = '^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,15}$';
+//at least 1 number, capital letter nd special character. 8 to 15 characters
+var regexPassword = '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$';
 var regexUsername = '^[a-zA-z]+[a-zA-Z0-9]+$'
 
 export function checkInput(str, type) {

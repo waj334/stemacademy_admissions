@@ -1,9 +1,11 @@
 import React, {Component, PropTypes} from 'react';
-import {Form, Segment, Header, Container} from 'semantic-ui-react';
+import {Form, Segment, Header, Container, Message} from 'semantic-ui-react';
 
 import {connect} from 'react-redux';
 
 import {checkInput} from '../ValidationHelper.jsx';
+
+import {LoginActions} from '../actions';
 
 class AdminLogin extends Component {
     constructor(props) {
@@ -27,7 +29,7 @@ class AdminLogin extends Component {
         var fail = false;
 
         //Validate input
-        if (!checkInput(this.state.username, 'username')) {
+        if (!(checkInput(this.state.username, 'username') || checkInput(this.state.username, 'email'))) {
             fail = true;
             this.state.err[0] = true;
         }
@@ -39,18 +41,25 @@ class AdminLogin extends Component {
 
         //Try to get session token
         if (!fail) {
-            //fetch ...
-
-            //Goto admin view if successful
+            const {dispatch} = this.props;
+            const creds = {
+                username: this.state.username,
+                password: this.state.password
+            }
+            dispatch(
+                LoginActions.loginUser(creds)
+            );
         } else {
-            this.setState( this.state);
+            this.setState(this.state);
         }
     }
 
     render() {
-        const {isAuthenticated, errorMessage} = this.props;
+        console.log(this.props);
+        const {isAuthenticated, err, dispatch, isFetching} = this.props;
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form onSubmit={this.onSubmit} error={err ? true:false} loading={isFetching}>
+                <Message error header="Error" content={err} />
                 <Segment.Group compact>
                     <Segment>
                         <Header>Login</Header>
@@ -71,9 +80,20 @@ class AdminLogin extends Component {
 }
 
 AdminLogin.PropTypes = {
-    login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired,
-    errorMessage: PropTypes.string
+    dispatch: PropTypes.func.isRequired,
+    err: PropTypes.string
 }
 
-export default connect(null, {login})(AdminLogin);
+function mapStateToProps(state) {
+    console.log(state);
+    const {loginUpdate} = state;
+    const {isAuthenticated, err, isFetching} = loginUpdate;
+
+    return {
+        isAuthenticated, 
+        err, 
+        isFetching,
+    }
+}
+
+export default connect(mapStateToProps)(AdminLogin);

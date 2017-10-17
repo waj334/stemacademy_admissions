@@ -1,6 +1,6 @@
 import {ApiKey, Endpoint} from './ApiKey.jsx'
 
-function checkStatus(resp) {
+function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
         return response;
     } else {
@@ -30,20 +30,17 @@ export function ApiPostStudentApp(data) {
 export function ApiLogin(uname, pwd) {
     var url = Url('/admin/session/login');
     
-    fetch(url, {
+    
+    return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            
         },
-        body: {
+        body: JSON.stringify({
             username: uname,
             password: pwd
-        }
+        })
     })
     .then(checkStatus)
-    .then(resp => resp.json())
-    .then(data => {
-        return data;
-    })
+    .then(resp => resp.json());
 }

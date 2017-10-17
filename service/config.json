@@ -5,6 +5,7 @@
 	"dbHost": "localhost",
 	"dbSSLMode": "disable",
 	"addrMemcached": "127.0.0.1:11211",
-	"servicePort": "3000",
-	"clientPort": "8080"
+	"servicePort": "8081",
+	"clientPort": "8080",
+	"jwtIssuer": ["http://localhost:8081", "http://localhost:8080"]
 }

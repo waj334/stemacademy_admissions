@@ -8,13 +8,14 @@ import (
 )
 
 type configuration struct {
-	DbName        string `json:"dbName"`
-	DbUser        string `json:"dbUser"`
-	DbHost        string `json:"dbHost"`
-	DbPassword    string `json:"dbPassword"`
-	DbSSLMode     string `json:"dbSSLMode"`
-	AddrMemcached string `json:"addrMemcached"`
-	ServicePort   string `json:"servicePort"`
+	DbName        string   `json:"dbName"`
+	DbUser        string   `json:"dbUser"`
+	DbHost        string   `json:"dbHost"`
+	DbPassword    string   `json:"dbPassword"`
+	DbSSLMode     string   `json:"dbSSLMode"`
+	AddrMemcached string   `json:"addrMemcached"`
+	ServicePort   string   `json:"servicePort"`
+	JwtIssuer     []string `json:"jwtIssuer"`
 }
 
 func getConfig() (configuration, error) {

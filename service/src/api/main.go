@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/handlers"
 )
 
 //Use for conf file
@@ -19,6 +21,10 @@ func main() {
 
 	conf, err := getConfig()
 
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "content-type"})
+	originsOk := handlers.AllowedOrigins(conf.JwtIssuer)
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
 	if err == nil {
 		//Setup API
 		router := setupAPI()
@@ -28,7 +34,7 @@ func main() {
 
 		if err == nil {
 			fmt.Println("Server running on port ", conf.ServicePort, "...")
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", conf.ServicePort), router))
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", conf.ServicePort), handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 		} else {
 			log.Fatal(err)
 		}
