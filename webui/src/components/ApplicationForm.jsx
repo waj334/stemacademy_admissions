@@ -5,8 +5,10 @@ class ApplicationForm extends Component {
     constructor(props) {
         super(props);
 
-        this.state = props.data[this.props.id];
-        this.state.err = [];
+        this.state = {
+            ...props.data[this.props.id],
+            err: []
+        }
 
         console.log(this.state);
 

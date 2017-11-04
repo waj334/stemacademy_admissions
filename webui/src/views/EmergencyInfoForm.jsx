@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
-import ApplicationForm from '../ApplicationForm.jsx'
+import ApplicationForm from '../components/ApplicationForm.jsx'
 import {checkInput, checkPhoneNo} from '../ValidationHelper.jsx';
 
 class EmergencyInfoForm extends ApplicationForm {

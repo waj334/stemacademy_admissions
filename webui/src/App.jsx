@@ -8,14 +8,14 @@ import reduxThunk from 'redux-thunk';
 import logo from './logo.svg';
 import './App.css'; 
 
-import MainPage from './MainPage.jsx';
-import StudentApplication from './studentapp/StudentApplication.jsx';
-import TeacherApplication from './teacherapp/TeacherApplication.jsx';
+//Views
+import MainPage from './views/MainPage.jsx';
+import StudentApplication from './views/StudentApplication.jsx';
+import TeacherApplication from './views/TeacherApplication.jsx';
+import LoginPage from './views/LoginPage.jsx';
+import AdminMain from './views/AdminMain.jsx';
 
-import AuthComponent from './auth/AuthComponent.jsx';
-
-import LoginPage from './adminui/LoginPage.jsx';
-import AdminMain from './adminui/AdminMain.jsx';
+import AuthComponent from './components/AuthComponent.jsx';
 
 import reducers from './reducers';
 

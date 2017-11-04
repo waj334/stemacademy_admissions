@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import Application from '../Application.jsx';
+import Application from '../components/Application.jsx';
 
-import PersonalInfoForm from '../common/PersonalInfoForm.jsx';
+import PersonalInfoForm from './PersonalInfoForm.jsx';
 import EmergencyInfoForm from './EmergencyInfoForm.jsx';
-import HighSchoolInfoForm from '../common/HighSchoolInfoForm.jsx';
+import HighSchoolInfoForm from './HighSchoolInfoForm.jsx';
 import SubjectForm from './SubjectForm.jsx';
 import TeacherConfirmationForm from './TeacherConfirmationForm.jsx';
-import ApplicationSubmittedPage from '../common/ApplicationSubmittedPage.jsx';
+import ApplicationSubmittedPage from './ApplicationSubmittedPage.jsx';
 
 const forms = [
     {key: 0, icon:'user', title:'Personal Information', desc:'Please provide for us a few details about yourself.', page:PersonalInfoForm},

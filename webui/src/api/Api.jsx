@@ -17,7 +17,7 @@ function Url(path) {
 export function ApiPostStudentApp(data) {
     var url = Url('/app/student');
 
-    fetch(url, {
+    return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,6 +25,8 @@ export function ApiPostStudentApp(data) {
         },
         body: data
     })
+    .then(checkStatus)
+    .then(resp => resp.json());
 }
 
 export function ApiLogin(uname, pwd) {

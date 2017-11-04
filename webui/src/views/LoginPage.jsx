@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminLogin from './AdminLogin.jsx';
+import AdminLogin from '../components/AdminLogin.jsx';
 
 import {Container, Header, Segment} from 'semantic-ui-react';
 

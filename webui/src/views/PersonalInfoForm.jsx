@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
-import ApplicationForm from '../ApplicationForm.jsx'
+import ApplicationForm from '../components/ApplicationForm.jsx';
+import * as ValidationHelper from '../ValidationHelper.jsx';
 
 class PersonalInfoForm extends ApplicationForm {
     constructor(props) {
         super(props);
+
+        this.validate = this.validate.bind(this);
     }
 
 validate(data) {
@@ -14,42 +17,42 @@ validate(data) {
         //Discard old error list
         this.state.err = []
 
-        if (!checkInput(data.fname, 'name')) {
+        if (!ValidationHelper.checkInput(data.fname, 'name')) {
             this.state.err.push('fname');
             pass = false;
         }
 
-        if (!checkInput(data.lname, 'name')) {
+        if (!ValidationHelper.checkInput(data.lname, 'name')) {
             this.state.err.push('lname');
             pass = false;
         }
 
-        if (!checkInput(data.age, 'age')) {
+        if (!ValidationHelper.checkInput(data.age, 'age')) {
             this.state.err.push('age');
             pass = false;
         }
 
-        if (!checkInput(data.gender, 'gender')) {
+        if (!ValidationHelper.checkInput(data.gender, 'gender')) {
             this.state.err.push('gender');
             pass = false;
         }
 
-        if (!checkInput(data.ethnicity, 'ethnicity')) {
+        if (!ValidationHelper.checkInput(data.ethnicity, 'ethnicity')) {
             this.state.err.push('ethnicity');
             pass = false;
         }
 
-        if (!checkInput(data.citizenship, 'citizenship')) {
+        if (!ValidationHelper.checkInput(data.citizenship, 'citizenship')) {
             this.state.err.push('citizenship');
             pass = false;
         }
 
-        if (!checkInput(data.email, 'email')) {
+        if (!ValidationHelper.checkInput(data.email, 'email')) {
             this.state.err.push('email');
             pass = false;
         }
 
-        if (!checkPhoneNo(data.phone_no)) {
+        if (!ValidationHelper.checkPhoneNo(data.phone_no)) {
             this.state.err.push('phone_no');
             pass = false;
         }
