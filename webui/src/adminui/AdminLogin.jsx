@@ -47,7 +47,7 @@ class AdminLogin extends Component {
                 password: this.state.password
             }
             dispatch(
-                LoginActions.loginUser(creds)
+                LoginActions.loginUser(creds, this.props.history)
             );
         } else {
             this.setState(this.state);
@@ -81,7 +81,8 @@ class AdminLogin extends Component {
 
 AdminLogin.PropTypes = {
     dispatch: PropTypes.func.isRequired,
-    err: PropTypes.string
+    err: PropTypes.string,
+    history: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {

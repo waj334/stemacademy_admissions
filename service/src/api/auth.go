@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/SermoDigital/jose/crypto"
 	"github.com/SermoDigital/jose/jws"
@@ -21,7 +22,7 @@ func AuthUser(w http.ResponseWriter, r *http.Request) {
 	info := new(LoginInfo)
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&info)
-	config, _ := getConfig()
+	//config, _ := getConfig()
 
 	//Retrieve user login info from database
 	pwdHash, salt, err := sqlGetUserPasswordHash(info)
@@ -33,16 +34,18 @@ func AuthUser(w http.ResponseWriter, r *http.Request) {
 		if strings.Compare(pwdHash, hash) == 0 {
 			//Create JWS claims
 			claims := jws.Claims{}
-			claims.SetAudience(config.JwtIssuer...)
+			claims.SetExpiration(time.Now().Add(time.Hour))
+			//claims.SetAudience(config.JwtIssuer...)
+			claims.Set("User", info.Username)
 
 			//Generate JWT for this user
-			token := jws.NewJWT(claims, crypto.SigningMethodES512)
+			token := jws.NewJWT(claims, crypto.SigningMethodHS256)
 			sToken, _ := token.Serialize([]byte("abcdef"))
 
 			//Write response containing token
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusAccepted)
-			w.Write([]byte("{\"tokenId\": \"" + string(sToken) + "\"}"))
+			w.Write([]byte("{\"token\": \"" + string(sToken) + "\"}"))
 		} else {
 			//Invalid password
 			w.WriteHeader(http.StatusUnauthorized)

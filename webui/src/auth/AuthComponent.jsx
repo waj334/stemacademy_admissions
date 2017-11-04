@@ -9,10 +9,11 @@ export default function (comp) {
 
         componentWillMount() {
             //Check if authenticated
+            console.log(this.props);
             if (!this.props.authenticated) {
                 //Go back to front page
                 //TODO: Notify user is unauthorized
-                this.context.router.push('/');
+                this.props.router.push('/');
             }
         }
 
@@ -21,18 +22,25 @@ export default function (comp) {
             if (!nextProps.authorized) {
                 //Go back to front page
                 //TODO: Notify user is unauthorized
-                this.context.router.push('/');
+                this.props.router.push('/');
             }
         }
 
         render() {
+            console.log("AuthComponent.render", this.props);
             return <comp {...this.props} />
         }
     }
 
     function mapStateToProps(state) {
-        return {authenticated: state.authenticated}
-    }
+        console.log("AuthComponent", state);
+        const {isAuthenticated} = state.loginUpdate;
+        const {history} = state.loginUpdate.history;
 
+        return {
+            authenticated: isAuthenticated,
+            router: history,
+        }
+    }
     return connect(mapStateToProps)(AuthComponent)
 }

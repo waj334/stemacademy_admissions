@@ -29,8 +29,8 @@ class App extends Component {
     <Provider store={store}>
       <Router history={history}>
         <Switch>
-          <Route path='/admin/login' component={LoginPage} />
-          <Route path ='/admin/main' component={AdminMain} />
+          <Route path='/admin/login' history={history} render={LoginPage} />
+          <Route path ='/admin/main' component={AuthComponent(AdminMain)} />
           <Route path='/app/student' component={StudentApplication} />
           <Route path='/app/teacher' component={TeacherApplication} />
           <Route path='/' component={MainPage} />

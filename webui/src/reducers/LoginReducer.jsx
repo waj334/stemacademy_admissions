@@ -1,6 +1,7 @@
 import * as Constants from '../Constants';
 
 const initialState = {
+    history: null,
     data: null,
     isFetching: false,
     isAuthenticated: false,
@@ -15,7 +16,7 @@ export default function loginUpdate(state = initialState, action) {
         case Constants.LOGIN_REQUEST:
             return { ...initialState, isFetching: true}
         case Constants.LOGIN_SUCCESS:
-            return {id_token: null, isFetching: false, isAuthenticated: true}
+            return { history: action.history, isFetching: false, isAuthenticated: true}
         case Constants.LOGIN_FAILURE:
             return {err: action.err, isFetching: false, isAuthenticated: false}
         default:

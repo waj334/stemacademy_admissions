@@ -3,14 +3,14 @@ import AdminLogin from './AdminLogin.jsx';
 
 import {Container, Header, Segment} from 'semantic-ui-react';
 
-const LoginPage = () => (
+const LoginPage = (history) => (
     <div>
         <Segment padded basic>
             <Header textAlign='center'>Admin Interface</Header>
         </Segment>
 
         <Container>
-            <AdminLogin />
+            <AdminLogin history={history} />
         </Container>
     </div>
 )

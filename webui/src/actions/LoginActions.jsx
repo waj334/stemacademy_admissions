@@ -16,12 +16,13 @@ function requestLogin(creds) {
     }
 }
 
-function receiveLogin(user) {
+function receiveLogin(user, history) {
     return {
         type: Constants.LOGIN_SUCCESS,
         isFetching: false,
         isAuthenticated: true,
-        id_token: user.id_token
+        id_token: user.id_token,
+        history: history
     }
 }
 
@@ -43,24 +44,27 @@ function _translateErr(e) {
         return "There was an unexpected error logging in. Try again later."
 }
 
-function loginUser(creds) {
+function loginUser(creds, history) {
     return dispatch => {
         dispatch(requestLogin(creds))
         ApiLogin(creds.username, creds.password)
-        .then(token => {
-            //Store JWT
-            dispatch(receiveLogin(token))
-            localStorage.setItem('token', token);
-
-            //Goto Admin Front
-            browserHistory.push('/admin/main')
-        })
         .catch(e => {
             console.log("API ERROR:", e);
             if (e.hasOwnProperty('response'))
                 dispatch(loginError(_translateErr(e.response)));
             else
                 dispatch(loginError("Could not contact service. Try again later."));
+        })
+        .then(data => {
+            //Extract token
+            const token = data.token;
+
+            //Store JWT
+            dispatch(receiveLogin(token, history.history))
+            localStorage.setItem('token', token);
+
+            //Goto Admin Front
+            history.history.push('/admin/main')
         });
     }
 }
