@@ -69,6 +69,9 @@ func ProcessStudentInfo(student *Student) (string, error) {
 
 	err := SQLInsertStudent(studentInfo)
 
+	//TODO: Handle situation where student is already in the database
+	//TODO: Update student info when new information is given
+
 	if err == nil {
 		return studentInfo.ID, nil
 	}
@@ -83,5 +86,12 @@ func ProcessGuardianInfo(guardian *Guardian) error {
 	
 	err := SQLInsertGuardian(guardianInfo)
 
-	return err
+	//TODO: Handle situation when guardian already exists
+	//TODO: Update guardian info when new information is given
+
+	if (err != nil) {
+		return err
+	}
+
+	return nil
 }
