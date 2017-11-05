@@ -1,11 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
-
 //Student struct holding student info for API
 type Student struct {
 	ID          string `json:"id"`
@@ -90,76 +84,4 @@ type StudentPayload struct {
 //StudentPayloadContainer struct holding the payload from API
 type StudentPayloadContainer struct {
 	Application StudentPayload `json:"payload"`
-}
-
-func apiStudentAppSubmit(w http.ResponseWriter, r *http.Request) {
-	container := new(StudentPayloadContainer)
-	var payload StudentPayload
-
-	//Decode request body
-	decoder := json.NewDecoder(r.Body)
-	derr := decoder.Decode(&container)
-
-	if derr == nil {
-		payload = container.Application
-	} else {
-		fmt.Println(derr)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	//Process information first
-	schoolInfo := payload.SchoolInfo.ToSchoolDB()
-
-	//Generate unique ID for this school
-	schoolInfo.ID = GenerateGUID()
-
-	err := sqlInsertSchool(schoolInfo)
-
-	//This school is already in the database if unique violation. Get existing object from database
-	if err != nil {
-		if err.Code.Name() == "unique_violation" {
-			existingSchool, err := sqlGetSchoolByAddr(schoolInfo.Address, schoolInfo.Zip)
-
-			if err == nil {
-				schoolInfo = existingSchool
-			} else {
-				//Something went wrong
-				fmt.Println(err)
-				w.WriteHeader(http.StatusInternalServerError)
-			}
-		} else {
-			//Something went wrong
-			fmt.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-	}
-
-	//Attempt insertion of student info into database
-	studentInfo := payload.StudentInfo.ToStudentDB()
-	studentInfo.ID = GenerateGUID()
-	studentInfo.SchoolID = schoolInfo.ID
-	err = sqlInsertStudent(studentInfo)
-
-	if err != nil {
-		//Something went wrong
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	//Attempt insertion of guardian info into database
-	guardianInfo := payload.GuardianInfo.ToGuardianDB()
-	guardianInfo.StudentID = studentInfo.ID
-	err = sqlInsertGuardian(guardianInfo)
-
-	if err != nil {
-		//Something went wrong
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
 }

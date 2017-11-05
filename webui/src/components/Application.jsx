@@ -88,10 +88,10 @@ class Application extends Component {
                     <Modal.Description>
                         {this.props.err}
                     </Modal.Description>
-                    <Modal.Actions>
+                </Modal.Content>
+                <Modal.Actions>
                         <Button onClick={this.closeMessage}>Ok</Button>
                     </Modal.Actions>
-                </Modal.Content>
             </Modal>
 
             <Segment basic loading={this.props.isPosting} style={{height:'100vh', 'overflow-y':'hidden'}}>

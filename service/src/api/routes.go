@@ -16,13 +16,13 @@ var routes = routeList{
 		"Login",
 		"POST",
 		"/admin/session/login",
-		AuthUser,
+		APIUserLogin,
 	},
 	route{
 		"Signout",
 		"POST",
 		"/admin/session/signout",
-		Signout,
+		APIUserLogout,
 	},
 	route{
 		"CreateUser",
@@ -34,7 +34,7 @@ var routes = routeList{
 		"apiStudentAppSubmit",
 		"POST",
 		"/app/student/submit",
-		apiStudentAppSubmit,
+		APIApplicationSubmitStudent,
 	},
 }
 

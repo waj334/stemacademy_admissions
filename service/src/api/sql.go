@@ -23,7 +23,7 @@ func openDatabase() (*sqlx.DB, error) {
 	return nil, err
 }
 
-func sqlCreateTables() error {
+func SQLCreateTables() error {
 	db, err := openDatabase()
 
 	if err == nil {
@@ -87,7 +87,7 @@ func sqlCreateTables() error {
 	return err
 }
 
-func sqlGetUserPasswordHash(user *LoginInfo) (string, string, error) {
+func SQLGetUserPasswordHash(user *LoginInfo) (string, string, error) {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -110,7 +110,7 @@ func sqlGetUserPasswordHash(user *LoginInfo) (string, string, error) {
 	return pwd, salt, nil
 }
 
-func sqlRegisterNewUser(user *User) error {
+func SQLRegisterNewUser(user *User) error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -137,7 +137,7 @@ func sqlRegisterNewUser(user *User) error {
 
 //School database actions
 
-func sqlInsertSchool(school *SchoolDB) *pq.Error {
+func SQLInsertSchool(school *SchoolDB) *pq.Error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -157,7 +157,7 @@ func sqlInsertSchool(school *SchoolDB) *pq.Error {
 	return nil
 }
 
-func sqlGetSchoolByAddr(addr string, zip string) (*SchoolDB, *pq.Error) {
+func SQLGetSchoolByAddr(addr string, zip string) (*SchoolDB, *pq.Error) {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -179,7 +179,7 @@ func sqlGetSchoolByAddr(addr string, zip string) (*SchoolDB, *pq.Error) {
 
 //Student database actions
 
-func sqlInsertStudent(student *StudentDB) *pq.Error {
+func SQLInsertStudent(student *StudentDB) *pq.Error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()
@@ -201,7 +201,7 @@ func sqlInsertStudent(student *StudentDB) *pq.Error {
 
 //Guardian database actions
 
-func sqlInsertGuardian(guardian *GuardianDB) *pq.Error {
+func SQLInsertGuardian(guardian *GuardianDB) *pq.Error {
 	//Open databse connection and close after function returns
 	db, err := openDatabase()
 	defer db.Close()

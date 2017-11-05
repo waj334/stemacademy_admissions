@@ -21,7 +21,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&newUser)
 
 	if err == nil {
-		err := sqlRegisterNewUser(newUser)
+		err := SQLRegisterNewUser(newUser)
 
 		if err == nil {
 			w.WriteHeader(http.StatusAccepted)

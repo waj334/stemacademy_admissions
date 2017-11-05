@@ -30,7 +30,7 @@ func main() {
 		router := setupAPI()
 
 		//Create database tables if not exist
-		err = sqlCreateTables()
+		err = SQLCreateTables()
 
 		if err == nil {
 			fmt.Println("Server running on port ", conf.ServicePort, "...")

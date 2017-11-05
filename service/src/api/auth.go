@@ -1,9 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"strings"
 	"time"
 
@@ -18,14 +15,9 @@ type LoginInfo struct {
 }
 
 //AuthUser Authorizes a user returning session token
-func AuthUser(w http.ResponseWriter, r *http.Request) {
-	info := new(LoginInfo)
-	decoder := json.NewDecoder(r.Body)
-	decoder.Decode(&info)
-	//config, _ := getConfig()
-
+func AuthUser(info *LoginInfo) ([]byte, error) {
 	//Retrieve user login info from database
-	pwdHash, salt, err := sqlGetUserPasswordHash(info)
+	pwdHash, salt, err := SQLGetUserPasswordHash(info)
 
 	if err == nil {
 		//Hash incoming login info
@@ -42,24 +34,18 @@ func AuthUser(w http.ResponseWriter, r *http.Request) {
 			token := jws.NewJWT(claims, crypto.SigningMethodHS256)
 			sToken, _ := token.Serialize([]byte("abcdef"))
 
-			//Write response containing token
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusAccepted)
-			w.Write([]byte("{\"token\": \"" + string(sToken) + "\"}"))
-		} else {
-			//Invalid password
-			w.WriteHeader(http.StatusUnauthorized)
+			return sToken, nil
 		}
-	} else {
-		w.WriteHeader(http.StatusInternalServerError)
+
+		//Invalid password
+		return nil, NewErrAuthInvalidPassword("Invalid Password")
 	}
+
+	//User not present in database
+	return nil, NewErrAuthUserNotFound("User does not exist")
 }
 
-//Signout API call for user signout
-func Signout(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadAll(r.Body)
-	if err == nil {
-		sessionID := string(b)
-		DestroySession(sessionID)
-	}
+//Signout user signout and destroys session
+func Signout(sessionID string) {
+	DestroySession(sessionID)
 }

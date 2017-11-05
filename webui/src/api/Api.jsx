@@ -15,7 +15,7 @@ function Url(path) {
 }
 
 export function ApiPostStudentApp(data) {
-    var url = Url('/app/student');
+    var url = Url('/app/student/submit');
 
     return fetch(url, {
         method: 'POST',
