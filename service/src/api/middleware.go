@@ -1,39 +1,27 @@
 package main
 
 import (
-	"net/http"
-	"strings"
+	"fmt"
 
-	"github.com/SermoDigital/jose/crypto"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo"
 )
 
-// APIKeyCheckMiddleware Middleware that verifies API key in request header
-func APIKeyCheckMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		key := r.Header.Get("APIKey")
+//MiddleWareAdminCheck Middleware for checking if user authenticated with admin rights
+func MiddleWareAdminCheck(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		//Extract info from JWT
+		user := ctx.Get("user").(*jwt.Token)
+		claims := user.Claims.(*UserJWTClaims)
 
-		if strings.Compare(key, apiKey) != 0 {
-			w.WriteHeader(http.StatusUnauthorized)
-		} else {
-			next.ServeHTTP(w, r)
+		fmt.Println(claims)
+		admin := claims.Admin
+
+		if admin == true {
+			fmt.Println("is admin: ", admin)
+			return next(ctx)
 		}
-	})
-}
 
-// JWTCheckMiddleware Middleware that checks and validate authorization header
-func JWTCheckMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token, err := DecodeAuthHeader(r)
-
-		if err == nil {
-			//Validate claims
-			if token.Validate(rsaPub, crypto.SigningMethodRS512) {
-				next.ServeHTTP(w, r)
-			} else {
-				w.WriteHeader(http.StatusUnauthorized)
-			}
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-	})
+		return echo.ErrForbidden
+	}
 }

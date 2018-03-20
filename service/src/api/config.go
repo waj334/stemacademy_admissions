@@ -7,20 +7,21 @@ import (
 	"os"
 )
 
-type configuration struct {
-	DbName        string   `json:"dbName"`
-	DbUser        string   `json:"dbUser"`
-	DbHost        string   `json:"dbHost"`
-	DbPassword    string   `json:"dbPassword"`
-	DbSSLMode     string   `json:"dbSSLMode"`
-	AddrMemcached string   `json:"addrMemcached"`
-	ServicePort   string   `json:"servicePort"`
-	JwtIssuer     []string `json:"jwtIssuer"`
-	APIKey        string   `json:"apiKey"`
-	PrivateKey    string   `json:"privateKey"`
+//Configuration Structure holding config values
+type Configuration struct {
+	DbName       string   `json:"dbName"`
+	DbUser       string   `json:"dbUser"`
+	DbHost       string   `json:"dbHost"`
+	DbPasswdFile string   `json:"dbPasswdFile"`
+	DbSSLMode    string   `json:"dbSSLMode"`
+	ServicePort  string   `json:"servicePort"`
+	JwtIssuer    []string `json:"jwtIssuer"`
+	TLSCert      string   `json:"TLSCert"`
+	TLSKey       string   `json:"TLSKey"`
+	LogHTTP      bool     `json:"logHttp"`
 }
 
-func getConfig() (configuration, error) {
+func getConfig() (Configuration, error) {
 
 	flag.Parse()
 
@@ -30,7 +31,7 @@ func getConfig() (configuration, error) {
 	}
 	defer file.Close()
 
-	var conf configuration
+	var conf Configuration
 
 	parser := json.NewDecoder(file)
 	if err = parser.Decode(&conf); err != nil {

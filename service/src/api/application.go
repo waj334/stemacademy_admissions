@@ -1,64 +1,54 @@
 package main
 
-// Application application record
+//Application struct holding Application info
 type Application struct {
-	id          int    `json:"id"`
-	status      int    `json:"status"`
-	applicantID string `json:"applicant_id"`
-	sessionName string `json:"session_name"`
+	ID               string `json:"id" db:"id"`
+	Age              int    `json:"age" db:"age"`
+	Gender           int    `json:"gender" db:"gender"`
+	Eth              int    `json:"eth_race" db:"eth_race"`
+	Citizenship      int    `json:"citizenship" db:"citizenship"`
+	PhoneNo          string `json:"phone_no" db:"phone_no"`
+	Street           string `json:"Street" db:"street"`
+	City             string `json:"city" db:"city"`
+	State            string `json:"state" db:"state"`
+	Zip              string `json:"zip" db:"zip"`
+	ContactFirstname string `json:"contact_firstname" db:"contact_firstname"`
+	ContactLastname  string `json:"contact_lastname" db:"contact_lastname"`
+	ContactPhoneNo   string `json:"contact_phone_no" db:"contact_phone_no"`
+	SchoolName       string `json:"school_name" db:"school_name"`
+	SchoolStreet     string `json:"school_street" db:"school_street"`
+	SchoolCity       string `json:"school_city" db:"school_city"`
+	SchoolState      string `json:"school_state" db:"school_state"`
+	SchoolCounty     string `json:"school_county" db:"school_county"`
+	SchoolZip        string `json:"school_zip" db:"school_zip"`
+	GradeLevel       int    `json:"grade_level" db:"grade_level"`
+	Subject          string `json:"subject" db:"subject"`
+	Group            string `json:"group" db:"group"`
+	Room             string `json:"room" db:"room"`
+	Status           string `json:"status" db:"status"`
 }
 
-func NewApplication(id int, status int, applicantID string, sessionName string) *Application {
-	return &Application{
-		id:          id,
-		status:      status,
-		applicantID: applicantID,
-		sessionName: sessionName,
-	}
+//UpdateStatus Updates the application status
+func (app *Application) UpdateStatus(status string) {
+	app.Status = status
+	database.UpdateApplication(app.ID, "status", status)
 }
 
-// ApplicationPayload hold complete application data
-type ApplicationPayload struct {
-	ApplicationDaata Application `json:"application"`
-	ApplicantData    Applicant   `json:"applicant"`
-	SchoolData       School      `json:"school"`
+//UpdateRoom Updates the room for this applicant
+func (app *Application) UpdateRoom(room string) {
+	app.Room = room
+	database.UpdateApplication(app.ID, "room", room)
 }
 
-// NewApplicationPayload create a new application payload
-func NewApplicationPayload(applicant Applicant, school School) *ApplicationPayload {
-	return &ApplicationPayload{
-		ApplicantData: applicant,
-		SchoolData:    school,
-	}
+//UpdateGroup Updates the group this applicant will belong to
+func (app *Application) UpdateGroup(group string) {
+	app.Group = group
+	database.UpdateApplication(app.ID, "group", group)
 }
 
-// SubmitApplication Processes application data and inserts into database
-func SubmitApplication(payload *ApplicationPayload) error {
-	//Insert school information into database
-	err := sql.SQLInsertSchool(&payload.SchoolData)
+//Process Inserts application information into database
+func (app *Application) Process() error {
+	err := database.InsertApplication(app)
 
-	if err.Code.Name() == "unique_violation" {
-		//Update info?
-	} else {
-		return err
-	}
-
-	//Insert applicant info into database
-	err = sql.SQLInsertApplicant(&payload.ApplicantData)
-
-	if err.Code.Name() == "unique_violation" {
-		//Update info?
-	} else {
-		return err
-	}
-
-	//Insert application record into database
-
-	//Application processed successfully!
-	return nil
-}
-
-// GetApplications Get all applicants for a session
-func GetApplications(session string) *ApplicationPayload {
-
+	return err
 }

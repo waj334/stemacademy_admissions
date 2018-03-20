@@ -1,59 +1,34 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
-//User struct holding details about an user
+//User Structure for storing infomation about a user
 type User struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Type      string `json:"type"`
+	FName    string `db:"fname" json:"fname"`
+	LName    string `db:"lname" json:"lname"`
+	Username string `db:"username" json:"username"`
+	Admin    bool   `db:"admin" json:"admin"`
+	Hash     string `db:"pwd_hash"`
+	Email    string `db:"email"`
+	Password string `json:"password"`
 }
 
-//CreateUser create a new user
-func CreateUser(user *User) error {
-	var err error
+//UserAuth Structure for holding user authentication info from client
+type UserAuth struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
 
-	//Hash password
-	hash, salt := GenPasswordHash(user.Password)
+//CreateUser Adds a new user to the database
+func CreateUser(user *User, pwd string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), 10)
 
-	//Attemp insertion into database
-	err = sql.SQLCreateUser(user.Email, user.FirstName, user.LastName, hash, salt, user.Type)
-
-	if err != nil {
-		log.Print(err)
-
-		//Convert pq error
-		pqerr := err.(*pq.Error)
-
-		//User already exists
-		if pqerr.Code.Name() == "unique_violation" {
-			err = NewErrCreateUserExists("User already exists")
-		}
-
-		return err
+	if err == nil {
+		user.Hash = string(hash)
+		err = database.AddUser(user)
 	}
 
-	return nil
-}
-
-//DeleteUser delete the user with the given username
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-
-}
-
-//ListUsers lists all users described by filter
-func ListUsers(w http.ResponseWriter, r *http.Request) {
-
-}
-
-//GetUser gets an user by username
-func GetUser(w http.ResponseWriter, r *http.Request) {
-
+	return err
 }

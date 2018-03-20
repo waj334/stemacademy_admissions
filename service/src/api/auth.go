@@ -1,51 +1,50 @@
 package main
 
 import (
-	"strings"
+	"errors"
 	"time"
 
-	"github.com/SermoDigital/jose/crypto"
-	"github.com/SermoDigital/jose/jws"
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
-//LoginInfo struct holding login credential payload
-type LoginInfo struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+//UserJWTClaims JWT claims for a user account
+type UserJWTClaims struct {
+	FName    string `json:"fname"`
+	LName    string `json:"lname"`
+	Username string `json:"username"`
+	Admin    bool   `json:"admin"`
+	jwt.StandardClaims
 }
 
-//AuthUser Authorizes a user returning session token
-func AuthUser(info *LoginInfo) ([]byte, error) {
-	//Retrieve user login info from database
-	pwdHash, salt, err := sql.SQLGetUserPasswordHash(info.Email)
+//AuthenticateUser Authenticates user login info and returns jwt
+func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
+	//Get information about this user
+	userinfo, err := database.GetUserInfo(user)
 
 	if err == nil {
-		//Hash incoming login info
-		hash := HashPasswordInput(info.Password, salt)
+		//Verify Password
+		if bcrypt.CompareHashAndPassword([]byte(userinfo.Hash), []byte(pwd)) == nil {
+			//Create JWT if passwords match
+			//Set claims for JWT
+			claims := &UserJWTClaims{
+				userinfo.FName,
+				userinfo.LName,
+				userinfo.Username,
+				userinfo.Admin,
+				jwt.StandardClaims{
+					ExpiresAt: time.Now().Add(time.Hour).Unix(),
+				},
+			}
 
-		if strings.Compare(pwdHash, hash) == 0 {
-			//Create JWS claims
-			claims := jws.Claims{}
-			claims.SetExpiration(time.Now().Add(time.Hour))
-			//claims.SetAudience(config.JwtIssuer...)
-			claims.Set("User", info.Email)
-
-			//Generate JWT for this user
-			token := jws.NewJWT(claims, crypto.SigningMethodRS512)
-			sToken, _ := token.Serialize([]byte("abcdef"))
-
-			return sToken, nil
+			//Generate and return JWT
+			return jwt.NewWithClaims(jwt.SigningMethodHS256, claims), nil
 		}
 
-		//Invalid password
-		return nil, NewErrAuthInvalidPassword("Invalid Password")
+		//Password was incorrect
+		return nil, errors.New("Incorrect Password")
 	}
 
-	//User not present in database
-	return nil, NewErrAuthUserNotFound("User does not exist")
-}
-
-//Signout user signout and destroys session
-func Signout(sessionID string) {
-	DestroySession(sessionID)
+	//Username does not exist
+	return nil, err
 }

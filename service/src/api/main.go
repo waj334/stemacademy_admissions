@@ -1,67 +1,74 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
-
-	"github.com/gorilla/handlers"
+	"os"
+	"os/signal"
+	"time"
 )
 
-//Use for conf file
 var configPath *string
-var sql *SQL
-var apiKey string
+var config Configuration
+var database *Database
 
 func main() {
+	//Read configuration
 	configPath = flag.String(
 		"conf",
 		"config.json",
 		"Path to configuration json file",
 	)
 
-	conf, err := getConfig()
-
-	//CORS
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "content-type"})
-	originsOk := handlers.AllowedOrigins(conf.JwtIssuer)
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	config, err := getConfig()
 
 	if err == nil {
-		//Create SQL Wrapper and connect to db
-		sql = NewSQL()
-		err = sql.Open()
-		defer sql.Close()
+
+		//Initialize API
+		e, err := InitAPI()
 
 		if err == nil {
-			//Create database tables if not exist
-			err = sql.SQLCreateTables()
+			//Open database connection
+			database, err = ConnectDB(&config)
 
 			if err == nil {
-				//Load encryption keys
-				err = LoadRSAKeys()
 
-				if err == nil {
-
-					//Setup API
-					router := setupAPI()
-
-					//Set API Key
-					apiKey = conf.APIKey
-
-					if err == nil {
-						//Listen on port whilst checking for APIKey
-						fmt.Println("Server running on port ", conf.ServicePort, "...")
-						http.ListenAndServe(fmt.Sprintf(":%s", conf.ServicePort), handlers.CORS(originsOk, headersOk, methodsOk)(APIKeyCheckMiddleware(router)))
+				go func() {
+					//Start API service
+					if len(config.TLSCert) > 0 && len(config.TLSKey) > 0 {
+						e.Logger.Fatal(e.StartTLS(":443", config.TLSCert, config.TLSKey)) //Override port to 443
+					} else {
+						e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", config.ServicePort)))
 					}
-				}
-			}
-		}
-	}
+				}()
 
-	//Log if there was some error
-	if err != nil {
+			} else {
+				e.Logger.Fatal(err)
+			}
+		} else {
+			//Couldn't properly create an API route
+			e.Logger.Fatal(err)
+		}
+
+		//Wait for interrupt signal to gracefully shutdown the server with
+		// a timeout of 10 seconds.
+		quit := make(chan os.Signal)
+		signal.Notify(quit, os.Interrupt)
+		<-quit
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		if err = database.db.Close(); err != nil {
+			e.Logger.Fatal(err)
+		}
+
+		if err = e.Shutdown(ctx); err != nil {
+			e.Logger.Fatal(err)
+		}
+
+	} else {
 		log.Fatal(err)
 	}
 }
