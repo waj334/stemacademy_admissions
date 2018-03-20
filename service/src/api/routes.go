@@ -13,27 +13,27 @@ type routeList []route
 
 var routes = routeList{
 	route{
-		"Login",
+		"APIUserLogin",
 		"POST",
 		"/admin/session/login",
 		APIUserLogin,
 	},
 	route{
-		"Signout",
+		"APIUserLogout",
 		"POST",
 		"/admin/session/signout",
 		APIUserLogout,
 	},
 	route{
-		"CreateUser",
+		"APICreateUser",
 		"POST",
 		"/user/create",
-		CreateUser,
+		APICreateUser,
 	},
 	route{
-		"apiStudentAppSubmit",
+		"APIApplicationSubmit",
 		"POST",
-		"/app/student/submit",
+		"/app/submit",
 		APIApplicationSubmitStudent,
 	},
 }

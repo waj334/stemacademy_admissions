@@ -11,6 +11,7 @@ func newRouter() *mux.Router {
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
+			Headers("APIKey").
 			Handler(route.HandlerFunc)
 	}
 
@@ -20,7 +21,8 @@ func newRouter() *mux.Router {
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
-			Headers("SESSION_ID").
+			Headers("APIKey", "Authorization").
+			Handler(JWTCheckMiddleware).
 			Handler(route.HandlerFunc)
 	}
 

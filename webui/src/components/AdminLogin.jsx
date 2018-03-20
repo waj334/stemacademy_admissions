@@ -12,7 +12,7 @@ class AdminLogin extends Component {
         super(props);
 
         this.state = {
-            username: '',
+            email: '',
             password: '',
             err: [false, false],
         }
@@ -29,7 +29,7 @@ class AdminLogin extends Component {
         var fail = false;
 
         //Validate input
-        if (!(checkInput(this.state.username, 'username') || checkInput(this.state.username, 'email'))) {
+        if (!checkInput(this.state.username, 'email')) {
             fail = true;
             this.state.err[0] = true;
         }
@@ -43,7 +43,7 @@ class AdminLogin extends Component {
         if (!fail) {
             const {dispatch} = this.props;
             const creds = {
-                username: this.state.username,
+                username: this.state.email,
                 password: this.state.password
             }
             dispatch(
@@ -65,7 +65,7 @@ class AdminLogin extends Component {
                         <Header>Login</Header>
                     </Segment>
                     <Segment>
-                        <Form.Input label='Username' placeholder='Username' name='username' value={this.state.username} onChange={this.onChange} error={this.state.err[0]} />
+                        <Form.Input label='Username' placeholder='Email' name='email' value={this.state.email} onChange={this.onChange} error={this.state.err[0]} />
                     </Segment>
                     <Segment>
                         <Form.Input type='password' label='Password' placeholder='Password' name='password' value={this.state.password} onChange={this.onChange} error={this.state.err[1]} />

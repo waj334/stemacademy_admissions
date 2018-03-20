@@ -36,6 +36,22 @@ func (e *ErrAuthUserNotFound) Error() string {
 	return e.message
 }
 
+// ErrAuthInvalidHeader Request authorization header was invalid
+type ErrAuthInvalidHeader struct {
+	message string
+}
+
+//NewErrAuthInvalidHeader Create new invalid authorization header error
+func NewErrAuthInvalidHeader(message string) *ErrAuthInvalidHeader {
+	return &ErrAuthInvalidHeader{
+		message: message,
+	}
+}
+
+func (e *ErrAuthInvalidHeader) Error() string {
+	return e.message
+}
+
 ///////////////////////////////////
 /// Application Data Errors
 ///////////////////////////////////
@@ -53,5 +69,25 @@ func NewErrApplicationDataInvalid(message string) *ErrApplicationDataInvalid {
 }
 
 func (e *ErrApplicationDataInvalid) Error() string {
+	return e.message
+}
+
+////////////////////////////////////
+/// Creation Errors
+////////////////////////////////////
+
+// ErrCreateUserExists User already exists in database
+type ErrCreateUserExists struct {
+	message string
+}
+
+// NewErrCreateUserExists create a new user exists error
+func NewErrCreateUserExists(message string) *ErrCreateUserExists {
+	return &ErrCreateUserExists{
+		message: message,
+	}
+}
+
+func (e *ErrCreateUserExists) Error() string {
 	return e.message
 }

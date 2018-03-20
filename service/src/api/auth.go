@@ -10,28 +10,28 @@ import (
 
 //LoginInfo struct holding login credential payload
 type LoginInfo struct {
-	Username string `json:"username"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 //AuthUser Authorizes a user returning session token
 func AuthUser(info *LoginInfo) ([]byte, error) {
 	//Retrieve user login info from database
-	pwdHash, salt, err := SQLGetUserPasswordHash(info)
+	pwdHash, salt, err := sql.SQLGetUserPasswordHash(info.Email)
 
 	if err == nil {
 		//Hash incoming login info
-		hash := hashPasswordInput(info.Password, salt)
+		hash := HashPasswordInput(info.Password, salt)
 
 		if strings.Compare(pwdHash, hash) == 0 {
 			//Create JWS claims
 			claims := jws.Claims{}
 			claims.SetExpiration(time.Now().Add(time.Hour))
 			//claims.SetAudience(config.JwtIssuer...)
-			claims.Set("User", info.Username)
+			claims.Set("User", info.Email)
 
 			//Generate JWT for this user
-			token := jws.NewJWT(claims, crypto.SigningMethodHS256)
+			token := jws.NewJWT(claims, crypto.SigningMethodRS512)
 			sToken, _ := token.Serialize([]byte("abcdef"))
 
 			return sToken, nil

@@ -1,97 +1,64 @@
 package main
 
-// SubmitStudentApplication Processes application data and inserts into database
-func SubmitStudentApplication(payload *StudentPayload) error {
-	//Process school information
-	schoolID, err := ProcessSchoolInfo(&payload.SchoolInfo)
-	
-	if err != nil {
+// Application application record
+type Application struct {
+	id          int    `json:"id"`
+	status      int    `json:"status"`
+	applicantID string `json:"applicant_id"`
+	sessionName string `json:"session_name"`
+}
+
+func NewApplication(id int, status int, applicantID string, sessionName string) *Application {
+	return &Application{
+		id:          id,
+		status:      status,
+		applicantID: applicantID,
+		sessionName: sessionName,
+	}
+}
+
+// ApplicationPayload hold complete application data
+type ApplicationPayload struct {
+	ApplicationDaata Application `json:"application"`
+	ApplicantData    Applicant   `json:"applicant"`
+	SchoolData       School      `json:"school"`
+}
+
+// NewApplicationPayload create a new application payload
+func NewApplicationPayload(applicant Applicant, school School) *ApplicationPayload {
+	return &ApplicationPayload{
+		ApplicantData: applicant,
+		SchoolData:    school,
+	}
+}
+
+// SubmitApplication Processes application data and inserts into database
+func SubmitApplication(payload *ApplicationPayload) error {
+	//Insert school information into database
+	err := sql.SQLInsertSchool(&payload.SchoolData)
+
+	if err.Code.Name() == "unique_violation" {
+		//Update info?
+	} else {
 		return err
 	}
 
-	//Set student school ID
-	payload.StudentInfo.SchoolID = schoolID
+	//Insert applicant info into database
+	err = sql.SQLInsertApplicant(&payload.ApplicantData)
 
-	studentID, err := ProcessStudentInfo(&payload.StudentInfo)
-
-	if err != nil {
-		//Most likely database error
+	if err.Code.Name() == "unique_violation" {
+		//Update info?
+	} else {
 		return err
 	}
 
-	//Set id of guardian's student applicant
-	payload.GuardianInfo.StudentID = studentID
-
-	//Process guardian info
-	err = ProcessGuardianInfo(&payload.GuardianInfo)
-
-	if err != nil {
-		//Most likely some database error
-		return err
-	}
+	//Insert application record into database
 
 	//Application processed successfully!
 	return nil
 }
 
-// ProcessSchoolInfo Adds school information database if new and returns school guid
-func ProcessSchoolInfo(school *School) (string, error) {
-	schoolInfo := school.ToSchoolDB()
+// GetApplications Get all applicants for a session
+func GetApplications(session string) *ApplicationPayload {
 
-	//Generate unique ID for this school
-	schoolInfo.ID = GenerateGUID()
-
-	err := SQLInsertSchool(schoolInfo)
-
-	//This school is already in the database if unique violation. Get existing object from database
-	if err != nil {
-		if err.Code.Name() == "unique_violation" {
-			existingSchool, err := SQLGetSchoolByAddr(schoolInfo.Address, schoolInfo.Zip)
-
-			if err == nil {
-				schoolInfo = existingSchool
-			} else {
-				return "", err
-			}
-		} else {
-			return "", err
-		}
-	}
-
-	return schoolInfo.ID, nil
-}
-
-// ProcessStudentInfo Adds student info to the database and returns guid of student
-func ProcessStudentInfo(student *Student) (string, error) {
-	//Attempt insertion of student info into database
-	studentInfo := student.ToStudentDB()
-	studentInfo.ID = GenerateGUID()
-
-	err := SQLInsertStudent(studentInfo)
-
-	//TODO: Handle situation where student is already in the database
-	//TODO: Update student info when new information is given
-
-	if err == nil {
-		return studentInfo.ID, nil
-	}
-
-	return "", err
-}
-
-// ProcessGuardianInfo Adds guardian info to the database
-func ProcessGuardianInfo(guardian *Guardian) error {
-	//Attempt insertion of guardian info into database
-	guardianInfo := guardian.ToGuardianDB()
-	
-	err := SQLInsertGuardian(guardianInfo)
-
-	//TODO: Handle situation when guardian already exists
-	//TODO: Update guardian info when new information is given
-
-	if (err != nil) {
-		return err
-	}
-
-	return nil
 }

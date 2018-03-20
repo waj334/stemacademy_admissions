@@ -18,7 +18,28 @@ func setupAPI() *mux.Router {
 	return router
 }
 
+/////////////////////////////////////////////////////////////////
 /// User Authentication API Functions
+/////////////////////////////////////////////////////////////////
+
+// APICreateUser API call to create a new user
+func APICreateUser(w http.ResponseWriter, r *http.Request) {
+	newUser := new(User)
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&newUser)
+
+	if err == nil {
+		err := CreateUser(newUser)
+
+		if err == nil {
+			w.WriteHeader(http.StatusAccepted)
+		} else {
+			w.WriteHeader(http.StatusConflict)
+		}
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+}
 
 // APIUserLogin API call to authenticate user and reply with JWT if successful
 func APIUserLogin(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +67,9 @@ func APIUserLogin(w http.ResponseWriter, r *http.Request) {
 func APIUserLogout(w http.ResponseWriter, r *http.Request) {
 }
 
+//////////////////////////////////////////////////////////////////////////
 /// Student API Functions
+//////////////////////////////////////////////////////////////////////////
 
 // APIApplicationSubmitStudent API call to process student application data
 func APIApplicationSubmitStudent(w http.ResponseWriter, r *http.Request) {

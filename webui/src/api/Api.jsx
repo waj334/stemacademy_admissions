@@ -29,7 +29,7 @@ export function ApiPostStudentApp(data) {
     .then(resp => resp.json());
 }
 
-export function ApiLogin(uname, pwd) {
+export function ApiLogin(email, pwd) {
     var url = Url('/admin/session/login');
     
     
@@ -39,7 +39,7 @@ export function ApiLogin(uname, pwd) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            username: uname,
+            email: email,
             password: pwd
         })
     })

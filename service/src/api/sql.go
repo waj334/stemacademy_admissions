@@ -5,47 +5,22 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	sq "github.com/Masterminds/squirrel"
 	"github.com/lib/pq"
+
+	sq "github.com/Masterminds/squirrel"
 )
 
 var errUserInfoConflict = errors.New("Conflicting user data entered")
 
 const (
-	//SQLTableAddress SQL Table: 'address'
-	SQLTableAddress				= "address"
 	//SQLTableAuth SQL Table: 'auth'
-	SQLTableAuth				= "auth"
+	SQLTableAuth = "auth"
 	//SQLTableApplicant SQL Table: 'application'
-	SQLTableApplicant			= "applicant"
+	SQLTableApplicant = "applicant"
 	//SQLTableApplication SQL Table: 'application'
-	SQLTableApplication			= "application"
-	//SQLTableApplicationStatus SQL Table: 'application_status'
-	SQLTableApplicationStatus	= "application_status"
-	//SQLTableCitizenshipType SQL Table: 'citizenship_type'
-	SQLTableCitizenshipType		= "citizenship_type"
-	//SQLTableContact SQL Table: 'contact'
-	SQLTableContact				= "contact"
-	//SQLTableContactType SQL Table: 'contact_type'
-	SQLTableContactType			= "contact_type"
-	//SQLTableCustody SQL Table: 'custody'
-	SQLTableCustody				= "custody"
-	//SQLTableEntity SQL Table: 'entity'
-	SQLTableEntity				= "entity"
-	//SQLTableEntityType SQL Table: 'entity_type'
-	SQLTableEntityType			= "entity_type"
-	//SQLTableEthnicityType SQL Table: 'ethnicity_type'
-	SQLTableEthnicityType		= "ethnicity_type"
-	//SQLTableGenderType SQL Table: 'gender_type'
-	SQLTableGenderType			= "gender_type"
-	//SQLTableName SQL Table: 'name'
-	SQLTableName				= "name"
-	//SQLTableNameType SQL Table: 'name_type'
-	SQLTableNameType			= "name_type"
-	//SQLTableSession SQL Table: 'session'
-	SQLTableSession				= "session"
-	//SQLTableStatus SQL Table: 'status'
-	SQLTableStatus				= "status"
+	SQLTableApplication = "application"
+	//SQLTableSchool SQL Table: 'address'
+	SQLTableSchool = "school"
 )
 
 // SQLInterface SQL interface
@@ -53,25 +28,10 @@ type SQLInterface interface {
 	Open() error
 	Close() error
 
-	SQLCreateSequences() *pq.Error
-
-	SQLCreateAddressTable() *pq.Error
-	SQLCreateAuthTable() *pq.Error
 	SQLCreateApplicantTable() *pq.Error
 	SQLCreateApplicationTable() *pq.Error
-	SQLCreateApplicationStatusTable() *pq.Error
-	SQLCreateCitizenshipTypeTable() *pq.Error
-	SQLCreateContactTable() *pq.Error
-	SQLCreateContactTypeTable() *pq.Error
-	SQLCreateCustodyTable() *pq.Error
-	SQLCreateEntityTable() *pq.Error
-	SQLCreateEntityTypeTable() *pq.Error
-	SQLCreateEthnicityTypeTable() *pq.Error
-	SQLCreateGenderTypeTable() *pq.Error
-	SQLCreateNameTable() *pq.Error
-	SQLCreateNameTypeTable() *pq.Error
-	SQLCreateSessionTable() *pq.Error
-	SQLCreateStatusTypeTable() *pq.Error
+	SQLCreateUserTable() *pq.Error
+	SQLCreateSchoolTable() *pq.Error
 }
 
 // SQL database interaction functions
@@ -79,58 +39,71 @@ type SQL struct {
 	db *sqlx.DB
 }
 
-func openDatabase() (*sqlx.DB, error) {
+// NewSQL Create new SQL Wrapper object
+func NewSQL() *SQL {
+	return new(SQL)
+}
+
+// Open open connection to database
+func (sql *SQL) Open() error {
 	conf, err := getConfig()
 
 	if err == nil {
 		dbConf := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s", conf.DbUser, conf.DbPassword, conf.DbHost, conf.DbName, conf.DbSSLMode)
 		db, err := sqlx.Open("postgres", dbConf)
-		return db, err
 	}
 
-	return nil, err
+	return err
 }
 
-// SQLCreateAddressTable Create the address table
-func (sql *SQL) SQLCreateAddressTable() *pq.Error {
-	_, err := sql.db.Query(`create table if not exists address (
-		id		text	not null references entity (id),
-		address text	not null,
-		state	text	not null,
-		zip		text 	not null,
-		county	text	not null,
-		primary key(id)
-	)`)
-
-	return err.(*pq.Error)
+// Close Close the database connection
+func (sql *SQL) Close() {
+	sql.db.Close()
 }
 
-// SQLCreateAuthTable Create the auth table
-func (sql *SQL) SQLCreateAuthTable() *pq.Error {
-	_, err := sql.db.Query(`create table if not exists auth (
-		id			text	not null references entity (id),
-		username	text	not null,
-		pwd_hash	text	not null,
-		pwd_salt	text	not null,
-		policy		text	not null,
-		primary key(id),
-		unique(username),
-		unique(pwd_hash)
-	)`)
+// SQLCreateTables Create needed tables in the proper order
+func (sql *SQL) SQLCreateTables() *pq.Error {
+	funcs := []func() *pq.Error{
+		sql.SQLCreateUserTable,
+		sql.SQLCreateSchoolTable,
+		sql.SQLCreateApplicantTable,
+		sql.SQLCreateApplicationTable,
+	}
 
-	return err.(*pq.Error)
+	for i := range funcs {
+		err := funcs[i]()
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // SQLCreateApplicantTable Create the applicant table
 func (sql *SQL) SQLCreateApplicantTable() *pq.Error {
 	_, err := sql.db.Query(`create table if not exists applicant (
-		id				text	not null references entity (id),
-		age				integer	not null,
-		gender_id		integer	not null references gender_type (id),
-		ethnicity_id	integer	not null references ethnicity_type (id),
-		citizenship_id	integer not null references citizenship_type (id),
-		school_id		integer not null references entity (id),
-		primary key(id)
+		id					text	not null references auth (email),
+		age					integer	not null,
+		gender_type			integer	not null,
+		ethnicity_type		integer	not null,
+		citizenship_type	integer not null,
+		phone_no			text	not null,
+		school_name			text 	not null references school (name),
+		contact_first_name	text 	not null,
+		contact_last_name	text 	not null,
+		contact_phone_no	text 	not null,
+		address				text 	not null,
+		state				text 	not null,
+		city				text 	not null,
+		zip					text 	not null,
+		grade_level			integer not null,
+		subject				text	not null,
+		group				text,
+		room				text,
+		primary key(id),
+		unique(id)
 	)`)
 
 	return err.(*pq.Error)
@@ -142,9 +115,10 @@ func (sql *SQL) SQLCreateApplicationTable() *pq.Error {
 
 	if err == nil {
 		_, err = sql.db.Query(`create table if not exists application (
-			id				integer	not null nextval('application_seq'),
+			id				integer	not null default nextval('application_seq'),
+			status			integer,
 			applicant_id	text	not null references applicant (id)
-			session_id		text	not null references session (id)
+			session_id		text	not null
 			primary key(id),
 			unique(id)
 		)`)
@@ -153,209 +127,152 @@ func (sql *SQL) SQLCreateApplicationTable() *pq.Error {
 	return err.(*pq.Error)
 }
 
-// SQLCreateApplicationStatusTable Create the application status table
-func (sql *SQL) SQLCreateApplicationStatusTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence application_status_seq`)
-
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists application_status (
-			id				text		not null nextval('application_status_seq'),
-			application_id	integer		not null references application (id)
-			status_id		integer		not null references status_type (id),
-			date			date		not null
-			primary key(id),
-			unique(id)
-		)`)
-	}
-
-	return err.(*pq.Error)
-}
-
-// SQLCreateCitizenshipTypeTable Create the citizenship type table
-func (sql *SQL) SQLCreateCitizenshipTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence citizenship_type_seq`)
-
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists citizenship_type (
-			id		integer	not null nextval('citizenship_type_seq'),
-			type	text 	not null
-			primary key(id),
-			unique(id)
-		)`)
-	}
-
-	return err.(*pq.Error)
-}
-
-// SQLCreateContactTable Create the contact table
-func (sql *SQL) SQLCreateContactTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence contact_sequence`)
-
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists contact (
-			id			integer		not null nextval('contact_sequence'),
-			entity_id	text		not null references entity (id),
-			infomation	text		not null,
-			type_id		integer		not null references contact_type (id),
-			primary key(id),
-			unique(id)
-		)`)
-	}
-
-	return err.(*pq.Error)
-}
-
-// SQLCreateContactTypeTable Create the contact type table
-func (sql *SQL) SQLCreateContactTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence contact_type_seq`)
-
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists contact_type (
-			id		integer	not null nextval('contact_type_seq'),
-			type	text 	not null
-			primary key(id),
-			unique(id)
-		)`)
-	}
-
-	return err.(*pq.Error)
-}
-
-// SQLCreateCustodyTable Create the custody table
-func (sql *SQL) SQLCreateCustodyTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence custody_seq`)
-
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists custody (
-			id				integer	not null nextval('custody_seq'),
-			applicant_id	text	not null references applicant (id),
-			guardian_id		text	not null references entity (id)
-			primary key(id),
-			unique(id)
-		)`)
-	}
-
-	return err.(*pq.Error)
-}
-
-// SQLCreateEntityTable Create the entity table
-func (sql *SQL) SQLCreateEntityTable() *pq.Error {
-	_, err := sql.db.Query(`create table if not exists entity (
-		id		text	not null,
-		type_id integer	not null references entity_type (id),
+// SQLCreateUserTable Create the user table
+func (sql *SQL) SQLCreateUserTable() *pq.Error {
+	_, err := sql.db.Query(`create table if not exists user (
+		email		text	not null,
+		first_name	text	not null,
+		last_name	text	not null,
+		pwd_hash	text	not null,
+		pwd_salt	text	not null,
+		type		text	not null,
 		primary key(id),
-		unique(id)
+		unique(username),
+		unique(pwd_hash)
 	)`)
 
 	return err.(*pq.Error)
 }
 
-// SQLCreateEntityTypeTable Create the entity type table
-func (sql *SQL) SQLCreateEntityTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence entity_seq`)
-
-	if err == nil {
-		_, err := sql.db.Query(`create table if not exists entity_type (
-			id		integer 	not null nextval('entity_seq'),
-			type	text		not null,
-			primary key(id),
-			unique(id)
+// SQLCreateSchoolTable Create the school table
+func (sql *SQL) SQLCreateSchoolTable() *pq.Error {
+	_, err := sql.db.Query(`create table if not exists school (
+		name		text		not null,
+		address		text		not null,
+		state		text		not null,
+		city		text		not null,
+		zip			text		not null,
+		county		text		not null,
+		primary key(name),
+		unique(name)
 		)`)
-	}
 
 	return err.(*pq.Error)
 }
 
-// SQLCreateEthnicityTypeTable Create the ethnicity type table
-func (sql *SQL) SQLCreateEthnicityTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence ethnicity_seq`)
+////////////////////////////////////////////////////////////////////////////
+/// User Account Functions
+////////////////////////////////////////////////////////////////////////////
 
-	if err == nil {
-		_, err := sql.db.Query(`create table if not exists ethnicity_type (
-			id		integer 	not null nextval('ethnicity_seq'),
-			type	text		not null,
-			primary key(id),
-			unique(id)
-		)`)
-	}
+// SQLCreateUser Create a database record for a new user
+func (sql *SQL) SQLCreateUser(email string, firstname string, lastname string, pwdhash string, pwdsalt string, usertype string) *pq.Error {
+	query := sq.Insert(SQLTableAuth).Columns("email", "pwd_hash", "pwd_salt", "type").
+		Values(email, firstname, lastname, pwdhash, pwdsalt, usertype).
+		RunWith(sql.db)
 
+	_, err := query.Exec()
 	return err.(*pq.Error)
 }
 
-// SQLCreateGenderTypeTable Create the gender type table
-func (sql *SQL) SQLCreateGenderTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence gender_seq`)
+// SQLGetUserPasswordHash Get the password hash from database
+func (sql *SQL) SQLGetUserPasswordHash(email string) (string, string, *pq.Error) {
+	pwd, salt := "", ""
 
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists gender_type (
-			id		integer 	not null nextval('gender_seq'),
-			type	text		not null,
-			primary key(id),
-			unique(id)
-		)`)
+	query := sq.Select("pwd_hash", "pwd_salt").
+		From(SQLTableAuth).
+		Where("email =?", email).
+		RunWith(sql.db).
+		PlaceholderFormat(sq.Dollar)
+
+	rows, err := query.Query()
+
+	if err != nil {
+		//User does not exist in database
+		return "", "", err.(*pq.Error)
 	}
 
+	defer rows.Close()
+	rows.Next()
+
+	rows.Scan(&pwd, &salt)
+
+	return pwd, salt, nil
+}
+
+////////////////////////////////////////////////////////////
+/// School Functions
+////////////////////////////////////////////////////////////
+
+// SQLInsertSchool Insert new school into database. Returns error if already exists
+func (sql *SQL) SQLInsertSchool(school *School) *pq.Error {
+	query := sq.Insert(SQLTableSchool).
+		Columns("name", "address", "state", "zip", "county").
+		Values(school.Name, school.Address, school.State, school.Zip, school.County).
+		RunWith(sql.db)
+
+	_, err := query.Exec()
 	return err.(*pq.Error)
 }
 
-// SQLCreateNameTable Create the name table
-func (sql *SQL) SQLCreateNameTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence name_seq`)
+// SQLGetSchoolByAddr Get school from database by address
+func (sql *SQL) SQLGetSchoolByAddr(address string, zip string) (*School, *pq.Error) {
+	query := sq.Select("*").
+		From(SQLTableSchool).
+		Where(sq.Eq{"address": address, "zip": zip}).
+		RunWith(sql.db)
+
+	//Execute query
+	rows, err := query.Query()
 
 	if err == nil {
-		_, err = sql.db.Query(`create table if not exists name (
-			id			integer		not null nextval(name_seq),
-			entity_id	text		not null references entity (id),
-			name		text		not null,
-			type_id		integer		not null references name_type (id),
-			primary key(id),
-			unique(id)
-		)`)
+		defer rows.Close()
+		rows.Next()
+
+		var _name, _address, _city, _state, _zip, _county string
+		rows.Scan(&_name, &_address, &_city, &_state, &_zip, &_county)
+
+		return NewSchool(_name, _address, _city, _state, _zip, _county), nil
 	}
 
+	return nil, err.(*pq.Error)
+}
+
+////////////////////////////////////////////////////////////////
+/// Applicant Functions
+////////////////////////////////////////////////////////////////
+
+// SQLInsertApplicant Insert new student into database
+func (sql *SQL) SQLInsertApplicant(applicant *Applicant) *pq.Error {
+	query := sq.Insert(SQLTableApplicant).
+		Columns("id", "age", "gender_type", "ethnicity_type", "citizenship_type",
+			"phone_no", "school_name", "contact_first_name", "contact_last_name",
+			"contact_phone_no", "address", "state", "zip", "grade_level",
+			"subject", "group", "room").
+		Values(applicant.ID, applicant.Age, applicant.Gender, applicant.Eth,
+			applicant.Citizenship, applicant.SchoolName, applicant.PhoneNo,
+			applicant.ContactFirstname, applicant.ContactLastname,
+			applicant.ContactPhoneNo, applicant.Address, applicant.City,
+			applicant.State, applicant.Zip, applicant.Grade, applicant.Subject,
+			applicant.Group, applicant.Room,
+		).
+		RunWith(sql.db)
+
+	_, err := query.Exec()
 	return err.(*pq.Error)
 }
 
-// SQLCreateNameTypeTable Create the name type table
-func (sql *SQL) SQLCreateNameTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence name_seq`)
+////////////////////////////////////////////////////////////////
+/// Application Functions
+////////////////////////////////////////////////////////////////
 
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists name_type (
-			id		integer 	not null nextval('name_seq'),
-			type	text		not null,
-			primary key(id),
-			unique(id)
-		)`)
-	}
+//SQLGetApplicationData Get all application data from database
+func (sql *SQL) SQLGetApplicationData(session string) []Application {
+	query := sq.Select("*").
+		From(SQLTableApplication).
+		Where(sq.Eq{"session_name": session}).
+		Join(fmt.Sprintf("%s on %s.%s = %s.%s", 
+			SQLTableApplicant, "applicant_id",
+			SQLTableApplication, "id"))
 
-	return err.(*pq.Error)
-}
-
-// SQLCreateSessionTable Create the session table
-func (sql *SQL) SQLCreateSessionTable() *pq.Error {
-	_, err := sql.db.Query(`create table if not exists session (
-		id			integer		not null references entity (id),
-		begin_date	date		not null,
-		end_date	date		not null,
-		primary key(id)
-	)`)
-
-	return err.(*pq.Error)
-}
-
-// SQLCreateStatusTypeTable Create the status type table
-func (sql *SQL) SQLCreateStatusTypeTable() *pq.Error {
-	_, err := sql.db.Query(`create sequence status_seq`)
-
-	if err == nil {
-		_, err = sql.db.Query(`create table if not exists status_type (
-			id		integer 	not null nextval('status_seq'),
-			type	text		not null,
-			primary key(id),
-			unique(id)
-		)`)
-	}
-
-	return err.(*pq.Error)
+	
 }

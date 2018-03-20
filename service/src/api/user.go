@@ -1,49 +1,59 @@
 package main
 
 import (
-	"encoding/json"
+	"log"
 	"net/http"
+
+	"github.com/lib/pq"
 )
 
 //User struct holding details about an user
 type User struct {
-	FirstName   string    `json:"firstName"`
-	LastName    string    `json:"lastName"`
-	Email       string    `json:"email"`
-	Username    string    `json:"username"`
-	Credentials LoginInfo `json:"credentials"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Type      string `json:"type"`
 }
 
-//CreateUser API call to create a new user
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	newUser := new(User)
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newUser)
+//CreateUser create a new user
+func CreateUser(user *User) error {
+	var err error
 
-	if err == nil {
-		err := SQLRegisterNewUser(newUser)
+	//Hash password
+	hash, salt := GenPasswordHash(user.Password)
 
-		if err == nil {
-			w.WriteHeader(http.StatusAccepted)
-		} else {
-			w.WriteHeader(http.StatusConflict)
+	//Attemp insertion into database
+	err = sql.SQLCreateUser(user.Email, user.FirstName, user.LastName, hash, salt, user.Type)
+
+	if err != nil {
+		log.Print(err)
+
+		//Convert pq error
+		pqerr := err.(*pq.Error)
+
+		//User already exists
+		if pqerr.Code.Name() == "unique_violation" {
+			err = NewErrCreateUserExists("User already exists")
 		}
-	} else {
-		w.WriteHeader(http.StatusBadRequest)
+
+		return err
 	}
+
+	return nil
 }
 
-//DeleteUser API call that will delete the user with the given username
+//DeleteUser delete the user with the given username
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//ListUsers API call that lists all users described by filter
+//ListUsers lists all users described by filter
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//GetUser API call that gets an user by username
+//GetUser gets an user by username
 func GetUser(w http.ResponseWriter, r *http.Request) {
 
 }

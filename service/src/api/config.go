@@ -16,6 +16,8 @@ type configuration struct {
 	AddrMemcached string   `json:"addrMemcached"`
 	ServicePort   string   `json:"servicePort"`
 	JwtIssuer     []string `json:"jwtIssuer"`
+	APIKey        string   `json:"apiKey"`
+	PrivateKey    string   `json:"privateKey"`
 }
 
 func getConfig() (configuration, error) {
