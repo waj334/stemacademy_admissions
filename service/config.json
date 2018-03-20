@@ -1,12 +1,9 @@
 {
-	"dbName": "stemapi",
-	"dbUser": "postgres",
-	"dbPassword": "postgres",
-	"dbHost": "localhost",
-	"dbSSLMode": "disable",
-	"addrMemcached": "127.0.0.1:11211",
-	"servicePort": "8081",
-	"clientPort": "8080",
-	"jwtIssuer": ["http://localhost:8081", "http://localhost:8080"],
-	"rsaKey": ""
+    "dbName": "ssa",
+    "dbUser": "postgres",
+    "dbHost": "localhost",
+    "dbPasswdFile": "C:/Projects/stemacademy_admissions/service/password.bin",
+    "dbSSLMode": "disable",
+    "servicePort": "8081",
+    "logHttp": true
 }
