@@ -34,15 +34,23 @@ func main() {
 			database, err = ConnectDB(&config)
 
 			if err == nil {
+				//Create database tables
+				err := database.CreateTables()
 
-				go func() {
-					//Start API service
-					if len(config.TLSCert) > 0 && len(config.TLSKey) > 0 {
-						e.Logger.Fatal(e.StartTLS(":443", config.TLSCert, config.TLSKey)) //Override port to 443
-					} else {
-						e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", config.ServicePort)))
-					}
-				}()
+				if err == nil {
+
+					go func() {
+						//Start API service
+						if len(config.TLSCert) > 0 && len(config.TLSKey) > 0 {
+							e.Logger.Fatal(e.StartTLS(":443", config.TLSCert, config.TLSKey)) //Override port to 443
+						} else {
+							e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", config.ServicePort)))
+						}
+					}()
+
+				} else {
+					e.Logger.Fatal(err)
+				}
 
 			} else {
 				e.Logger.Fatal(err)

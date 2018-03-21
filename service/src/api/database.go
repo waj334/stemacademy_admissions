@@ -40,13 +40,15 @@ func ConnectDB(conf *Configuration) (*Database, error) {
 		connStr := fmt.Sprintf("user=%s dbname=%s password=%s host=%s sslmode=%s", conf.DbUser, conf.DbName, pwd, conf.DbHost, conf.DbSSLMode)
 		db, err := sqlx.Connect("postgres", connStr)
 
-		db.Mapper = reflectx.NewMapperFunc("db", strings.ToLower)
-
 		if err == nil {
-			d := new(Database)
-			d.db = db
+			if db != nil {
+				db.Mapper = reflectx.NewMapperFunc("db", strings.ToLower)
 
-			return d, nil
+				d := new(Database)
+				d.db = db
+
+				return d, nil
+			}
 		}
 	}
 
@@ -75,7 +77,7 @@ func (db *Database) CreateTables() *pq.Error {
 func (db *Database) CreateApplicationTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS application (
-			id					text	not null references user (email),
+			id					text	not null references users (email),
 			age					integer	not null,
 			gender_type			integer	not null,
 			ethnicity_type		integer	not null,
@@ -96,14 +98,18 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			school_county		text	not null,
 			grade_level			integer not null,
 			subject				text,
-			group				text,
+			group_name				text,
 			room				text,
 			status				text,
 			primary key(id),
 			unique(id)
 		)`)
 
-	return err.(*pq.Error)
+	if err != nil {
+		return err.(*pq.Error)
+	}
+
+	return nil
 }
 
 //CreateUserTable Create the user table
@@ -120,7 +126,11 @@ func (db *Database) CreateUserTable() *pq.Error {
 			unique(hash)
 		)`)
 
-	return err.(*pq.Error)
+	if err != nil {
+		return err.(*pq.Error)
+	}
+
+	return nil
 }
 
 //AddUser Adds new user info to the database

@@ -23,7 +23,7 @@ type Application struct {
 	SchoolZip        string `json:"school_zip" db:"school_zip"`
 	GradeLevel       int    `json:"grade_level" db:"grade_level"`
 	Subject          string `json:"subject" db:"subject"`
-	Group            string `json:"group" db:"group"`
+	GroupName        string `json:"group" db:"group_name"`
 	Room             string `json:"room" db:"room"`
 	Status           string `json:"status" db:"status"`
 }
@@ -42,8 +42,8 @@ func (app *Application) UpdateRoom(room string) {
 
 //UpdateGroup Updates the group this applicant will belong to
 func (app *Application) UpdateGroup(group string) {
-	app.Group = group
-	database.UpdateApplication(app.ID, "group", group)
+	app.GroupName = group
+	database.UpdateApplication(app.ID, "group_name", group)
 }
 
 //Process Inserts application information into database
