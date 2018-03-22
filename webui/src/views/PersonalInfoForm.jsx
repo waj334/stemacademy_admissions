@@ -108,7 +108,6 @@ validate(data) {
                 <Form.Input label='State' name='state' placeholder='State' value={this.state.state} onChange={this.onChange} />
                 <Form.Input label='Zip Code' name='zip' placeholder='Zip Code' value={this.state.zip} onChange={this.onChange} />
             </Form.Group>
-            <Form.Button content='Next' floated='right' />
         </Form>
     )}
 }

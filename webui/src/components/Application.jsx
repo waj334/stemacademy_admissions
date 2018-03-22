@@ -17,10 +17,12 @@ function mapStateToProps(state) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, props) {
     return {
         goto: (page, progress) => dispatch(ApplicationActions.actionApplicationGoto(page, progress)),
+        next: (current, progress) => dispatch(ApplicationActions.nextPage(props.page, props.progress)),
         submit: (data, type, page, progress) => dispatch(ApplicationActions.submit(data, type, page, progress)),
+        dp: dispatch
     }
 }
 
@@ -39,6 +41,7 @@ class Application extends Component {
         this.onCommit = this.onCommit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.closeMessage = this.closeMessage.bind(this);
+        this.displayButton = this.displayButton.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -74,6 +77,16 @@ class Application extends Component {
     closeMessage() {
         this.state.show = false;
         this.setState(this.state);
+    }
+
+    displayButton() {
+        if (this.props.forms.length-1 == this.props.page)
+            return <Button content='Finish' floated='right' /> //Go to home page
+        
+        if (this.props.forms.length-2 == this.props.page)
+            return <Button content='Submit' floated='right' onClick={this.onSubmit} />
+
+        return <Button content='Next' floated='right' onClick={this.onNext} />
     }
 
     render() {
@@ -113,6 +126,9 @@ class Application extends Component {
                                     },
                                     null):<div/>
                         }
+                        
+                        <this.displayButton />
+
                     </Container>
                 </Segment>
                 <Segment basic style={{'height':'10%', 'padding-top':0}}>

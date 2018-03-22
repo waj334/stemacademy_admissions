@@ -58,7 +58,7 @@ var routes = RouteArray{
 		"Application Submission",
 		"/app/submit",
 		"POST",
-		"user",
+		"",
 		MiddlewareList{},
 		APISubmitApplication,
 	},

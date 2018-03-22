@@ -93,7 +93,6 @@ class StudentConfirmationForm extends ApplicationForm {
             <Form.Input label='State' value={this.props.data[2].hs_state} readOnly />
             <Form.Input label='Zip Code' value={this.props.data[2].hs_zip} readOnly />
         </Form.Group>
-        <Form.Button content='Submit' floated='right' />
     </Form>
     )}
 }

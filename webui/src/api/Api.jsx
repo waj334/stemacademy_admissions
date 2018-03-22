@@ -14,14 +14,13 @@ function Url(path) {
     return Endpoint+path;
 }
 
-export function ApiPostStudentApp(data) {
-    var url = Url('/app/student/submit');
+export function ApiSubmitApp(data) {
+    var url = Url('/app/submit');
 
     return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'APIKey': ApiKey.key
         },
         body: data
     })
@@ -30,7 +29,7 @@ export function ApiPostStudentApp(data) {
 }
 
 export function ApiLogin(email, pwd) {
-    var url = Url('/admin/session/login');
+    var url = Url('/login');
     
     
     return fetch(url, {
@@ -39,7 +38,7 @@ export function ApiLogin(email, pwd) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            email: email,
+            username: email,
             password: pwd
         })
     })

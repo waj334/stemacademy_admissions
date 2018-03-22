@@ -1,4 +1,6 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+
 import {Form, Segment, Header, Container, Message} from 'semantic-ui-react';
 
 import {connect} from 'react-redux';
