@@ -87,7 +87,7 @@ validate(data) {
         ]
 
         return (
-        <Form onSubmit={this.onSubmit}>
+        <Form>
             <Form.Group widths='equal'>
                 <Form.Input label='First Name' placeholder='First Name' name='fname' value={this.state.fname} onChange={this.onChange} />
                 <Form.Input label='Last Name' placeholder='Last Name' name='lname' value={this.state.lname} onChange={this.onChange} />

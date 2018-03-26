@@ -47,22 +47,14 @@ function _translateErr(e) {
         return 'There was an unexpected error. Try again later.';
 }
 
-export function submit(data , type, page, progress) {
+export function submit(data, page, progress) {
     return dispatch => {
         dispatch(actionApplicationSubmit(page, progress))
         var submitFunc = null;
         var err = false;
 
-        //Determine proper submit API call
-        //TODO: Let service determine how to process based on type^
-        if (type === Constants.APPLICATION_TYPE_STUDENT) {
-            submitFunc = API.ApiPostStudentApp;
-        } else if (type === Constants.APPLICATION_TYPE_TEACHER) {
-            //submitFunc = API.ApiPostTeacherApp;
-        }
-
         //Return async API call
-        return submitFunc(data)
+        return API.SubmitApp(data)
         .catch( e => {
             err = true;
             if (e.hasOwnProperty('response'))

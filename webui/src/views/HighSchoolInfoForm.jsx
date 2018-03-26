@@ -10,7 +10,7 @@ class HighSchoolInfoForm extends ApplicationForm {
 
     render() {
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form>
                 <Form.Group widths='equal'>
                     <Form.Input label='High School' placeholder='High School' name='hs_name' value={this.state.hs_name} onChange={this.onChange} />
                     <Form.Input label='County' placeholder='County' name='hs_county' value={this.state.hs_county} onChange={this.onChange} />

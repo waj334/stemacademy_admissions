@@ -14,7 +14,7 @@ function Url(path) {
     return Endpoint+path;
 }
 
-export function ApiSubmitApp(data) {
+export function SubmitApp(data) {
     var url = Url('/app/submit');
 
     return fetch(url, {
@@ -22,13 +22,13 @@ export function ApiSubmitApp(data) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: data
+        body: JSON.stringify(data)
     })
     .then(checkStatus)
     .then(resp => resp.json());
 }
 
-export function ApiLogin(email, pwd) {
+export function Login(email, pwd) {
     var url = Url('/login');
     
     

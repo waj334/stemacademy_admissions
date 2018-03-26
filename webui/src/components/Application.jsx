@@ -21,7 +21,7 @@ function mapDispatchToProps(dispatch, props) {
     return {
         goto: (page, progress) => dispatch(ApplicationActions.actionApplicationGoto(page, progress)),
         next: (current, progress) => dispatch(ApplicationActions.nextPage(props.page, props.progress)),
-        submit: (data, type, page, progress) => dispatch(ApplicationActions.submit(data, type, page, progress)),
+        submit: (data, page, progress) => dispatch(ApplicationActions.submit(data, page, progress)),
         dp: dispatch
     }
 }
@@ -41,6 +41,7 @@ class Application extends Component {
         this.onCommit = this.onCommit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.closeMessage = this.closeMessage.bind(this);
+        this.displayForm = this.displayForm.bind(this);
         this.displayButton = this.displayButton.bind(this);
     }
 
@@ -70,13 +71,39 @@ class Application extends Component {
         }
     }
 
-    onSubmit(data, type) {
-        this.props.submit(data, type, this.props.page, this.props.progress);
+    onSubmit() {
+        var data = {}
+
+        for (var d in this.state.data) {
+            for (var key in this.state.data[d]) {
+                data[key] = d[key];
+            }
+        }
+
+        this.props.submit(data, this.props.page, this.props.progress);
     }
 
     closeMessage() {
         this.state.show = false;
         this.setState(this.state);
+    }
+
+    displayForm() {
+        if (this.props.forms[this.props.page].page != null)
+            this.state.form = React.createElement(
+                this.props.forms[this.props.page].page, 
+                {
+                    data: this.state.data, 
+                    onCommit:this.onCommit, 
+                    id:this.props.page,
+                    onNext:this.onNext,
+                    onSubmit:this.onSubmit,
+                },
+                null)
+        else
+            this.state.form = <div/>
+
+        return this.state.form;
     }
 
     displayButton() {
@@ -90,7 +117,6 @@ class Application extends Component {
     }
 
     render() {
-        console.log('props', this.props);
         return (
         <div>
             <Modal open={this.state.show} onClose={this.closeMessage}>
@@ -116,19 +142,8 @@ class Application extends Component {
                 </Segment>
                 <Segment basic style={{'height':'66%', 'overflow-y':'auto', 'padding-top':0}}>
                     <Container>
-                        {this.props.forms[this.props.page].page != null ? React.createElement(this.props.forms[this.props.page].page, 
-                                {
-                                    data: this.state.data, 
-                                    onCommit:this.onCommit, 
-                                    id:this.props.page,
-                                    onNext:this.onNext,
-                                    onSubmit:this.onSubmit,
-                                    },
-                                    null):<div/>
-                        }
-                        
+                        <this.displayForm />                        
                         <this.displayButton />
-
                     </Container>
                 </Segment>
                 <Segment basic style={{'height':'10%', 'padding-top':0}}>

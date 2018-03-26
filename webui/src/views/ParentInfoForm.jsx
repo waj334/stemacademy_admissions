@@ -11,7 +11,7 @@ class ParentInfoForm extends ApplicationForm {
 
     render() {
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form>
                 <Form.Group widths='equal'>
                     <Form.Input label='First Name' placeholder='First Name' name='pg_fname' value={this.state.pg_fname} onChange={this.onChange} />
                     <Form.Input label='Last Name' placeholder='Last Name' name='pg_lname' value={this.state.pg_lname} onChange={this.onChange} />

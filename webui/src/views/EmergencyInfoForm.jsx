@@ -46,7 +46,7 @@ class EmergencyInfoForm extends ApplicationForm {
 
     render() {
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form>
             <Form.Group widths='equal'>
                 <Form.Input label='First Name' placeholder='First Name' name='em_fname' value={this.state.em_fname} onChange={this.onChange} error={this.hasError('em_fname')} />
                 <Form.Input label='Last Name' placeholder='Last Name' name='em_lname' value={this.state.em_lname} onChange={this.onChange} error={this.hasError('em_lname')} />

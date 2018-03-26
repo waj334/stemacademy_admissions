@@ -49,8 +49,10 @@ class StudentConfirmationForm extends ApplicationForm {
             {key: 'nc', text:'Non US Citizen', value:'nc'},
         ]
 
+        console.log("Supposed to be: ", this.props.data[0].citizenship)
+
         return (
-        <Form onSubmit={this.onSubmit}>
+        <Form>
         <Header dividing>Your Personal Information</Header>
         <Form.Group widths='equal'>
             <Form.Input label='First Name' value={this.props.data[0].fname} readOnly/>

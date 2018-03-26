@@ -72,6 +72,16 @@ func InitAPI() (*echo.Echo, error) {
 		e.Use(middleware.Logger())
 	}
 
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"https:localhost:8080", "http:localhost:8080"},
+		AllowHeaders: []string{
+			echo.HeaderOrigin,
+			echo.HeaderContentType,
+			echo.HeaderAccept,
+		},
+		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS},
+	}))
+
 	//JWT Middleware
 	jwtMW := middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte("supersecure"),
