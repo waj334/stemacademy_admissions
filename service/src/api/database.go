@@ -77,20 +77,24 @@ func (db *Database) CreateTables() *pq.Error {
 func (db *Database) CreateApplicationTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS application (
-			id					text	not null references users (email),
+			fname				text	not null,
+			lname				text	not null,
 			age					integer	not null,
-			gender_type			integer	not null,
-			ethnicity_type		integer	not null,
-			citizenship_type	integer not null,
-			phone_no			text	not null,
-			contact_first_name	text 	not null,
-			contact_last_name	text 	not null,
+			gender				integer	not null,
+			ethnicity			integer	not null,
+			citizenship			integer not null,
+			phone_no			text,
+			email				text	not null,
+			contact_fname		text 	not null,
+			contact_lname		text 	not null,
 			contact_phone_no	text 	not null,
+			contact_email		text	not null,
 			street				text 	not null,
 			state				text 	not null,
 			city				text 	not null,
 			zip					text 	not null,
 			school_name			text 	not null,
+			school_phone_no		text	not null,
 			school_street		text	not null,
 			school_state		text	not null,
 			school_city			text	not null,
@@ -98,11 +102,11 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			school_county		text	not null,
 			grade_level			integer not null,
 			subject				text,
-			group_name				text,
+			group_name			text,
 			room				text,
 			status				text,
-			primary key(id),
-			unique(id)
+			primary key(email),
+			unique(email)
 		)`)
 
 	if err != nil {
@@ -117,8 +121,6 @@ func (db *Database) CreateUserTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
 			email		text	not null,
-			fname		text	not null,
-			lname		text	not null,
 			hash		text	not null,
 			type		text	not null,
 			primary key(email),
@@ -146,13 +148,9 @@ func (db *Database) AddUser(user *User) error {
 	pgerr := err.(*pq.Error)
 
 	if pgerr.Code == "23505" {
-		if pgerr.Constraint == "username_unique" {
+		if pgerr.Constraint == "email_unique" {
 			return &ErrAuthUserExists{
-				fmt.Sprintf("User %s exists", user.Username),
-			}
-		} else if pgerr.Constraint == "email_unique" {
-			return &ErrAuthUserExists{
-				fmt.Sprintf("User with email, %s, exists", user.Email),
+				fmt.Sprintf("User %s exists", user.Email),
 			}
 		}
 	}
@@ -174,25 +172,28 @@ func (db *Database) GetUserInfo(user string) (*User, error) {
 }
 
 // InsertApplication Insert new application into database
-func (db *Database) InsertApplication(app *Application) *pq.Error {
+func (db *Database) InsertApplication(app *Application) error {
 	_, err := db.db.NamedExec(`
 			INSERT INTO application (
-				id, age, gender_type, ethnicity_type, citizenship_type, phone_no, 
-				contact_first_name, contact_last_name,
-				contact_phone_no, street, state, zip,
-				school_name, school_street, school_city, school_state, school_county, school_zip
-				grade_level, subject, group, room, status
+				fname, lname, age, gender, ethnicity, citizenship, phone_no, email, street, city, state, zip,
+				contact_fname, contact_lname, contact_phone_no, contact_email, 
+				school_name, school_phone_no, school_street, school_city, school_state, school_county, school_zip,
+				grade_level, subject, group_name, room, status
 			)
 			VALUES (
-				:id, :age, :gender_type, :ethnicity_type, :citizenship_type, :phone_no, 
-				:contact_first_name, :contact_last_name,
-				:contact_phone_no, :street, :state, :zip,
-				:school_name, :school_street, :school_city, :school_state, :school_county, :school_zip
-				:grade_level, :subject, :group, :room, :status
+				:fname, :lname, :age, :gender, :ethnicity, :citizenship, :phone_no, :email, :street, :city, :state, :zip,
+				:contact_fname, :contact_lname, :contact_phone_no, :contact_email, 
+				:school_name, :school_phone_no, :school_street, :school_city, :school_state, :school_county, :school_zip,
+				:grade_level, :subject, :group_name, :room, :status
 			)
 			`, app)
 
-	return err.(*pq.Error)
+	switch err.(type) {
+	case *pq.Error:
+		return err.(*pq.Error)
+	}
+
+	return err
 }
 
 //UpdateApplication Updates a single column from the application database table

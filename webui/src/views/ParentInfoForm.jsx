@@ -13,12 +13,12 @@ class ParentInfoForm extends ApplicationForm {
         return (
             <Form>
                 <Form.Group widths='equal'>
-                    <Form.Input label='First Name' placeholder='First Name' name='pg_fname' value={this.state.pg_fname} onChange={this.onChange} />
-                    <Form.Input label='Last Name' placeholder='Last Name' name='pg_lname' value={this.state.pg_lname} onChange={this.onChange} />
+                    <Form.Input label='First Name' placeholder='First Name' name='contact_fname' value={this.state.contact_fname} onChange={this.onChange} readOnly={this.props.readOnly} />
+                    <Form.Input label='Last Name' placeholder='Last Name' name='contact_lname' value={this.state.contact_lname} onChange={this.onChange} readOnly={this.props.readOnly} />
                 </Form.Group>
                 <Form.Group widths='equal'>
-                    <Form.Input label='Phone Number' placeholder='Phone Number' name='pg_phone_no' value={this.state.pg_phone_no} onChange={this.onChange} />
-                    <Form.Input label='Email' placeholder='Email' name='pg_email' value={this.state.pg_email} onChange={this.onChange} />
+                    <Form.Input label='Phone Number' placeholder='Phone Number' name='contact_phone_no' value={this.state.contact_phone_no} onChange={this.onChange} readOnly={this.props.readOnly} />
+                    <Form.Input label='Email' placeholder='Email' name='contact_email' value={this.state.contact_email} onChange={this.onChange} readOnly={this.props.readOnly} />
                 </Form.Group>
             </Form>
         )

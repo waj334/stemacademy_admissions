@@ -10,10 +10,8 @@ import (
 
 //UserJWTClaims JWT claims for a user account
 type UserJWTClaims struct {
-	FName    string `json:"fname"`
-	LName    string `json:"lname"`
-	Username string `json:"username"`
-	Admin    bool   `json:"admin"`
+	Email string `json:"email"`
+	Admin bool   `json:"admin"`
 	jwt.StandardClaims
 }
 
@@ -24,13 +22,11 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 
 	if err == nil {
 		//Verify Password
-		if bcrypt.CompareHashAndPassword([]byte(userinfo.Hash), []byte(pwd)) == nil {
+		if bcrypt.CompareHashAndPassword([]byte(userinfo.Password), []byte(pwd)) == nil {
 			//Create JWT if passwords match
 			//Set claims for JWT
 			claims := &UserJWTClaims{
-				userinfo.FName,
-				userinfo.LName,
-				userinfo.Username,
+				userinfo.Email,
 				userinfo.Admin,
 				jwt.StandardClaims{
 					ExpiresAt: time.Now().Add(time.Hour).Unix(),

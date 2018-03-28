@@ -19,3 +19,13 @@ export const APPLICATION_NEXT_PAGE = 'APPLICATION_NEXT_PAGE';
 //Application Types
 export const APPLICATION_TYPE_STUDENT = 'APPLICATION_TYPE_STUDENT';
 export const APPLICATION_TYPE_TEACHER = 'APPLICATION_TYPE_TEACHER';
+
+//Gender Map
+export const GENDERS = {
+    'm': 0,
+    'f': 1
+};
+
+export const ETHNICITIES = {
+    
+}

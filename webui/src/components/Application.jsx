@@ -22,7 +22,6 @@ function mapDispatchToProps(dispatch, props) {
         goto: (page, progress) => dispatch(ApplicationActions.actionApplicationGoto(page, progress)),
         next: (current, progress) => dispatch(ApplicationActions.nextPage(props.page, props.progress)),
         submit: (data, page, progress) => dispatch(ApplicationActions.submit(data, page, progress)),
-        dp: dispatch
     }
 }
 
@@ -76,7 +75,7 @@ class Application extends Component {
 
         for (var d in this.state.data) {
             for (var key in this.state.data[d]) {
-                data[key] = d[key];
+                data[key] = this.state.data[d][key];
             }
         }
 
@@ -108,8 +107,9 @@ class Application extends Component {
 
     displayButton() {
         if (this.props.forms.length-1 == this.props.page)
-            return <Button content='Finish' floated='right' /> //Go to home page
-        
+            return <Container textAlign='center'>
+                        <Button content='Finish' floated='center' /> //Go to home page
+                    </Container>
         if (this.props.forms.length-2 == this.props.page)
             return <Button content='Submit' floated='right' onClick={this.onSubmit} />
 

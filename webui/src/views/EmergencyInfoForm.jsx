@@ -48,12 +48,12 @@ class EmergencyInfoForm extends ApplicationForm {
         return (
             <Form>
             <Form.Group widths='equal'>
-                <Form.Input label='First Name' placeholder='First Name' name='em_fname' value={this.state.em_fname} onChange={this.onChange} error={this.hasError('em_fname')} />
-                <Form.Input label='Last Name' placeholder='Last Name' name='em_lname' value={this.state.em_lname} onChange={this.onChange} error={this.hasError('em_lname')} />
+                <Form.Input label='First Name' placeholder='First Name' name='em_fname' value={this.state.em_fname} onChange={this.onChange} error={this.hasError('em_fname')} readOnly={this.props.readOnly} />
+                <Form.Input label='Last Name' placeholder='Last Name' name='em_lname' value={this.state.em_lname} onChange={this.onChange} error={this.hasError('em_lname')} readOnly={this.props.readOnly} />
             </Form.Group>
             <Form.Group widths='equal'>
-                <Form.Input label='Phone Number' placeholder='Phone Number' name='em_phone_no' value={this.state.em_phone_no} onChange={this.onChange} error={this.hasError('em_phone_no')} />
-                <Form.Input label='Email' placeholder='Email' name='em_email' value={this.state.em_email} onChange={this.onChange} error={this.hasError('em_email')} />
+                <Form.Input label='Phone Number' placeholder='Phone Number' name='em_phone_no' value={this.state.em_phone_no} onChange={this.onChange} error={this.hasError('em_phone_no')} readOnly={this.props.readOnly} />
+                <Form.Input label='Email' placeholder='Email' name='em_email' value={this.state.em_email} onChange={this.onChange} error={this.hasError('em_email')} readOnly={this.props.readOnly} />
             </Form.Group>
             <Form.Button content='Next' floated='right' />
         </Form>

@@ -24,8 +24,11 @@ func APISubmitApplication(ctx echo.Context) error {
 			ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
 				"error": "Could not process application data",
 			})
+
+			return err
 		}
 	}
 
-	return nil
+	//Application processed ok
+	return ctx.String(http.StatusOK, "{}")
 }

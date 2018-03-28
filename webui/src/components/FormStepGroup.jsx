@@ -24,7 +24,7 @@ export default class FormStepGroup extends Component {
     build(data, i) {
         return <FormStep id={i} icon={data.icon} title={data.title} desc={data.desc} onToggle={this.props.onStepToggle} 
             active={this.props.current == i} 
-            disabled={this.props.progress < i} 
+            disabled={this.props.progress < i || this.props.current == this.props.steps.length-1} 
             ref={i} />;
     }
 

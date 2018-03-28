@@ -57,14 +57,17 @@ export function submit(data, page, progress) {
         return API.SubmitApp(data)
         .catch( e => {
             err = true;
-            if (e.hasOwnProperty('response'))
+            if (e.hasOwnProperty('response')) {
                 dispatch(actionApplicationSubmitErr(_translateErr(e.response), page, progress));
-            else
+            } else if (e.hasOwnProperty('message')) {
+                dispatch(actionApplicationSubmitErr(e.message, page, progress));
+            } else {
                 dispatch(actionApplicationSubmitErr('Could not contact service. Try again later.', page, progress));
+            }
         })
         .then( () => {
             if (!err)
-                dispatch(actionApplicationSubmitSuccess(page, progress));
+                dispatch(actionApplicationSubmitSuccess(page+1, progress+1));
         });
     }
 }

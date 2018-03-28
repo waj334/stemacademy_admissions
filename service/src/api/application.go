@@ -3,19 +3,24 @@ package main
 //Application struct holding Application info
 type Application struct {
 	ID               string `json:"id" db:"id"`
+	FName            string `json:"fname" db:"fname"`
+	LName            string `json:"lname" db:"lname"`
+	Email            string `json:"email" db:"email"`
 	Age              int    `json:"age" db:"age"`
 	Gender           int    `json:"gender" db:"gender"`
-	Eth              int    `json:"eth_race" db:"eth_race"`
+	Ethnicity        int    `json:"ethnicity" db:"ethnicity"`
 	Citizenship      int    `json:"citizenship" db:"citizenship"`
 	PhoneNo          string `json:"phone_no" db:"phone_no"`
-	Street           string `json:"Street" db:"street"`
+	Street           string `json:"street" db:"street"`
 	City             string `json:"city" db:"city"`
 	State            string `json:"state" db:"state"`
 	Zip              string `json:"zip" db:"zip"`
-	ContactFirstname string `json:"contact_firstname" db:"contact_firstname"`
-	ContactLastname  string `json:"contact_lastname" db:"contact_lastname"`
+	ContactFirstname string `json:"contact_fname" db:"contact_fname"`
+	ContactLastname  string `json:"contact_lname" db:"contact_lname"`
 	ContactPhoneNo   string `json:"contact_phone_no" db:"contact_phone_no"`
+	ContactEmail     string `json:"contact_email" db:"contact_email"`
 	SchoolName       string `json:"school_name" db:"school_name"`
+	SchoolPhoneNo    string `json:"school_phone_no" db:"school_phone_no"`
 	SchoolStreet     string `json:"school_street" db:"school_street"`
 	SchoolCity       string `json:"school_city" db:"school_city"`
 	SchoolState      string `json:"school_state" db:"school_state"`
@@ -23,7 +28,7 @@ type Application struct {
 	SchoolZip        string `json:"school_zip" db:"school_zip"`
 	GradeLevel       int    `json:"grade_level" db:"grade_level"`
 	Subject          string `json:"subject" db:"subject"`
-	GroupName        string `json:"group" db:"group_name"`
+	GroupName        string `json:"group_name" db:"group_name"`
 	Room             string `json:"room" db:"room"`
 	Status           string `json:"status" db:"status"`
 }

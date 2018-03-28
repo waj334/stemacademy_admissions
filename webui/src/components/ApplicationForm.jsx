@@ -15,10 +15,10 @@ class ApplicationForm extends Component {
     }
 
     componentWillUnmount() {
-        //Strip err list from state
-        delete this.state['err'];
-
-        this.props.onCommit(this.props.id, this.state);
+        if (this.props.readOnly == false) {
+            delete this.state['err'];   //Strip err list from state
+            this.props.onCommit(this.props.id, this.state);
+        }
     }
 
     hasError(field) {
@@ -39,6 +39,10 @@ class ApplicationForm extends Component {
             }
         );
     }
+}
+
+ApplicationForm.defaultProps = {
+    readOnly: false
 }
 
 export default ApplicationForm;

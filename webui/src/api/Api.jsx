@@ -16,13 +16,14 @@ function Url(path) {
 
 export function SubmitApp(data) {
     var url = Url('/app/submit');
+    var payload = JSON.stringify(data);
 
     return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: payload
     })
     .then(checkStatus)
     .then(resp => resp.json());

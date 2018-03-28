@@ -11,9 +11,6 @@ class ApplicationSubmittedPage extends Component {
                 <Segment basic>
                     <Icon name='check' size='huge' />
                 </Segment>
-                <Segment basic>
-                    <Button>Exit</Button>
-                </Segment>
             </Container>
         )}
 }
