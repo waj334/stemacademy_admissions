@@ -5,7 +5,7 @@ import * as Constants from '../Constants';
 
 import ApplicationForm from '../components/ApplicationForm.jsx';
 import PersonalInfoForm from './PersonalInfoForm.jsx';
-import ParentInfoForm from './ParentInfoForm.jsx';
+import ContactInfoForm from './ContactInfoForm.jsx';
 import HighSchoolInfoForm from './HighSchoolInfoForm.jsx';
 
 class StudentConfirmationForm extends ApplicationForm {
@@ -13,15 +13,15 @@ class StudentConfirmationForm extends ApplicationForm {
         super(props);
     }
 
-    render() {
+    form() {
         return (
         <div>
             <Header dividing>Personal Information</Header>
-            <PersonalInfoForm id={0} data={this.props.data} readOnly={true} />
+            <PersonalInfoForm id={0} data={this.props.data} count={this.props.count} disableButton readOnly={true} />
             <Header dividing>Parent/Guardian Contact Information</Header>
-            <ParentInfoForm id={1} data={this.props.data} readOnly={true} />
+            <ContactInfoForm id={1} data={this.props.data} count={this.props.count} disableButton readOnly={true} />
             <Header dividing>High School Information</Header>
-            <HighSchoolInfoForm id={2} data={this.props.data} readOnly={true} />
+            <HighSchoolInfoForm id={2} data={this.props.data} count={this.props.count} disableButton readOnly={true} />
         </div>
     )}
 }

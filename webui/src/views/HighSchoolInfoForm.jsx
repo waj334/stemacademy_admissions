@@ -8,7 +8,7 @@ class HighSchoolInfoForm extends ApplicationForm {
         super(props);
     }
 
-    render() {
+    form() {
         console.log("Highschool data:", this.state, this.props.data)
         return (
             <Form>

@@ -77,6 +77,7 @@ func (db *Database) CreateTables() *pq.Error {
 func (db *Database) CreateApplicationTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS application (
+			id					text	not null,
 			fname				text	not null,
 			lname				text	not null,
 			age					integer	not null,
@@ -105,7 +106,8 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			group_name			text,
 			room				text,
 			status				text,
-			primary key(email),
+			primary key(id),
+			unique(id),
 			unique(email)
 		)`)
 
@@ -205,4 +207,20 @@ func (db *Database) UpdateApplication(id string, column string, val string) *pq.
 		`, column, val, id)
 
 	return err.(*pq.Error)
+}
+
+//GetApplicationList Gets minimal infomation about all applications in database
+func (db *Database) GetApplicationList() ([]ApplicationMinimal, *pq.Error) {
+	list := []ApplicationMinimal{}
+	err := db.db.Select(&list, "SELECT (fname, lname, email, type, date, id) FROM application")
+
+	return list, err.(*pq.Error)
+}
+
+//GetApplication Gets a single application from the database
+func (db *Database) GetApplication(id string) (*Application, *pq.Error) {
+	app := Application{}
+	err := db.db.Get(&app, "SELECT * FROM application WHERE id=$1", id)
+
+	return &app, err.(*pq.Error)
 }

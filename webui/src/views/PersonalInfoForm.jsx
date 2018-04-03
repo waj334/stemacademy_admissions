@@ -9,11 +9,7 @@ class PersonalInfoForm extends ApplicationForm {
         super(props);
 
         this.validate = this.validate.bind(this);
-    }
-
-    componentWillUnmount() {
-        this.state.age = parseInt(this.state.age);
-        ApplicationForm.prototype.componentWillUnmount.call(this);
+        this.onNext = this.onNext.bind(this);
     }
 
 validate(data) {
@@ -69,7 +65,12 @@ validate(data) {
         return pass;
     }
 
-    render() {
+    onNext() {
+        this.state.age = parseInt(this.state.age);
+        ApplicationForm.prototype.onNext.call(this);
+    }
+
+    form() {
         const gender_opts = [
             {key: 'm', text:'Male', value: 0},
             {key: 'f', text:'Female', value: 1},
@@ -99,9 +100,9 @@ validate(data) {
                 <Form.Input width={4} label='Age' placeholder='Age' name='age' value={this.state.age} onChange={this.onChange} readOnly={this.props.readOnly} />
             </Form.Group>
             <Form.Group widths='equal'>
-                <Form.Select label='Gender' options={gender_opts} name='gender' placeholder='Choose One' value={this.state.gender} onChange={this.onChange} readOnly={this.props.readOnly} />
-                <Form.Select label='Ethnicity' options={ethnicity_opts} name='ethnicity' placeholder='Choose One' value={this.state.ethnicity} onChange={this.onChange} readOnly={this.props.readOnly} />
-                <Form.Select label='Citizenship Status' options={citizenship_opts} name='citizenship' placeholder='Choose One' value={this.state.citizenship} onChange={this.onChange} readOnly={this.props.readOnly} />
+                <Form.Select label='Gender' options={gender_opts} name='gender' placeholder='Choose One' value={this.state.gender} onChange={this.onChange} disabled={this.props.readOnly} />
+                <Form.Select label='Ethnicity' options={ethnicity_opts} name='ethnicity' placeholder='Choose One' value={this.state.ethnicity} onChange={this.onChange} disabled={this.props.readOnly} />
+                <Form.Select label='Citizenship Status' options={citizenship_opts} name='citizenship' placeholder='Choose One' value={this.state.citizenship} onChange={this.onChange} disabled={this.props.readOnly} />
             </Form.Group>
             <Form.Group widths='equal'>
                 <Form.Input label='Email' name='email' placeholder='Email' value={this.state.email} onChange={this.onChange} readOnly={this.props.readOnly} />

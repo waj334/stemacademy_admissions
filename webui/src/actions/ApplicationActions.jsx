@@ -19,6 +19,15 @@ function actionApplicationSubmit(page, progress) {
     }
 }
 
+function actionApplicationUpdate(data, page, progress) {
+    return {
+        type: Constants.APPLICATION_UPDATE,
+        page: page,
+        progress: progress,
+        data: data
+    }
+}
+
 function actionApplicationSubmitSuccess(page, progress) {
     return {
         type: Constants.APPLICATION_SUBMIT_SUCCESS,
@@ -45,6 +54,12 @@ function _translateErr(e) {
         return 'Invalid data.';
     else
         return 'There was an unexpected error. Try again later.';
+}
+
+export function update(data, page, progress) {
+    return dispatch => {
+        dispatch(actionApplicationUpdate(data, page, progress));
+    }
 }
 
 export function submit(data, page, progress) {

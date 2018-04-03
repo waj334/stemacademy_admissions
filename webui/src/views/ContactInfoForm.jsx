@@ -3,13 +3,13 @@ import {Form} from 'semantic-ui-react';
 
 import ApplicationForm from '../components/ApplicationForm.jsx';
 
-class ParentInfoForm extends ApplicationForm {
+class ContactInfoForm extends ApplicationForm {
     constructor(props) {
         super(props);
 
     }
 
-    render() {
+    form() {
         return (
             <Form>
                 <Form.Group widths='equal'>
@@ -25,4 +25,4 @@ class ParentInfoForm extends ApplicationForm {
     }
 }
 
-export default ParentInfoForm;
+export default ContactInfoForm;

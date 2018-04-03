@@ -7,13 +7,17 @@ import * as ApplicationActions from '../actions/ApplicationActions.jsx';
 
 import FormStepGroup from './FormStepGroup.jsx';
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
     return {
         page: state.applicationReducer.page,
         progress: state.applicationReducer.progress,
         isPosting: state.applicationReducer.isPosting,
         postFail: state.applicationReducer.postFail,
         err: state.applicationReducer.err,
+        data: {
+            ...ownProps.data,
+            ...state.applicationReducer.data
+        }
     }
 }
 
@@ -22,6 +26,7 @@ function mapDispatchToProps(dispatch, props) {
         goto: (page, progress) => dispatch(ApplicationActions.actionApplicationGoto(page, progress)),
         next: (current, progress) => dispatch(ApplicationActions.nextPage(props.page, props.progress)),
         submit: (data, page, progress) => dispatch(ApplicationActions.submit(data, page, progress)),
+        update: (data, page, progress) => dispatch(ApplicationActions.update(data, page, progress))
     }
 }
 
@@ -41,7 +46,7 @@ class Application extends Component {
         this.onSubmit = this.onSubmit.bind(this);
         this.closeMessage = this.closeMessage.bind(this);
         this.displayForm = this.displayForm.bind(this);
-        this.displayButton = this.displayButton.bind(this);
+        this.count = this.count.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,7 +57,8 @@ class Application extends Component {
         var newState = this.state;
 
         newState.data[id] = data;
-        this.setState(newState);
+        //this.setState(newState);
+        this.props.update(this.state.data, this.props.page, this.props.progress)
     }
 
     onStepToggle(id) {
@@ -87,6 +93,10 @@ class Application extends Component {
         this.setState(this.state);
     }
 
+    count() {
+        return this.props.forms.length
+    }
+
     displayForm() {
         if (this.props.forms[this.props.page].page != null)
             this.state.form = React.createElement(
@@ -97,23 +107,13 @@ class Application extends Component {
                     id:this.props.page,
                     onNext:this.onNext,
                     onSubmit:this.onSubmit,
+                    count: this.count
                 },
                 null)
         else
             this.state.form = <div/>
 
         return this.state.form;
-    }
-
-    displayButton() {
-        if (this.props.forms.length-1 == this.props.page)
-            return <Container textAlign='center'>
-                        <Button content='Finish' floated='center' /> //Go to home page
-                    </Container>
-        if (this.props.forms.length-2 == this.props.page)
-            return <Button content='Submit' floated='right' onClick={this.onSubmit} />
-
-        return <Button content='Next' floated='right' onClick={this.onNext} />
     }
 
     render() {
@@ -142,8 +142,7 @@ class Application extends Component {
                 </Segment>
                 <Segment basic style={{'height':'66%', 'overflow-y':'auto', 'padding-top':0}}>
                     <Container>
-                        <this.displayForm />                        
-                        <this.displayButton />
+                        <this.displayForm />
                     </Container>
                 </Segment>
                 <Segment basic style={{'height':'10%', 'padding-top':0}}>

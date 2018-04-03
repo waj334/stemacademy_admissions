@@ -15,7 +15,8 @@ export default function ApplicationReducer(state = initialState, action) {
             return {...initialState, 
                 page: action.page, 
                 progress: action.progress,
-                postFail: false
+                postFail: false,
+                data: {}
             };
         case Constants.APPLICATION_SUBMIT:
             return {
@@ -38,6 +39,12 @@ export default function ApplicationReducer(state = initialState, action) {
                 err: action.err, 
                 page: action.page,
                 progress: action.progress
+            }
+        case Constants.APPLICATION_UPDATE:
+            return {
+                page: action.page,
+                progress: action.progress,
+                data: action.data
             }
         default:
             return state;
