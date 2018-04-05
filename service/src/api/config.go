@@ -19,6 +19,7 @@ type Configuration struct {
 	TLSCert      string   `json:"TLSCert"`
 	TLSKey       string   `json:"TLSKey"`
 	LogHTTP      bool     `json:"logHttp"`
+	RecaptchaKey string   `json:"recaptchaKey`
 }
 
 func getConfig() (Configuration, error) {

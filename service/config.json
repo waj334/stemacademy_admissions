@@ -5,5 +5,6 @@
     "dbPasswdFile": "C:/Projects/stemacademy_admissions/service/password.bin",
     "dbSSLMode": "disable",
     "servicePort": "8081",
-    "logHttp": true
+    "logHttp": true,
+    "recaptchaKey": "6Lc7XlEUAAAAAPTgql0igCE4j697EC0MH5QTKWeA"
 }

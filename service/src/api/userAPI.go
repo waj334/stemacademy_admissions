@@ -5,13 +5,19 @@ import (
 	"net/http"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	recaptcha "github.com/dpapathanasiou/go-recaptcha"
 	"github.com/labstack/echo"
 )
 
 //APICreateUser API call for creating a new user
 func APICreateUser(ctx echo.Context) error {
-	user := new(User)
-	err := ctx.Bind(&user)
+	type req struct {
+		User      User   `json:"user"`
+		Recaptcha string `json:"recaptcha"`
+	}
+
+	r := &req{}
+	err := ctx.Bind(&r)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]string{
@@ -19,8 +25,11 @@ func APICreateUser(ctx echo.Context) error {
 		})
 	} else {
 
+		//Verify reCAPTCH
+		recaptcha.Confirm(ctx.Request().RemoteAddr, r.Recaptcha)
+
 		//Only allow admins to create admins
-		if user.Type == AccountTypeAdmin {
+		if r.User.Type == AccountTypeAdmin {
 			//Check claims for admin flag
 			userClaims := ctx.Get("user").(*jwt.Token)
 			claims := userClaims.Claims.(*UserJWTClaims)
@@ -30,7 +39,7 @@ func APICreateUser(ctx echo.Context) error {
 			}
 		}
 
-		err := CreateUser(user, user.Password)
+		err := CreateUser(&r.User, r.User.Password)
 
 		if err != nil {
 			switch e := err.(type) {
@@ -70,6 +79,12 @@ func APIGetUsers(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Unexpected error occurred.",
 		})
+	}
+
+	//Strip passwords from results
+	for i, user := range users {
+		user.Password = ""
+		users[i] = user
 	}
 
 	return ctx.JSON(http.StatusOK, users)

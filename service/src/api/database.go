@@ -188,7 +188,7 @@ func (db *Database) GetUserInfo(user string) (*User, error) {
 //GetUsers Gets all user of type (Type)
 func (db *Database) GetUsers(Type int) ([]User, error) {
 	users := []User{}
-	err := db.db.Get(&users, `SELECT * FROM users WHERE type=$1`, Type)
+	err := db.db.Select(&users, `SELECT * FROM users WHERE type=$1`, Type)
 
 	if err != nil {
 		return nil, err.(*pq.Error)

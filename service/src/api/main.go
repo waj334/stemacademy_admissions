@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/dpapathanasiou/go-recaptcha"
 )
 
 var configPath *string
@@ -28,6 +30,9 @@ func main() {
 
 		//Initialize API
 		e, err := InitAPI()
+
+		//Initialize reCAPTCHA
+		recaptcha.Init(config.RecaptchaKey)
 
 		if err == nil {
 			//Open database connection

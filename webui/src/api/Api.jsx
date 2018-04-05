@@ -68,10 +68,10 @@ export function Login(email, pwd) {
 }
 
 export function GetUsers(type) {
-    var url = Url('/users/get');
+    var url = Url('/user/get/type');
 
     return fetch(url, {
-        methos: 'POST',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },

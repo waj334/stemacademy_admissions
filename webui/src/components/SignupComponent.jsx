@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Segment, Form, Container, Header, Icon, Message } from 'semantic-ui-react';
+import { Divider, Segment, Form, Container, Header, Icon, Message } from 'semantic-ui-react';
 import {connect} from 'react-redux';
+import ReCAPTCHA from 'react-google-recaptcha';
+
 import * as Constants from '../Constants';
 import * as Validation from '../ValidationHelper.jsx';
 import * as SignupActions from '../actions/SignupActions.jsx';
@@ -31,10 +33,12 @@ export default class SignupForm extends Component {
             email: '',
             password: '',
             cpassword: '',
-            invalid: []
+            invalid: [],
+            recaptcha: null
         }
 
         this.onChange = this.onChange.bind(this);
+        this.onRecaptcha = this.onRecaptcha.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
         this.error = this.error.bind(this);
@@ -46,6 +50,12 @@ export default class SignupForm extends Component {
                 [name]: value
             }
         );
+    }
+
+    onRecaptcha(value) {
+        this.setState({
+            recaptcha: value
+        });
     }
 
     onSubmit() {
@@ -72,11 +82,14 @@ export default class SignupForm extends Component {
 
                 if (invalid.indexOf('password') == -1) {
                     var payload = {
-                        fname: this.state.fname,
-                        lname: this.state.lname,
-                        email: this.state.email,
-                        type: this.state.teacher == true ? Constants.AccountTypes.Teacher:Constants.AccountTypes.Student,
-                        password: this.state.password
+                        user: {
+                            fname: this.state.fname,
+                            lname: this.state.lname,
+                            email: this.state.email,
+                            type: this.state.teacher == true ? Constants.AccountTypes.Teacher:Constants.AccountTypes.Student,
+                            password: this.state.password
+                        },
+                        recaptcha: this.state.recaptcha
                     }
 
                     this.props.signup(payload)
@@ -125,7 +138,12 @@ export default class SignupForm extends Component {
                         <this.error name='password' message='Empty or invalid password entered! Must contain at least 1 number, capital letter and special character. Length must be 8 to 15 characters long.' />
                         <Form.Input name='cpassword' placeholder='Confirm Password' label='Confirm Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('cpassword') != -1} />
                         <this.error name='cpassword' message='Passwords do not match!' />
-                        <Form.Button>Sign Up</Form.Button>
+                        
+                        <Divider dividing> Please check the box below </Divider>
+                        <ReCAPTCHA ref='recaptcha' sitekey='6Lc7XlEUAAAAAEL3vtJka2Uxhs_AzUEyaX7UlfFM' onChange={this.onRecaptcha} />
+                        <Divider dividing />
+                        
+                        <Form.Button disabled={this.state.recaptcha == null}>Sign Up</Form.Button>
                     </Segment>
                 </Form>
             )
