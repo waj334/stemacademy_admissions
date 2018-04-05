@@ -10,7 +10,6 @@ export default function (comp) {
 
         componentWillMount() {
             //Check if authenticated
-            console.log(this.props);
             if (!this.props.authenticated) {
                 //Go back to front page
                 //TODO: Notify user is unauthorized
@@ -28,13 +27,11 @@ export default function (comp) {
         }
 
         render() {
-            console.log("AuthComponent.render", this.props);
             return <comp {...this.props} />
         }
     }
 
     function mapStateToProps(state) {
-        console.log("AuthComponent", state);
         const {isAuthenticated} = state.loginUpdate;
         const {history} = state.loginUpdate.history;
 

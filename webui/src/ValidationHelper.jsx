@@ -54,8 +54,6 @@ export function checkInput(str, type) {
     var v = new RegExp(regex);
     var t = v.test(str);
 
-    console.log(str, type, regex, v, t);
-
     return t;
 }
 

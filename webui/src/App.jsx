@@ -14,6 +14,7 @@ import StudentApplication from './views/StudentApplication.jsx';
 import TeacherApplication from './views/TeacherApplication.jsx';
 import LoginPage from './views/LoginPage.jsx';
 import AdminMain from './views/AdminMain.jsx';
+import SignupView from './views/SignupView.jsx';
 
 import AuthComponent from './components/AuthComponent.jsx';
 
@@ -30,9 +31,10 @@ class App extends Component {
       <Router history={history}>
         <Switch>
           <Route path='/admin/login' history={history} render={LoginPage} />
-          <Route path ='/admin/main' component={AuthComponent(AdminMain)} />
+          <Route path ='/admin/main' component={AdminMain} />
           <Route path='/app/student' component={StudentApplication} />
           <Route path='/app/teacher' component={TeacherApplication} />
+          <Route path='/signup' component={SignupView} />
           <Route path='/' component={MainPage} />
         </Switch>
       </Router>

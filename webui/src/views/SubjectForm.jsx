@@ -11,8 +11,8 @@ class SubjectForm extends ApplicationForm {
 
     form() {
         return (
-            <Form fluid>
-                <Form.Input name='subject' label='Subjects' placeholder='Computer Science, Pre Algebra, Chemistry...' value={this.state.subjects} onChange={this.onChange} readOnly={this.props.readOnly} />
+            <Form>
+                <Form.Input name='subjects' label='Subjects' placeholder='Computer Science, Pre Algebra, Chemistry...' value={this.state.subjects} onChange={this.onChange} readOnly={this.props.readOnly} />
             </Form>
         )
     }

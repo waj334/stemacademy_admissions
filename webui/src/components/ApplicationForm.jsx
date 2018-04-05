@@ -4,9 +4,9 @@ import {Form, Button} from 'semantic-ui-react';
 class ApplicationForm extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
-            ...props.data[this.props.id],
+            ...props.data,
             err: []
         }
 

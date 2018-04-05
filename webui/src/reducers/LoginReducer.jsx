@@ -10,8 +10,6 @@ const initialState = {
 //let state = JSON.parse()
 
 export default function loginUpdate(state = initialState, action) {
-    console.log("Action:", action)
-    console.log("State:", state)
     switch (action.type) {
         case Constants.LOGIN_REQUEST:
             return { ...initialState, isFetching: true}

@@ -2,7 +2,6 @@ import * as Constants from '../Constants';
 import * as API from '../api/Api.jsx';
 
 export function actionApplicationGoto(page, progress) {
-    console.log("Going to page:", page, "Progress:", progress);
     return {
         type: Constants.APPLICATION_GOTO,
         page: page,
@@ -62,14 +61,14 @@ export function update(data, page, progress) {
     }
 }
 
-export function submit(data, page, progress) {
+export function submit(data, type, page, progress) {
     return dispatch => {
         dispatch(actionApplicationSubmit(page, progress))
         var submitFunc = null;
         var err = false;
 
         //Return async API call
-        return API.SubmitApp(data)
+        return API.SubmitApp(data, type)
         .catch( e => {
             err = true;
             if (e.hasOwnProperty('response')) {

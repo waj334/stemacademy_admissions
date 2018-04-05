@@ -30,3 +30,9 @@ export const GENDERS = {
 export const ETHNICITIES = {
     
 }
+
+export const AccountTypes = {
+    Student: 0,
+    Teacher: 1,
+    Admin: 2
+}

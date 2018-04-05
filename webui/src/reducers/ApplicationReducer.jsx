@@ -9,7 +9,6 @@ const initialState = {
 }
 
 export default function ApplicationReducer(state = initialState, action) {
-    console.log('app reducer', action, state);
     switch (action.type) {
         case Constants.APPLICATION_GOTO:
             return {...initialState, 

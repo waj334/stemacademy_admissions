@@ -60,6 +60,7 @@ func (db *Database) CreateTables() *pq.Error {
 	funcs := []func() *pq.Error{
 		db.CreateUserTable,
 		db.CreateApplicationTable,
+		db.CreateFileTable,
 	}
 
 	for i := range funcs {
@@ -78,14 +79,13 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS application (
 			id					text	not null,
-			fname				text	not null,
-			lname				text	not null,
+			user_id				text	not null references users(email) ON DELETE CASCADE,
+			date				timestamp with time zone not null,
 			age					integer	not null,
 			gender				integer	not null,
 			ethnicity			integer	not null,
 			citizenship			integer not null,
 			phone_no			text,
-			email				text	not null,
 			contact_fname		text 	not null,
 			contact_lname		text 	not null,
 			contact_phone_no	text 	not null,
@@ -108,7 +108,7 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			status				text,
 			primary key(id),
 			unique(id),
-			unique(email)
+			unique(user_id)
 		)`)
 
 	if err != nil {
@@ -122,9 +122,12 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 func (db *Database) CreateUserTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
+			type		integer not null,
+			approved	boolean not null,
+			fname		text	not null,
+			lname		text	not null,
 			email		text	not null,
 			hash		text	not null,
-			type		text	not null,
 			primary key(email),
 			unique(email),
 			unique(hash)
@@ -137,27 +140,36 @@ func (db *Database) CreateUserTable() *pq.Error {
 	return nil
 }
 
+//CreateFileTable Create the file table
+func (db *Database) CreateFileTable() *pq.Error {
+	_, err := db.db.Exec(`
+		CREATE TABLE IF NOT EXISTS file (
+			id		TEXT NOT NULL,
+			appId	TEXT NOT NULL references application(id),
+			owner	TEXT NOT NULL references users(email),
+			PRIMARY KEY(id),
+			UNIQUE(id)
+		)`)
+
+	if err != nil {
+		return err.(*pq.Error)
+	}
+
+	return nil
+}
+
 //AddUser Adds new user info to the database
 func (db *Database) AddUser(user *User) error {
-	_, err := db.db.NamedExec(`INSERT INTO users (email, fname, lname, hash, type)
-		VALUES (:email, :fname, :lname, :hash, :type)`, user)
+	_, err := db.db.NamedExec(`INSERT INTO users (email, fname, lname, hash, type, approved)
+		VALUES (:email, :fname, :lname, :hash, :type, FALSE)`, user)
 
-	if err == nil {
-		//TODO: Email verification here
-		return nil
+	if err != nil {
+		return err.(*pq.Error)
 	}
 
-	pgerr := err.(*pq.Error)
+	//TODO: Email verification here
 
-	if pgerr.Code == "23505" {
-		if pgerr.Constraint == "email_unique" {
-			return &ErrAuthUserExists{
-				fmt.Sprintf("User %s exists", user.Email),
-			}
-		}
-	}
-
-	return err
+	return nil
 }
 
 //GetUserInfo Gets and return information about an user
@@ -173,17 +185,45 @@ func (db *Database) GetUserInfo(user string) (*User, error) {
 	return nil, errors.New("User does not exist")
 }
 
+//GetUsers Gets all user of type (Type)
+func (db *Database) GetUsers(Type int) ([]User, error) {
+	users := []User{}
+	err := db.db.Get(&users, `SELECT * FROM users WHERE type=$1`, Type)
+
+	if err != nil {
+		return nil, err.(*pq.Error)
+	}
+
+	return users, nil
+}
+
+//ChangeUserApprovalStatus Changes user type
+func (db *Database) ChangeUserApprovalStatus(user string, approved bool) error {
+	_, err := db.db.Exec(
+		`UPDATE users
+		SET approved = $1
+		WHERE
+		email=$2`,
+		approved, user)
+
+	if err != nil {
+		return err.(*pq.Error)
+	}
+
+	return nil
+}
+
 // InsertApplication Insert new application into database
 func (db *Database) InsertApplication(app *Application) error {
 	_, err := db.db.NamedExec(`
 			INSERT INTO application (
-				fname, lname, age, gender, ethnicity, citizenship, phone_no, email, street, city, state, zip,
+				id, user_id, date, type, age, gender, ethnicity, citizenship, phone_no, street, city, state, zip,
 				contact_fname, contact_lname, contact_phone_no, contact_email, 
 				school_name, school_phone_no, school_street, school_city, school_state, school_county, school_zip,
 				grade_level, subject, group_name, room, status
 			)
 			VALUES (
-				:fname, :lname, :age, :gender, :ethnicity, :citizenship, :phone_no, :email, :street, :city, :state, :zip,
+				:id, :user_id, :fname, :lname, now(), :type, :age, :gender, :ethnicity, :citizenship, :phone_no, :street, :city, :state, :zip,
 				:contact_fname, :contact_lname, :contact_phone_no, :contact_email, 
 				:school_name, :school_phone_no, :school_street, :school_city, :school_state, :school_county, :school_zip,
 				:grade_level, :subject, :group_name, :room, :status
@@ -212,9 +252,16 @@ func (db *Database) UpdateApplication(id string, column string, val string) *pq.
 //GetApplicationList Gets minimal infomation about all applications in database
 func (db *Database) GetApplicationList() ([]ApplicationMinimal, *pq.Error) {
 	list := []ApplicationMinimal{}
-	err := db.db.Select(&list, "SELECT (fname, lname, email, type, date, id) FROM application")
+	err := db.db.Select(&list,
+		`SELECT users.fname, users.lname, users.email, users.type, application.date, application.id
+		FROM users
+		INNER JOIN application ON users.email = application.user_id;`)
 
-	return list, err.(*pq.Error)
+	if err != nil {
+		return nil, err.(*pq.Error)
+	}
+
+	return list, nil
 }
 
 //GetApplication Gets a single application from the database
@@ -222,5 +269,9 @@ func (db *Database) GetApplication(id string) (*Application, *pq.Error) {
 	app := Application{}
 	err := db.db.Get(&app, "SELECT * FROM application WHERE id=$1", id)
 
-	return &app, err.(*pq.Error)
+	if err != nil {
+		return nil, err.(*pq.Error)
+	}
+
+	return &app, nil
 }

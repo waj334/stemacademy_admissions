@@ -9,7 +9,6 @@ class HighSchoolInfoForm extends ApplicationForm {
     }
 
     form() {
-        console.log("Highschool data:", this.state, this.props.data)
         return (
             <Form>
                 <Form.Group widths='equal'>

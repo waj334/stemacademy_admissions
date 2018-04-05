@@ -17,46 +17,39 @@ const forms = [
     {key: 4, icon:'checked calendar', title:'Submitted', desc:'Your application has been submitted', page:ApplicationSubmittedPage},
 ];
 
-var data = [
-    {
-        fname: '',
-        lname: '',
-        age: '',
-        gender: '',
-        ethnicity: '',
-        citizenship: '',
-        email: '',
-        phone_no: '',
-        street_addr: '',
-        city: '',
-        state: '',
-        zip: '',
-    },
-    {
-        contact_fname: '',
-        contact_lname: '',
-        contact_phone_no: '',
-        contact_email: '',
-    },
-    {
-        school_name: '',
-        school_county: '',
-        school_phone_no: '',
-        school_street: '',
-        school_city: '',
-        school_state: '',
-        school_zip: '',
-    },
-    {
-        subject: ''
-    },
-]
+var data = {
+    fname: '',
+    lname: '',
+    age: '',
+    gender: '',
+    ethnicity: '',
+    citizenship: '',
+    email: '',
+    phone_no: '',
+    street_addr: '',
+    city: '',
+    state: '',
+    zip: '',
+    contact_fname: '',
+    contact_lname: '',
+    contact_phone_no: '',
+    contact_email: '',
+    school_name: '',
+    school_county: '',
+    school_phone_no: '',
+    school_street: '',
+    school_city: '',
+    school_state: '',
+    school_zip: '',
+    subjects: ''
+}
 
 const TeacherApplication = () => (
     <Application
         header='Application for Teachers' 
         data={data}
         forms={forms}
+        type='teacher'
     />
 )
 

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
@@ -14,11 +12,22 @@ func MiddleWareAdminCheck(next echo.HandlerFunc) echo.HandlerFunc {
 		user := ctx.Get("user").(*jwt.Token)
 		claims := user.Claims.(*UserJWTClaims)
 
-		fmt.Println(claims)
-		admin := claims.Admin
+		if claims.AccountType == AccountTypeAdmin {
+			return next(ctx)
+		}
 
-		if admin == true {
-			fmt.Println("is admin: ", admin)
+		return echo.ErrForbidden
+	}
+}
+
+//MiddleWareApprovedCheck Middleware for checking if user has been approved by an admin
+func MiddleWareApprovedCheck(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		//Extract info from JWT
+		user := ctx.Get("user").(*jwt.Token)
+		claims := user.Claims.(*UserJWTClaims)
+
+		if claims.Approved == true {
 			return next(ctx)
 		}
 

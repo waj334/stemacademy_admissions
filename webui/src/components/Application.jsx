@@ -54,11 +54,18 @@ class Application extends Component {
     }
 
     onCommit(id, data){
-        var newState = this.state;
+        var newData = {
+            ...this.state.data,
+            ...data
+        }
 
-        newState.data[id] = data;
-        //this.setState(newState);
-        this.props.update(this.state.data, this.props.page, this.props.progress)
+        this.setState(
+            {
+                data: newData
+            }
+        )
+
+        this.props.update(newData, this.props.page, this.props.progress)
     }
 
     onStepToggle(id) {
@@ -79,13 +86,13 @@ class Application extends Component {
     onSubmit() {
         var data = {}
 
-        for (var d in this.state.data) {
+        /*for (var d in this.state.data) {
             for (var key in this.state.data[d]) {
                 data[key] = this.state.data[d][key];
             }
-        }
+        }*/
 
-        this.props.submit(data, this.props.page, this.props.progress);
+        this.props.submit(this.state.data, this.props.type, this.props.page, this.props.progress);
     }
 
     closeMessage() {

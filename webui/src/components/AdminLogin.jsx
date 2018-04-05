@@ -57,7 +57,6 @@ class AdminLogin extends Component {
     }
 
     render() {
-        console.log(this.props);
         const {isAuthenticated, err, dispatch, isFetching} = this.props;
         return (
             <Form onSubmit={this.onSubmit} error={err ? true:false} loading={isFetching}>
@@ -88,7 +87,6 @@ AdminLogin.PropTypes = {
 }
 
 function mapStateToProps(state) {
-    console.log(state);
     const {loginUpdate} = state;
     const {isAuthenticated, err, isFetching} = loginUpdate;
 

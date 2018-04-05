@@ -9,9 +9,7 @@ type Application struct {
 	ID               string    `json:"id" db:"id"`
 	ApplicationType  string    `json:"type" db:"type"`
 	Date             time.Time `json:"date" db:"date"`
-	FName            string    `json:"fname" db:"fname"`
-	LName            string    `json:"lname" db:"lname"`
-	Email            string    `json:"email" db:"email"`
+	Email            string    `json:"email" db:"user_id"`
 	Age              int       `json:"age" db:"age"`
 	Gender           int       `json:"gender" db:"gender"`
 	Ethnicity        int       `json:"ethnicity" db:"ethnicity"`
@@ -33,7 +31,7 @@ type Application struct {
 	SchoolCounty     string    `json:"school_county" db:"school_county"`
 	SchoolZip        string    `json:"school_zip" db:"school_zip"`
 	GradeLevel       int       `json:"grade_level" db:"grade_level"`
-	Subject          string    `json:"subject" db:"subject"`
+	Subject          string    `json:"subjects" db:"subjects"`
 	GroupName        string    `json:"group_name" db:"group_name"`
 	Room             string    `json:"room" db:"room"`
 	Status           string    `json:"status" db:"status"`
@@ -45,7 +43,7 @@ type ApplicationMinimal struct {
 	FName           string    `json:"fname" db:"fname"`
 	LName           string    `json:"lname" db:"lname"`
 	Email           string    `json:"email" db:"email"`
-	ApplicationType string    `json:"type" db:"type"`
+	ApplicationType int       `json:"type" db:"type"`
 	Date            time.Time `json:"date" db:"date"`
 }
 

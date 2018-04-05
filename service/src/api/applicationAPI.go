@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+	"github.com/sony/sonyflake"
 )
 
 //APISubmitApplication Processes incoming application payload and inserts data into database
@@ -12,21 +15,28 @@ func APISubmitApplication(ctx echo.Context) error {
 	err := ctx.Bind(&app)
 
 	if err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
 			"error": "Invalid application data",
 		})
+	}
 
-	} else {
-		//Process application
-		err = app.Process()
+	//Set Application ID
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+	id, _ := flake.NextID()
+	app.ID = fmt.Sprint(id)
 
-		if err != nil {
-			ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
-				"error": "Could not process application data",
-			})
+	//Set email for this application submission
+	userClaims := ctx.Get("user").(*jwt.Token)
+	claims := userClaims.Claims.(*UserJWTClaims)
+	app.Email = claims.Email
 
-			return err
-		}
+	//Process application
+	err = app.Process()
+
+	if err != nil {
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+			"error": "Could not process application data",
+		})
 	}
 
 	//Application processed ok

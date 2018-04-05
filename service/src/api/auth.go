@@ -10,8 +10,9 @@ import (
 
 //UserJWTClaims JWT claims for a user account
 type UserJWTClaims struct {
-	Email string `json:"email"`
-	Admin bool   `json:"admin"`
+	Email       string `json:"email"`
+	AccountType int    `json:"type"`
+	Approved    bool   `json:"approved"`
 	jwt.StandardClaims
 }
 
@@ -27,7 +28,8 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 			//Set claims for JWT
 			claims := &UserJWTClaims{
 				userinfo.Email,
-				userinfo.Admin,
+				userinfo.Type,
+				userinfo.Approved,
 				jwt.StandardClaims{
 					ExpiresAt: time.Now().Add(time.Hour).Unix(),
 				},

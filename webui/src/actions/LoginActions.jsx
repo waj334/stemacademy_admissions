@@ -49,7 +49,6 @@ function loginUser(creds, history) {
         dispatch(requestLogin(creds))
         ApiLogin(creds.username, creds.password)
         .catch(e => {
-            console.log("API ERROR:", e);
             if (e.hasOwnProperty('response'))
                 dispatch(loginError(_translateErr(e.response)));
             else

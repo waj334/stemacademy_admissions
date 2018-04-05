@@ -1,5 +1,27 @@
 import React, {Component} from 'react';
 import {Sidebar, Menu, Icon, Segment, Header, Grid} from 'semantic-ui-react';
+
+import ApplicationListComponent from '../components/ApplicationListComponent.jsx';
+
+const testData = [
+    {
+        id: 0,
+        type: 'student',
+        date: '09-03-1993',
+        fname: 'Justin',
+        lname: 'Wilson',
+        email: 'waj334@gmail.com',
+    },
+    {
+        id: 1,
+        type: 'teacher',
+        date: '09-03-1973',
+        fname: 'Karen',
+        lname: 'Craig',
+        email: 'kcraig@gmail.com',
+    }
+]
+
 class AdminMain extends Component {
     render() {
         return (
@@ -28,7 +50,8 @@ class AdminMain extends Component {
                     </Grid.Column>
                     <Grid.Column fluid>
                         <Segment>
-                            <Header>Top</Header>
+                            <Header>Applications</Header>
+                            <ApplicationListComponent data={testData} />
                         </Segment>
                     </Grid.Column>
                 </Grid>

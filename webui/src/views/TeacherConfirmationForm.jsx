@@ -10,16 +10,6 @@ import SubjectForm from './SubjectForm.jsx';
 class TeacherConfirmationForm extends ApplicationForm {
     constructor(props) {
         super(props);
-
-        this.onSubmit = this.onSubmit.bind(this);
-    }
-
-    onSubmit() {
-        //API call to process application data
-        console.log(this.props.data);
-
-        //Move to completion page
-        this.props.onNext();
     }
 
     buildSubject(data, i) {

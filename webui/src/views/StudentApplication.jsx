@@ -16,40 +16,34 @@ const forms = [
     {key: 4, icon:'checked calendar', title:'Submitted', desc:'Your application has been submitted', page:ApplicationSubmittedPage},
 ];
 
-var data = [
-    {
-        fname: '',
-        lname: '',
-        age: '',
-        gender: '',
-        ethnicity: '',
-        citizenship: '',
-        email: '',
-        phone_no: '',
-        street: '',
-        city: '',
-        state: '',
-        zip: '',
-    },
-    {
-        contact_fname: '',
-        contact_lname: '',
-        contact_phone_no: '',
-        contact_email: '',
-    },
-    {
-        school_name: '',
-        school_county: '',
-        school_phone_no: '',
-        school_street: '',
-        school_city: '',
-        school_state: '',
-        school_zip: '',
-    }
-];
+var data = {
+    fname: '',
+    lname: '',
+    age: '',
+    gender: '',
+    ethnicity: '',
+    citizenship: '',
+    email: '',
+    phone_no: '',
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    contact_fname: '',
+    contact_lname: '',
+    contact_phone_no: '',
+    contact_email: '',
+    school_name: '',
+    school_county: '',
+    school_phone_no: '',
+    school_street: '',
+    school_city: '',
+    school_state: '',
+    school_zip: ''
+};
 
 const StudentApplication = () => (
-    <Application header='Application for Students' data={data} forms={forms} />
+    <Application header='Application for Students' data={data} forms={forms} type='student' />
 );
 
 export default StudentApplication;
