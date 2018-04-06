@@ -19,7 +19,11 @@ type Configuration struct {
 	TLSCert      string   `json:"TLSCert"`
 	TLSKey       string   `json:"TLSKey"`
 	LogHTTP      bool     `json:"logHttp"`
-	RecaptchaKey string   `json:"recaptchaKey`
+	RecaptchaKey string   `json:"recaptchaKey"`
+	ClientURL    string   `json:"clientUrl"`
+	EmailSMTP    string   `json:"emailSmtp"`
+	Email        string   `json:"email"`
+	EmailPasswd  string   `json:"emailPasswd"`
 }
 
 func getConfig() (Configuration, error) {

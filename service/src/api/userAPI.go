@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	recaptcha "github.com/dpapathanasiou/go-recaptcha"
@@ -26,7 +28,19 @@ func APICreateUser(ctx echo.Context) error {
 	} else {
 
 		//Verify reCAPTCH
-		recaptcha.Confirm(ctx.Request().RemoteAddr, r.Recaptcha)
+		result, err := recaptcha.Confirm(ctx.Request().RemoteAddr, r.Recaptcha)
+
+		if err != nil {
+			return ctx.JSON(http.StatusUnauthorized, map[string]string{
+				"error": "Could not validate reCAPTCHA",
+			})
+		}
+
+		if result == false {
+			return ctx.JSON(http.StatusUnauthorized, map[string]string{
+				"error": "reCAPTCHA failed",
+			})
+		}
 
 		//Only allow admins to create admins
 		if r.User.Type == AccountTypeAdmin {
@@ -39,7 +53,7 @@ func APICreateUser(ctx echo.Context) error {
 			}
 		}
 
-		err := CreateUser(&r.User, r.User.Password)
+		err = CreateUser(&r.User, r.User.Password)
 
 		if err != nil {
 			switch e := err.(type) {
@@ -53,6 +67,39 @@ func APICreateUser(ctx echo.Context) error {
 				})
 			}
 		}
+	}
+
+	//Send email verification
+	//Generate token using JWT
+	claims := &UserJWTClaims{
+		r.User.Email,
+		r.User.Type,
+		r.User.Approved,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+		},
+	}
+
+	//Generate JWT
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signedToken, err := token.SignedString([]byte("supersecure"))
+
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unexpected error occurred. (EMAIL_TOKEN)",
+		})
+	}
+
+	buffer := new(bytes.Buffer)
+	VerificationMessage(r.User.Email, config.ClientURL, signedToken, buffer)
+
+	//Send Email
+	err = SendEmail(r.User.Email, string(buffer.Bytes()))
+
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unexpected error occurred. (EMAIL_SEND)",
+		})
 	}
 
 	return ctx.NoContent(http.StatusAccepted)
@@ -115,4 +162,31 @@ func APIChangeUserApproval(ctx echo.Context) error {
 	}
 
 	return ctx.NoContent(http.StatusOK)
+}
+
+//APIVerifyUser Verifies the user associated wit the token param value
+func APIVerifyUser(ctx echo.Context) error {
+	//Extract info from JWT
+	token, err := jwt.Parse(ctx.Param("token"), func(token *jwt.Token) (interface{}, error) {
+		return []byte("supersecure"), nil
+	})
+
+	if err != nil {
+		return ctx.JSON(http.StatusForbidden, map[string]string{
+			"error": "Invalid token",
+		})
+	}
+
+	claims := token.Claims.(*UserJWTClaims)
+
+	//Check database info
+	_, err = database.GetUserInfo(claims.Email)
+
+	if err != nil {
+		return ctx.JSON(http.StatusForbidden, map[string]string{
+			"error": "Could not verify email",
+		})
+	}
+
+	return ctx.Redirect(http.StatusOK, fmt.Sprintf("%s/verificationSuccess", config.ClientURL))
 }

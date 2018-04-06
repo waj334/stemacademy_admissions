@@ -47,6 +47,14 @@ var routes = RouteArray{
 		APICreateUser,
 	},
 	{
+		"User Verification",
+		"/user/verify/:token",
+		"GET",
+		"",
+		MiddlewareList{},
+		APIVerifyUser,
+	},
+	{
 		"Get All Users (Type)",
 		"/user/get/type",
 		"POST",

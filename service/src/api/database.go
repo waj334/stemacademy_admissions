@@ -167,8 +167,6 @@ func (db *Database) AddUser(user *User) error {
 		return err.(*pq.Error)
 	}
 
-	//TODO: Email verification here
-
 	return nil
 }
 
