@@ -273,3 +273,13 @@ func (db *Database) GetApplication(id string) (*Application, *pq.Error) {
 
 	return &app, nil
 }
+
+//InsertFile Create a database record for an uploaded file
+func (db *Database) InsertFile(owner string, appID string, id string) error {
+	_, err := db.db.Exec(
+		`INSERT INTO files (id, appId, owner)
+		VALUES ($1, $2, $3)
+		`, id, appID, owner)
+
+	return err
+}

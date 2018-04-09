@@ -24,6 +24,7 @@ type Configuration struct {
 	EmailSMTP    string   `json:"emailSmtp"`
 	Email        string   `json:"email"`
 	EmailPasswd  string   `json:"emailPasswd"`
+	UploadPath   string   `json:"uploadPath"`
 }
 
 func getConfig() (Configuration, error) {
