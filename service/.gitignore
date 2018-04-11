@@ -28,4 +28,5 @@ _testmain.go
 *.prof
 
 debug
-password.bin
+password.db
+password.smtp

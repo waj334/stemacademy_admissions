@@ -7,11 +7,17 @@ import (
 
 //SendEmail Send email using gmail
 func SendEmail(to string, body string) error {
-	return smtp.SendMail(
-		fmt.Sprintf("%s:587", config.EmailSMTP),
-		smtp.PlainAuth("", config.Email, config.EmailPasswd, config.EmailSMTP),
-		config.Email,
-		[]string{to},
-		[]byte(body),
-	)
+	pwd, err := ReadPasswd(config.EmailPasswdFile)
+
+	if err == nil {
+		return smtp.SendMail(
+			fmt.Sprintf("%s:587", config.EmailSMTP),
+			smtp.PlainAuth("", config.Email, pwd, config.EmailSMTP),
+			config.Email,
+			[]string{to},
+			[]byte(body),
+		)
+	}
+
+	return err
 }

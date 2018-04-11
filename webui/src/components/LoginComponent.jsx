@@ -7,9 +7,7 @@ import {connect} from 'react-redux';
 
 import {checkInput} from '../ValidationHelper.jsx';
 
-import {LoginActions} from '../actions';
-
-class AdminLogin extends Component {
+export default class LoginComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -31,7 +29,7 @@ class AdminLogin extends Component {
         var fail = false;
 
         //Validate input
-        if (!checkInput(this.state.username, 'email')) {
+        if (!checkInput(this.state.email, 'email')) {
             fail = true;
             this.state.err[0] = true;
         }
@@ -43,24 +41,23 @@ class AdminLogin extends Component {
 
         //Try to get session token
         if (!fail) {
-            const {dispatch} = this.props;
             const creds = {
                 username: this.state.email,
                 password: this.state.password
             }
-            dispatch(
-                LoginActions.loginUser(creds, this.props.history)
-            );
+            
+            this.props.onLogin(creds);
+
         } else {
             this.setState(this.state);
         }
     }
 
     render() {
-        const {isAuthenticated, err, dispatch, isFetching} = this.props;
+  
         return (
-            <Form onSubmit={this.onSubmit} error={err ? true:false} loading={isFetching}>
-                <Message error header="Error" content={err} />
+            <Form onSubmit={this.onSubmit} onchange={this.onChange} error={this.props.error ? true:false} loading={this.props.isFetching}>
+                <Message error header="Error" content={this.props.error} />
                 <Segment.Group compact>
                     <Segment>
                         <Header>Login</Header>
@@ -79,22 +76,3 @@ class AdminLogin extends Component {
         )
     }
 }
-
-AdminLogin.PropTypes = {
-    dispatch: PropTypes.func.isRequired,
-    err: PropTypes.string,
-    history: PropTypes.object.isRequired
-}
-
-function mapStateToProps(state) {
-    const {loginUpdate} = state;
-    const {isAuthenticated, err, isFetching} = loginUpdate;
-
-    return {
-        isAuthenticated, 
-        err, 
-        isFetching,
-    }
-}
-
-export default connect(mapStateToProps)(AdminLogin);

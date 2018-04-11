@@ -27,6 +27,7 @@ export function SubmitApp(data, type) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: payload
     })
@@ -52,7 +53,6 @@ export function Signup(data) {
 export function Login(email, pwd) {
     var url = Url('/login');
     
-    
     return fetch(url, {
         method: 'POST',
         headers: {
@@ -74,6 +74,7 @@ export function GetUsers(type) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({
             type: type

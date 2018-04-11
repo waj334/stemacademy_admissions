@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -24,12 +26,16 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 	if err == nil {
 		//Verify Password
 		if bcrypt.CompareHashAndPassword([]byte(userinfo.Password), []byte(pwd)) == nil {
+			//Check if user has been verified
+			if !userinfo.Verified {
+				return nil, errors.New("User has not been verfied")
+			}
+
 			//Create JWT if passwords match
-			//Set claims for JWT
 			claims := &UserJWTClaims{
 				userinfo.Email,
 				userinfo.Type,
-				userinfo.Approved,
+				userinfo.Verified,
 				jwt.StandardClaims{
 					ExpiresAt: time.Now().Add(time.Hour).Unix(),
 				},
@@ -45,4 +51,18 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 
 	//Username does not exist
 	return nil, err
+}
+
+//ReadPasswd Read the password file
+func ReadPasswd(path string) (string, error) {
+	file, err := os.Open(path)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
+
+	bytes, _ := ioutil.ReadAll(file)
+	return string(bytes), nil
 }

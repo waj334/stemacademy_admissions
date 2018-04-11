@@ -3,8 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -15,20 +13,6 @@ import (
 //Database Structure for all database interactions
 type Database struct {
 	db *sqlx.DB
-}
-
-//ReadPasswd Read the password file
-func ReadPasswd(path string) (string, error) {
-	file, err := os.Open(path)
-
-	if err != nil {
-		return "", err
-	}
-
-	defer file.Close()
-
-	bytes, _ := ioutil.ReadAll(file)
-	return string(bytes), nil
 }
 
 //ConnectDB Initialize database structure for connection
@@ -196,7 +180,7 @@ func (db *Database) GetUsers(Type int) ([]User, error) {
 }
 
 //ChangeUserApprovalStatus Changes user type
-func (db *Database) ChangeUserApprovalStatus(user string, approved bool) error {
+func (db *Database) ChangeUserVerifiedStatus(user string, approved bool) error {
 	_, err := db.db.Exec(
 		`UPDATE users
 		SET approved = $1

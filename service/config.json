@@ -2,9 +2,14 @@
     "dbName": "ssa",
     "dbUser": "postgres",
     "dbHost": "localhost",
-    "dbPasswdFile": "C:/Projects/stemacademy_admissions/service/password.bin",
+    "dbPasswdFile": "C:/Projects/stemacademy_admissions/service/password.db",
     "dbSSLMode": "disable",
     "servicePort": "8081",
     "logHttp": true,
-    "recaptchaKey": "6Lc7XlEUAAAAAPTgql0igCE4j697EC0MH5QTKWeA"
+    "recaptchaKey": "6Lc7XlEUAAAAAPTgql0igCE4j697EC0MH5QTKWeA",
+    "clientURL": "http://localhost:8080",
+    "emailSMTP": "smtp.gmail.com",
+    "email": "waj334",
+    "emailPasswdFile": "C:/Projects/stemacademy_admissions/service/password.smtp",
+    "uploadPath": "."
 }

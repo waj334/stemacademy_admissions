@@ -31,6 +31,7 @@ func APICreateUser(ctx echo.Context) error {
 		result, err := recaptcha.Confirm(ctx.Request().RemoteAddr, r.Recaptcha)
 
 		if err != nil {
+			ctx.Logger().Error(err)
 			return ctx.JSON(http.StatusUnauthorized, map[string]string{
 				"error": "Could not validate reCAPTCHA",
 			})
@@ -56,6 +57,7 @@ func APICreateUser(ctx echo.Context) error {
 		err = CreateUser(&r.User, r.User.Password)
 
 		if err != nil {
+			ctx.Logger().Error(err)
 			switch e := err.(type) {
 			case *ErrAuthUserExists:
 				return ctx.JSON(http.StatusNotAcceptable, map[string]string{
@@ -74,7 +76,7 @@ func APICreateUser(ctx echo.Context) error {
 	claims := &UserJWTClaims{
 		r.User.Email,
 		r.User.Type,
-		r.User.Approved,
+		r.User.Verified,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 		},
@@ -85,6 +87,7 @@ func APICreateUser(ctx echo.Context) error {
 	signedToken, err := token.SignedString([]byte("supersecure"))
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Unexpected error occurred. (EMAIL_TOKEN)",
 		})
@@ -97,6 +100,7 @@ func APICreateUser(ctx echo.Context) error {
 	err = SendEmail(r.User.Email, string(buffer.Bytes()))
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Unexpected error occurred. (EMAIL_SEND)",
 		})
@@ -115,6 +119,7 @@ func APIGetUsers(ctx echo.Context) error {
 	err := ctx.Bind(&r)
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
 			"error": "Invalid request data.",
 		})
@@ -123,6 +128,7 @@ func APIGetUsers(ctx echo.Context) error {
 	users, err := database.GetUsers(r.Type)
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Unexpected error occurred.",
 		})
@@ -137,33 +143,6 @@ func APIGetUsers(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, users)
 }
 
-//APIChangeUserApproval Approves user for application process
-func APIChangeUserApproval(ctx echo.Context) error {
-	type req struct {
-		User     string `json:"user"`
-		Approved bool   `json:"approved"`
-	}
-
-	r := &req{}
-	err := ctx.Bind(&r)
-
-	if err != nil {
-		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
-			"error": "Invalid request data.",
-		})
-	}
-
-	err = database.ChangeUserApprovalStatus(r.User, r.Approved)
-
-	if err != nil {
-		return ctx.JSON(http.StatusNotFound, map[string]string{
-			"error": fmt.Sprintf("User, %s, not found.", r.User),
-		})
-	}
-
-	return ctx.NoContent(http.StatusOK)
-}
-
 //APIVerifyUser Verifies the user associated wit the token param value
 func APIVerifyUser(ctx echo.Context) error {
 	//Extract info from JWT
@@ -172,6 +151,7 @@ func APIVerifyUser(ctx echo.Context) error {
 	})
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusForbidden, map[string]string{
 			"error": "Invalid token",
 		})
@@ -180,11 +160,22 @@ func APIVerifyUser(ctx echo.Context) error {
 	claims := token.Claims.(*UserJWTClaims)
 
 	//Check database info
-	_, err = database.GetUserInfo(claims.Email)
+	userInfo, err := database.GetUserInfo(claims.Email)
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusForbidden, map[string]string{
 			"error": "Could not verify email",
+		})
+	}
+
+	//Change verified status
+	err = database.ChangeUserVerifiedStatus(userInfo.Email, true)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusForbidden, map[string]string{
+			"error": "Unexpected database error.",
 		})
 	}
 

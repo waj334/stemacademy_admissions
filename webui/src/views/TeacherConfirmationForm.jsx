@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import {Form, Header} from 'semantic-ui-react';
+import {Form, Header, Message} from 'semantic-ui-react';
 
 import ApplicationForm from '../components/ApplicationForm.jsx';
 import PersonalInfoForm from './PersonalInfoForm.jsx';
 import ContactInfoForm from './ContactInfoForm.jsx';
 import HighSchoolInfoForm from './HighSchoolInfoForm.jsx';
 import SubjectForm from './SubjectForm.jsx';
+import DocumentForm from './DocumentForm.jsx';
 
 class TeacherConfirmationForm extends ApplicationForm {
     constructor(props) {
@@ -19,6 +20,9 @@ class TeacherConfirmationForm extends ApplicationForm {
     form() {
         return (
             <div>
+                <Message info>
+                    Click above to return to any previous section.
+                </Message>
                 <Header dividing>Your Personal Information</Header>
                 <PersonalInfoForm id={0} data={this.props.data} disableButton readOnly={true} />
                 <Header dividing>Emergency Contact</Header>
@@ -27,6 +31,8 @@ class TeacherConfirmationForm extends ApplicationForm {
                 <HighSchoolInfoForm id={2} data={this.props.data} count={this.props.count} disableButton readOnly={true} />
                 <Header dividing>Subjects Taught</Header>
                 <SubjectForm id={3} data={this.props.data} count={this.props.count} disableButton readOnly={true} />
+                <Header dividing>Transcript</Header>
+                <DocumentForm id={3} data={this.props.data} count={this.props.count} disableButton readOnly={true} />
             </div>
         )
     }

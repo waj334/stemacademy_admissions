@@ -23,7 +23,7 @@ type User struct {
 	FName    string `db:"fname" json:"fname"`
 	LName    string `db:"lname" json:"lname"`
 	Type     int    `db:"type" json:"type"`
-	Approved bool   `db:"approved" json:"approved"`
+	Verified bool   `db:"verified" json:"verified"`
 	Email    string `db:"email" json:"email"`
 	Password string `db:"hash" json:"password"`
 }

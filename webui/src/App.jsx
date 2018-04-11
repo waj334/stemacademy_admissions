@@ -12,9 +12,10 @@ import './App.css';
 import MainPage from './views/MainPage.jsx';
 import StudentApplication from './views/StudentApplication.jsx';
 import TeacherApplication from './views/TeacherApplication.jsx';
-import LoginPage from './views/LoginPage.jsx';
+import LoginView from './views/LoginView.jsx';
 import AdminMain from './views/AdminMain.jsx';
 import SignupView from './views/SignupView.jsx';
+import FrontPageView from './views/FrontPageView.jsx';
 
 import AuthComponent from './components/AuthComponent.jsx';
 
@@ -30,12 +31,12 @@ class App extends Component {
     <Provider store={store}>
       <Router history={history}>
         <Switch>
-          <Route path='/admin/login' history={history} render={LoginPage} />
+          <Route path='/admin/login' history={history} component={LoginView} />
           <Route path ='/admin/main' component={AdminMain} />
-          <Route path='/app/student' component={StudentApplication} />
+          <Route path='/app/student' history={history} component={AuthComponent(StudentApplication)}/>
           <Route path='/app/teacher' component={TeacherApplication} />
           <Route path='/signup' component={SignupView} />
-          <Route path='/' component={MainPage} />
+          <Route path='/' component={FrontPageView} />
         </Switch>
       </Router>
     </Provider>

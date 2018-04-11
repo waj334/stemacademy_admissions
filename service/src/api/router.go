@@ -63,14 +63,6 @@ var routes = RouteArray{
 		APIGetUsers,
 	},
 	{
-		"Change User Approval",
-		"/user/approve",
-		"POST",
-		"",
-		MiddlewareList{},
-		APIChangeUserApproval,
-	},
-	{
 		"Application Submission",
 		"/app/submit",
 		"POST",

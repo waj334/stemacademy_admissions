@@ -1,27 +1,17 @@
 import * as Constants from '../Constants'
 import Login from '../auth/Login.jsx';
-import {ApiLogin} from '../api/Api.jsx';
-
-export const LoginActions = {
-    loginUser,
-}
+import * as API from '../api/Api.jsx';
 
 // Possible login actions
 function requestLogin(creds) {
     return {
         type: Constants.LOGIN_REQUEST,
-        isFetching: true,
-        isAuthenticated: false,
-        creds
     }
 }
 
 function receiveLogin(user, history) {
     return {
         type: Constants.LOGIN_SUCCESS,
-        isFetching: false,
-        isAuthenticated: true,
-        id_token: user.id_token,
         history: history
     }
 }
@@ -29,9 +19,7 @@ function receiveLogin(user, history) {
 function loginError(message) {
     return {
         type: Constants.LOGIN_FAILURE,
-        isFetching: false,
-        isAuthenticated: false,
-        err: message
+        error: message
     }
 }
 
@@ -44,10 +32,10 @@ function _translateErr(e) {
         return "There was an unexpected error logging in. Try again later."
 }
 
-function loginUser(creds, history) {
+export function login(creds) {
     return dispatch => {
         dispatch(requestLogin(creds))
-        ApiLogin(creds.username, creds.password)
+        API.Login(creds.username, creds.password)
         .catch(e => {
             if (e.hasOwnProperty('response'))
                 dispatch(loginError(_translateErr(e.response)));
@@ -59,11 +47,8 @@ function loginUser(creds, history) {
             const token = data.token;
 
             //Store JWT
-            dispatch(receiveLogin(token, history.history))
+            dispatch(receiveLogin(history.history))
             localStorage.setItem('token', token);
-
-            //Goto Admin Front
-            history.history.push('/admin/main')
         });
     }
 }
