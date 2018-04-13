@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
     </head>
     <body>
         <div class="ui basic very padded segment">
@@ -14,9 +14,9 @@
                         <h3 class="ui header">Email Verification</h3>
                     </div>
                     <div class="ui segment very padded">
-                        <p>Please click the following button to confirm that <%= email %> is your email address</p>
+                        <p>Please click the following link to confirm that <%= email %> is your email address:</p>
                         <h3 class="ui dividing header"></h3>
-                        <button onclick="window.open('<%= url %>/user/verify/<%= token %>');" class="ui button">Confirm</button>
+                        <a class="ui button" href="<%= url %>/user/verify/<%= token %>">Confirm</a>
                     </div>
                 </div>
             </div>

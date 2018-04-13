@@ -5,7 +5,7 @@ var APP_DIR  = path.resolve(__dirname, 'src');
 var BUILD_DIR = path.resolve(__dirname, 'public');
 
 var config = {
-   entry: ['whatwg-fetch', 'babel-polyfill', APP_DIR + '/index.jsx'],
+   entry: ['whatwg-fetch', 'babel-polyfill', 'abortcontroller-polyfill', APP_DIR + '/index.jsx'],
 	
    output: {
       path: BUILD_DIR,

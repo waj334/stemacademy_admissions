@@ -18,7 +18,16 @@ func APIAuthenticateUser(ctx echo.Context) (err error) {
 	token, err := AuthenticateUser(authInfo.Username, authInfo.Password)
 
 	if err != nil {
-		return echo.ErrUnauthorized
+		switch e := err.(type) {
+		case *ErrAuthInvalidPassword:
+			return ctx.JSON(http.StatusUnauthorized, map[string]string{
+				"error": e.Error(),
+			})
+		case *ErrAuthUserNotVerified:
+			return ctx.JSON(http.StatusForbidden, map[string]string{
+				"error": e.Error(),
+			})
+		}
 	}
 
 	//Create signed token

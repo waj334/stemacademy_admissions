@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"io/ioutil"
 	"os"
 	"time"
@@ -28,7 +27,9 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 		if bcrypt.CompareHashAndPassword([]byte(userinfo.Password), []byte(pwd)) == nil {
 			//Check if user has been verified
 			if !userinfo.Verified {
-				return nil, errors.New("User has not been verfied")
+				return nil, &ErrAuthUserNotVerified{
+					"User has not been verfied",
+				}
 			}
 
 			//Create JWT if passwords match
@@ -46,7 +47,9 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 		}
 
 		//Password was incorrect
-		return nil, errors.New("Incorrect Password")
+		return nil, &ErrAuthInvalidPassword{
+			"Invalid Login. Check your username/password and try again.",
+		}
 	}
 
 	//Username does not exist

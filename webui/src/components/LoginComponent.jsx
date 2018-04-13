@@ -22,7 +22,11 @@ export default class LoginComponent extends Component {
     }
 
     onChange(e, {name, value}) {
-        this.setState({[name]:value});
+        this.setState(
+            {
+                [name]: value
+            }
+        );
     }
 
     onSubmit() {
@@ -56,7 +60,7 @@ export default class LoginComponent extends Component {
     render() {
   
         return (
-            <Form onSubmit={this.onSubmit} onchange={this.onChange} error={this.props.error ? true:false} loading={this.props.isFetching}>
+            <Form onSubmit={this.onSubmit} onChange={this.onChange} error={this.props.error ? true:false} loading={this.props.isFetching}>
                 <Message error header="Error" content={this.props.error} />
                 <Segment.Group compact>
                     <Segment>

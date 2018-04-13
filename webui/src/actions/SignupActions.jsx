@@ -13,7 +13,7 @@ function actionSignupPending() {
 
 function actionSignupError(err) {
     return {
-        type: ACTION_SIGNUP_PENDING,
+        type: ACTION_SIGNUP_ERROR,
         isPosting: false,
         error: err
     }
@@ -33,14 +33,36 @@ export function signup(data) {
         dispatch(actionSignupPending());
 
         //Call signup API
+        var err = false;
         return API.Signup(data)
         .catch(e => {
             //Catch errors
-            dispatch(actionSignupError("Some random error"));
+            if (e.hasOwnProperty('response')) {
+                if (e.response.status == 401) {
+                    dispatch(actionSignupError("reCAPTCHA Error. Refresh page and try again."));
+                    err = true;
+                } else if (e.response.status == 406) {
+                    dispatch(actionSignupError("User with the same email is already registered."));
+                    err = true;
+                }
+                
+                return;
+            } else if (e.hasOwnProperty('message')) {
+                if (e.message === "Failed to fetch") {
+                    dispatch(actionSignupError("Service is down. Try again later."));
+                    err = true;
+                }
+                return;
+            } 
+            
+            dispatch(actionSignupError("Unexpected server error."))
+            err = true;
         })
         .then(()=> {
             //Successful
-            dispatch(actionSignupSuccess());
+            if (!err) {
+                dispatch(actionSignupSuccess());
+            }
         })
     }
 }

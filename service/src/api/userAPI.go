@@ -94,10 +94,10 @@ func APICreateUser(ctx echo.Context) error {
 	}
 
 	buffer := new(bytes.Buffer)
-	VerificationMessage(r.User.Email, config.ClientURL, signedToken, buffer)
+	VerificationMessage(r.User.Email, config.APIURL, signedToken, buffer)
 
 	//Send Email
-	err = SendEmail(r.User.Email, string(buffer.Bytes()))
+	err = SendEmail(r.User.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
 
 	if err != nil {
 		ctx.Logger().Error(err)
@@ -146,7 +146,7 @@ func APIGetUsers(ctx echo.Context) error {
 //APIVerifyUser Verifies the user associated wit the token param value
 func APIVerifyUser(ctx echo.Context) error {
 	//Extract info from JWT
-	token, err := jwt.Parse(ctx.Param("token"), func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(ctx.Param("token"), &UserJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte("supersecure"), nil
 	})
 

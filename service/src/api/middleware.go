@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
@@ -11,6 +13,8 @@ func MiddleWareAdminCheck(next echo.HandlerFunc) echo.HandlerFunc {
 		//Extract info from JWT
 		user := ctx.Get("user").(*jwt.Token)
 		claims := user.Claims.(*UserJWTClaims)
+
+		log.Print("Account type is: ", claims.AccountType)
 
 		if claims.AccountType == AccountTypeAdmin {
 			return next(ctx)
@@ -26,6 +30,8 @@ func MiddleWareApprovedCheck(next echo.HandlerFunc) echo.HandlerFunc {
 		//Extract info from JWT
 		user := ctx.Get("user").(*jwt.Token)
 		claims := user.Claims.(*UserJWTClaims)
+
+		log.Print("Account type is: ", claims.AccountType)
 
 		if claims.Approved == true {
 			return next(ctx)

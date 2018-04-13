@@ -21,7 +21,7 @@ export default class SlideshowComponent extends Component {
 
         this.state = {
             index: 0,
-            animation: 'drop',
+            animation: 'fade',
             show: true,
             direction: 1,
             active: true
@@ -30,13 +30,15 @@ export default class SlideshowComponent extends Component {
         this.onNext = this.onNext.bind(this);
         this.onPrevious = this.onPrevious.bind(this);
         this.onComplete = this.onComplete.bind(this);
+
+        setInterval(this.onNext, 5000);
     }
 
     onNext() {
         if (this.state.active == true) {
             this.setState({
                 direction: 1,
-                animation: 'fly right',
+                animation: 'fade',
                 show: false,
                 active: false
             })
@@ -47,7 +49,7 @@ export default class SlideshowComponent extends Component {
         if (this.state.active == true) {
             this.setState({
                 direction: -1,
-                animation: 'fly left',
+                animation: 'fade',
                 show: false,
                 active: false
             })
@@ -66,48 +68,34 @@ export default class SlideshowComponent extends Component {
 
             setTimeout(() => {this.setState({
                 active: true
-            })}, 1000);
+            })}, 2000);
 
             this.setState({
                 index: index,
                 show: true,
                 direction: 1,
-                animation: this.state.animation == 'fly left' ? 'fly right':'fly left'
+                //animation: this.state.animation == 'fly left' ? 'fly right':'fly left'
             })
         }
     }
 
     render() {
+        var headerImgStyle = {
+            position: 'absolute',
+            top: '-75px',
+            left: '0',
+            right: '0',
+            zIndex: '',
+            filter: 'blur(8px)',
+            width: '100%',
+            height: '100%',
+            opacity: '0.50'
+        }
+
         return (
-            <Segment.Group basic horizontal style={{maxWidth:'50vw', maxHeight:'30vh'}}>
-                <Segment basic style={{maxWidth: 64}}>
-                    <Grid relaxed stretched verticalAlign='middle' style={{height:'100%'}}>
-                        <Grid.Row>
-                            <Grid.Column>
-                                <Button basic onClick={this.onPrevious}>
-                                    <Icon fitted name='caret left'/>
-                                </Button>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </Segment>
-                <Segment basic>
-                    <Transition animation={this.state.animation} duration={500} visible={this.state.show} onComplete={this.onComplete}>
-                        <Image centered inline src={this.props.images[this.state.index]} style={{maxWidth:'50vw', maxHeight:'30vh'}} />
-                    </Transition>
-                </Segment>
-                <Segment compact basic style={{maxWidth: 64}}>
-                    <Grid relaxed stretched verticalAlign='middle' style={{height:'100%'}}>
-                        <Grid.Row>
-                            <Grid.Column>
-                                <Button basic onClick={this.onNext} style={{width:32}}>
-                                    <Icon fitted name='caret right'/>
-                                </Button>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </Segment>
-            </Segment.Group>
+            <Transition animation={this.state.animation} duration={500} visible={this.state.show} onComplete={this.onComplete} >
+                <Image centered inline src={this.props.images[this.state.index]} style={headerImgStyle} />
+            </Transition>
         )
     }
 }

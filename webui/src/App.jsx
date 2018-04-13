@@ -32,8 +32,8 @@ class App extends Component {
       <Router history={history}>
         <Switch>
           <Route path='/admin/login' history={history} component={LoginView} />
-          <Route path ='/admin/main' component={AdminMain} />
-          <Route path='/app/student' history={history} component={AuthComponent(StudentApplication)}/>
+          <Route path ='/admin/main'  render={() =><AuthComponent view={AdminMain} /> } />
+          <Route path='/app/student' history={history} render={() =><AuthComponent view={StudentApplication} /> } />
           <Route path='/app/teacher' component={TeacherApplication} />
           <Route path='/signup' component={SignupView} />
           <Route path='/' component={FrontPageView} />

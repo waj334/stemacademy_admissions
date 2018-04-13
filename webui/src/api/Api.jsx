@@ -14,8 +14,12 @@ function Url(path) {
     return Endpoint+path;
 }
 
+function AuthHeader() {
+    return 'Bearer ' + localStorage.getItem('token')
+}
+
 export function SubmitApp(data, type) {
-    var url = Url('/app/submit');
+    var url = Url('/user/app/submit');
     var date = new Date();
     var payload = JSON.stringify(
         {
@@ -27,7 +31,7 @@ export function SubmitApp(data, type) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': AuthHeader()
         },
         body: payload
     })
@@ -68,16 +72,47 @@ export function Login(email, pwd) {
 }
 
 export function GetUsers(type) {
-    var url = Url('/user/get/type');
+    var url = Url('/admin/user/get/type');
 
     return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': AuthHeader()
         },
         body: JSON.stringify({
             type: type
+        })
+    })
+    .then(checkStatus)
+    .then(resp => resp.json());
+}
+
+export function GetApplicationList() {
+    var url = Url('/admin/app/list');
+
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        }
+    })
+    .then(checkStatus)
+    .then(resp => resp.json());
+}
+
+export function UpdateApplicationStatus(list) {
+    var url = Url('/admin/app/status/update');
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: JSON.stringify({
+            list: list
         })
     })
     .then(checkStatus)

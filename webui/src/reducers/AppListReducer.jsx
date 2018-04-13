@@ -1,4 +1,4 @@
-import * as UserListActions from '../actions/UserListActions.jsx';
+import * as AppListActions from '../actions/AppListActions.jsx';
 
 const initialItemState = {
     isFetching: false,
@@ -10,16 +10,16 @@ const initialItemState = {
 const initialState = {
 }
 
-export default function UserListReducer(state = initialState, action) {
+export default function AppListReducer(state = initialState, action) {
     switch (action.type) {
-        case UserListActions.ACTION_USER_LIST_FETCHING:
+        case AppListActions. ACTION_APPLICATION_LIST_FETCHING:
             return {
                 [action.id]: {
                     ...initialItemState,
                     isFetching: true
                 }
             };
-        case UserListActions.ACTION_USER_LIST_ERROR:
+        case AppListActions. ACTION_APPLICATION_LIST_ERROR:
             return {
                 [action.id]: {
                     ...initialItemState,
@@ -27,7 +27,7 @@ export default function UserListReducer(state = initialState, action) {
                     data: {}
                 }
             };
-        case UserListActions.ACTION_USER_LIST_DONE:
+        case AppListActions. ACTION_APPLICATION_LIST_DONE:
             return {
                 [action.id]: {
                     ...initialItemState,

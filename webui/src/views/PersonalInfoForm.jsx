@@ -95,18 +95,10 @@ validate(data) {
         return (
         <Form>
             <Form.Group widths='equal'>
-                <Form.Input label='First Name' placeholder='First Name' name='fname' value={this.state.fname} onChange={this.onChange} readOnly={this.props.readOnly} />
-                <Form.Input label='Last Name' placeholder='Last Name' name='lname' value={this.state.lname} onChange={this.onChange} readOnly={this.props.readOnly} />
                 <Form.Input width={4} label='Age' placeholder='Age' name='age' value={this.state.age} onChange={this.onChange} readOnly={this.props.readOnly} />
-            </Form.Group>
-            <Form.Group widths='equal'>
                 <Form.Select label='Gender' options={gender_opts} name='gender' placeholder='Choose One' value={this.state.gender} onChange={this.onChange} disabled={this.props.readOnly} />
                 <Form.Select label='Ethnicity' options={ethnicity_opts} name='ethnicity' placeholder='Choose One' value={this.state.ethnicity} onChange={this.onChange} disabled={this.props.readOnly} />
                 <Form.Select label='Citizenship Status' options={citizenship_opts} name='citizenship' placeholder='Choose One' value={this.state.citizenship} onChange={this.onChange} disabled={this.props.readOnly} />
-            </Form.Group>
-            <Form.Group widths='equal'>
-                <Form.Input label='Email' name='email' placeholder='Email' value={this.state.email} onChange={this.onChange} readOnly={this.props.readOnly} />
-                <Form.Input label='Phone Number' name='phone_no' placeholder='Phone Number' value={this.state.phone_no} onChange={this.onChange} readOnly={this.props.readOnly} />
             </Form.Group>
             <Form.Input label='Street Address' name='street' placeholder='Street Address' value={this.state.street} onChange={this.onChange} readOnly={this.props.readOnly} />
             <Form.Group widths='equal'>

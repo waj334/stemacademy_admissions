@@ -58,7 +58,7 @@ var routes = RouteArray{
 		"Get All Users (Type)",
 		"/user/get/type",
 		"POST",
-		"",
+		"admin",
 		MiddlewareList{},
 		APIGetUsers,
 	},
@@ -66,7 +66,7 @@ var routes = RouteArray{
 		"Application Submission",
 		"/app/submit",
 		"POST",
-		"",
+		"user",
 		MiddlewareList{}, //MiddleWareApprovedCheck
 		APISubmitApplication,
 	},
@@ -74,7 +74,7 @@ var routes = RouteArray{
 		"Application List",
 		"/app/list",
 		"GET",
-		"",
+		"admin",
 		MiddlewareList{},
 		APIGetApplicationList,
 	},
@@ -82,14 +82,22 @@ var routes = RouteArray{
 		"Get Application",
 		"/app/get",
 		"POST",
-		"",
+		"admin",
 		MiddlewareList{},
 		APIGetApplication,
+	},
+	{
+		"Update Application Status",
+		"/app/status/update",
+		"POST",
+		"admin",
+		MiddlewareList{},
+		APIUpdateApplicationStatus,
 	},
 }
 
 //InitAPI Initialize the API router
-func InitAPI() (*echo.Echo, error) {
+func InitAPI(config *Configuration) (*echo.Echo, error) {
 	e := echo.New()
 
 	if config.LogHTTP {
@@ -105,6 +113,7 @@ func InitAPI() (*echo.Echo, error) {
 			echo.HeaderAccessControlRequestHeaders,
 			echo.HeaderAccessControlRequestMethod,
 			echo.HeaderAcceptEncoding,
+			echo.HeaderAuthorization,
 		},
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS},
 	}))
@@ -117,7 +126,7 @@ func InitAPI() (*echo.Echo, error) {
 
 	//Create groups
 	//TODO: Use signing certificate to sign JWT
-	ga := e.Group("/admin", jwtMW, MiddleWareAdminCheck) //Requires admin rights
+	ga := e.Group("/admin", jwtMW /*, MiddleWareAdminCheck*/) //Requires admin rights
 	gu := e.Group("/user", jwtMW)
 
 	for _, route := range routes {

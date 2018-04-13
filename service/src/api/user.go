@@ -25,6 +25,7 @@ type User struct {
 	Type     int    `db:"type" json:"type"`
 	Verified bool   `db:"verified" json:"verified"`
 	Email    string `db:"email" json:"email"`
+	PhoneNo  string `db:"phone_no" json:"phone_no"`
 	Password string `db:"hash" json:"password"`
 }
 

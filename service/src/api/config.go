@@ -21,13 +21,17 @@ type Configuration struct {
 	LogHTTP         bool     `json:"logHttp"`
 	RecaptchaKey    string   `json:"recaptchaKey"`
 	ClientURL       string   `json:"clientUrl"`
-	EmailSMTP       string   `json:"emailSmtp"`
+	APIURL          string   `json:"apiUrl"`
+	SMTPHost        string   `json:"SmtpHost"`
+	SMTPPort        int      `json:"SmtpPort"`
+	SMTPUser        string   `json:"SmtpUser"`
 	Email           string   `json:"email"`
 	EmailPasswdFile string   `json:"emailPasswdFile"`
 	UploadPath      string   `json:"uploadPath"`
 }
 
-func getConfig() (Configuration, error) {
+//GetConfig	Reads configuration file
+func GetConfig() (*Configuration, error) {
 
 	flag.Parse()
 
@@ -37,10 +41,10 @@ func getConfig() (Configuration, error) {
 	}
 	defer file.Close()
 
-	var conf Configuration
+	conf := &Configuration{}
 
 	parser := json.NewDecoder(file)
-	if err = parser.Decode(&conf); err != nil {
+	if err = parser.Decode(conf); err != nil {
 		log.Fatal(err)
 	}
 

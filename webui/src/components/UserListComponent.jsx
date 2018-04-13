@@ -17,7 +17,8 @@ function mapStateToProps(state, props) {
         return {
             isFetching: true,
             isDone: false,
-            error: null
+            error: null,
+            data: {}
         }
 }
 

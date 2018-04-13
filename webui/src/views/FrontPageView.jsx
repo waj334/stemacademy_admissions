@@ -28,23 +28,18 @@ export default class FrontPageView extends Component {
         var headerSegmentStyle = {
             paddingTop: '75px',
             minHeight: '100vh',
-            border: '0px'
+            border: '0px',
+            borderRadius: '0px'
         };
 
         return (
             <Segment.Group>
                 <Segment basic inverted style={headerSegmentStyle}>
+                    <SlideshowComponent images={images} />
                     <Grid relaxed stretched style={{height:'100vh', marginTop:'-5vh', fontSize:'20pt'}}>
                             <Grid.Row>
                                 <Grid.Column>
                                     <Header as='h1' size='huge' textAlign='center' inverted>STEM Summer Academy</Header>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Container>
-                                        <SlideshowComponent images={images} />
-                                    </Container>
                                 </Grid.Column>
                             </Grid.Row>
                             <Grid.Row>

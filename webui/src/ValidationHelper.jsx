@@ -57,6 +57,6 @@ export function checkInput(str, type) {
     return t;
 }
 
-export function checkPhoneNo(pno) {
+export function checkPhoneNo(pno="") {
     return isValidNumber(pno, 'US');
 }

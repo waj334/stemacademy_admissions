@@ -26,3 +26,12 @@ type ErrAuthUserExists struct {
 func (e *ErrAuthUserExists) Error() string {
 	return e.message
 }
+
+// ErrAuthUserNotVerified User is not present in the database
+type ErrAuthUserNotVerified struct {
+	message string
+}
+
+func (e *ErrAuthUserNotVerified) Error() string {
+	return e.message
+}

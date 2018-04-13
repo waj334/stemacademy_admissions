@@ -19,14 +19,10 @@ const forms = [
 ];
 
 var data = {
-    fname: '',
-    lname: '',
     age: '',
     gender: '',
     ethnicity: '',
     citizenship: '',
-    email: '',
-    phone_no: '',
     street: '',
     city: '',
     state: '',

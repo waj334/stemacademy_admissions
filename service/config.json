@@ -8,8 +8,11 @@
     "logHttp": true,
     "recaptchaKey": "6Lc7XlEUAAAAAPTgql0igCE4j697EC0MH5QTKWeA",
     "clientURL": "http://localhost:8080",
-    "emailSMTP": "smtp.gmail.com",
-    "email": "waj334",
+    "apiURL": "http://localhost:8081",
+    "SmtpHost": "smtp.gmail.com",
+    "SmtpPort": 587,
+    "SmtpUser": "waj334",
+    "email": "no-reply@tuskegee.edu",
     "emailPasswdFile": "C:/Projects/stemacademy_admissions/service/password.smtp",
     "uploadPath": "."
 }

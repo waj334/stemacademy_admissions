@@ -64,6 +64,7 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 		CREATE TABLE IF NOT EXISTS application (
 			id					text	not null,
 			user_id				text	not null references users(email) ON DELETE CASCADE,
+			type				integer not null,
 			date				timestamp with time zone not null,
 			age					integer	not null,
 			gender				integer	not null,
@@ -86,7 +87,7 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			school_zip			text	not null,
 			school_county		text	not null,
 			grade_level			integer not null,
-			subject				text,
+			subjects				text,
 			group_name			text,
 			room				text,
 			status				text,
@@ -107,10 +108,11 @@ func (db *Database) CreateUserTable() *pq.Error {
 	_, err := db.db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
 			type		integer not null,
-			approved	boolean not null,
+			verified	boolean not null,
 			fname		text	not null,
 			lname		text	not null,
 			email		text	not null,
+			phone_no	text	not null,
 			hash		text	not null,
 			primary key(email),
 			unique(email),
@@ -144,8 +146,8 @@ func (db *Database) CreateFileTable() *pq.Error {
 
 //AddUser Adds new user info to the database
 func (db *Database) AddUser(user *User) error {
-	_, err := db.db.NamedExec(`INSERT INTO users (email, fname, lname, hash, type, approved)
-		VALUES (:email, :fname, :lname, :hash, :type, FALSE)`, user)
+	_, err := db.db.NamedExec(`INSERT INTO users (email, phone_no, fname, lname, hash, type, verified)
+		VALUES (:email, :phone_no, :fname, :lname, :hash, :type, FALSE)`, user)
 
 	if err != nil {
 		return err.(*pq.Error)
@@ -183,7 +185,7 @@ func (db *Database) GetUsers(Type int) ([]User, error) {
 func (db *Database) ChangeUserVerifiedStatus(user string, approved bool) error {
 	_, err := db.db.Exec(
 		`UPDATE users
-		SET approved = $1
+		SET verified = $1
 		WHERE
 		email=$2`,
 		approved, user)
@@ -199,16 +201,16 @@ func (db *Database) ChangeUserVerifiedStatus(user string, approved bool) error {
 func (db *Database) InsertApplication(app *Application) error {
 	_, err := db.db.NamedExec(`
 			INSERT INTO application (
-				id, user_id, date, type, age, gender, ethnicity, citizenship, phone_no, street, city, state, zip,
+				id, user_id, date, type, age, gender, ethnicity, citizenship, street, city, state, zip,
 				contact_fname, contact_lname, contact_phone_no, contact_email, 
 				school_name, school_phone_no, school_street, school_city, school_state, school_county, school_zip,
-				grade_level, subject, group_name, room, status
+				grade_level, subjects, group_name, room, status
 			)
 			VALUES (
-				:id, :user_id, :fname, :lname, now(), :type, :age, :gender, :ethnicity, :citizenship, :phone_no, :street, :city, :state, :zip,
+				:id, :user_id, now(), :type, :age, :gender, :ethnicity, :citizenship, :street, :city, :state, :zip,
 				:contact_fname, :contact_lname, :contact_phone_no, :contact_email, 
 				:school_name, :school_phone_no, :school_street, :school_city, :school_state, :school_county, :school_zip,
-				:grade_level, :subject, :group_name, :room, :status
+				:grade_level, :subjects, :group_name, :room, :status
 			)
 			`, app)
 
@@ -221,21 +223,21 @@ func (db *Database) InsertApplication(app *Application) error {
 }
 
 //UpdateApplication Updates a single column from the application database table
-func (db *Database) UpdateApplication(id string, column string, val string) *pq.Error {
-	_, err := db.db.Exec(`
+func (db *Database) UpdateApplication(id string, column string, val string) error {
+	_, err := db.db.Exec(fmt.Sprintf(`
 		UPDATE application
-		SET $1=$2
-		WHERE id=$3
-		`, column, val, id)
+		SET %s=$1
+		WHERE id=$2
+		`, column), val, id)
 
-	return err.(*pq.Error)
+	return err
 }
 
 //GetApplicationList Gets minimal infomation about all applications in database
 func (db *Database) GetApplicationList() ([]ApplicationMinimal, *pq.Error) {
 	list := []ApplicationMinimal{}
 	err := db.db.Select(&list,
-		`SELECT users.fname, users.lname, users.email, users.type, application.date, application.id
+		`SELECT users.fname, users.lname, users.email, users.type, application.date, application.id, application.status
 		FROM users
 		INNER JOIN application ON users.email = application.user_id;`)
 

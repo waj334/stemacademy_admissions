@@ -74,6 +74,10 @@ export default class SignupForm extends Component {
             invalid.push('email')
         }
 
+        if (!Validation.checkPhoneNo(this.state.phone_no)) {
+            invalid.push('phone_no')
+        }
+
         if (!Validation.checkInput(this.state.password, 'password')) {
             invalid.push('password')
         } else {
@@ -86,6 +90,7 @@ export default class SignupForm extends Component {
                             fname: this.state.fname,
                             lname: this.state.lname,
                             email: this.state.email,
+                            phone_no: this.state.phone_no,
                             type: this.state.teacher == true ? Constants.AccountTypes.Teacher:Constants.AccountTypes.Student,
                             password: this.state.password
                         },
@@ -119,33 +124,38 @@ export default class SignupForm extends Component {
 
     render() {
         const opts = [
-            {key: 'yes', text:'Yes', value: true},
             {key: 'no', text:'No', value: false},
+            {key: 'yes', text:'Yes', value: true}
         ]
 
         if (!this.props.isSuccessful)
             return (
-                <Form onSubmit={this.onSubmit} loading={this.props.isPosting} error={this.state.invalid.length > 0}>
-                    <Segment compact>
-                        <Form.Input name='fname' placeholder='John' label='First Name' onChange={this.onChange} error={this.state.invalid.indexOf('fname') != -1} />
-                        <this.error name='fname' message='Empty or invalid name entered!' />
-                        <Form.Input name='lname' placeholder='Doe' label ='Last Name' onChange={this.onChange} error={this.state.invalid.indexOf('lname') != -1} />
-                        <this.error name='lname' message='Empty or invalid name entered!' />
-                        <Form.Select name='teacher' options={opts} value={false} label='Are you a teacher?' onChange={this.onChange} />
-                        <Form.Input name='email' placeholder='email@example.com' label='Email' onChange={this.onChange} error={this.state.invalid.indexOf('email') != -1} />
-                        <this.error name='email' message='Empty or invalid email entered!' />
-                        <Form.Input name='password' placeholder='Password' label='Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('password') != -1} />
-                        <this.error name='password' message='Empty or invalid password entered! Must contain at least 1 number, capital letter and special character. Length must be 8 to 15 characters long.' />
-                        <Form.Input name='cpassword' placeholder='Confirm Password' label='Confirm Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('cpassword') != -1} />
-                        <this.error name='cpassword' message='Passwords do not match!' />
-                        
-                        <Divider dividing> Please check the box below </Divider>
-                        <ReCAPTCHA ref='recaptcha' sitekey='6Lc7XlEUAAAAAEL3vtJka2Uxhs_AzUEyaX7UlfFM' onChange={this.onRecaptcha} />
-                        <Divider dividing />
-                        
-                        <Form.Button disabled={this.state.recaptcha == null}>Sign Up</Form.Button>
-                    </Segment>
-                </Form>
+                <div>
+                    {this.props.error != null ? <Message compact error header="Error" content={this.props.error} />:<div/>}
+                    <Form onSubmit={this.onSubmit} loading={this.props.isPosting} error={this.state.invalid.length > 0}>
+                        <Segment compact>
+                            <Form.Input name='fname' placeholder='John' label='First Name' onChange={this.onChange} error={this.state.invalid.indexOf('fname') != -1} />
+                            <this.error name='fname' message='Empty or invalid name entered!' />
+                            <Form.Input name='lname' placeholder='Doe' label ='Last Name' onChange={this.onChange} error={this.state.invalid.indexOf('lname') != -1} />
+                            <this.error name='lname' message='Empty or invalid name entered!' />
+                            <Form.Select name='teacher' options={opts} label='Are you a teacher?' onChange={this.onChange} />
+                            <Form.Input name='email' placeholder='email@example.com' label='Email' onChange={this.onChange} error={this.state.invalid.indexOf('email') != -1} />
+                            <this.error name='email' message='Empty or invalid email entered!' />
+                            <Form.Input name='phone_no' placeholder='(123) 456-9123' label='Phone Number' onChange={this.onChange} error={this.state.invalid.indexOf('phone_no') != -1} />
+                            <this.error name='phone_no' message='Empty or invalid phone number entered!' />
+                            <Form.Input name='password' placeholder='Password' label='Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('password') != -1} />
+                            <this.error name='password' message='Empty or invalid password entered! Must contain at least 1 number, capital letter and special character. Length must be 8 to 15 characters long.' />
+                            <Form.Input name='cpassword' placeholder='Confirm Password' label='Confirm Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('cpassword') != -1} />
+                            <this.error name='cpassword' message='Passwords do not match!' />
+                            
+                            <Divider dividing> Please check the box below </Divider>
+                            <ReCAPTCHA ref='recaptcha' sitekey='6Lc7XlEUAAAAAEL3vtJka2Uxhs_AzUEyaX7UlfFM' onChange={this.onRecaptcha} />
+                            <Divider dividing />
+                            
+                            <Form.Button disabled={this.state.recaptcha == null}>Sign Up</Form.Button>
+                        </Segment>
+                    </Form>
+                </div>
             )
         else
             return (

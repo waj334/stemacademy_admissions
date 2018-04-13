@@ -14,7 +14,6 @@ type Application struct {
 	Gender           int       `json:"gender" db:"gender"`
 	Ethnicity        int       `json:"ethnicity" db:"ethnicity"`
 	Citizenship      int       `json:"citizenship" db:"citizenship"`
-	PhoneNo          string    `json:"phone_no" db:"phone_no"`
 	Street           string    `json:"street" db:"street"`
 	City             string    `json:"city" db:"city"`
 	State            string    `json:"state" db:"state"`
@@ -45,6 +44,7 @@ type ApplicationMinimal struct {
 	Email           string    `json:"email" db:"email"`
 	ApplicationType int       `json:"type" db:"type"`
 	Date            time.Time `json:"date" db:"date"`
+	Status          string    `json:"status" db:"status"`
 }
 
 //UpdateStatus Updates the application status

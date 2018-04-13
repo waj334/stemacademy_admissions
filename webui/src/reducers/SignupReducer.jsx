@@ -16,6 +16,7 @@ export default function SignupReducer(state = initialState, action) {
         case SignupActions.ACTION_SIGNUP_ERROR:
             return {
                 ...initialState,
+                isSuccessful: false,
                 error: action.error
             };
         case SignupActions.ACTION_SIGNUP_SUCCESS:

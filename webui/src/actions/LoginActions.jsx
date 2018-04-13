@@ -24,12 +24,15 @@ function loginError(message) {
 }
 
 function _translateErr(e) {
-    if (e.status === 404)
+    if (e.status === 404) {
         return "Service is down. Try again later."
-    else if (e.status === 401)
+    } else if (e.status === 401) {
         return "Invalid Login. Check your username/password and try again."
-    else
+    } else if (e.status === 403) {
+        return "Account has not been verified. Please follow instructions sent via email."
+    } else {
         return "There was an unexpected error logging in. Try again later."
+    }
 }
 
 export function login(creds) {

@@ -15,6 +15,7 @@ func APISubmitApplication(ctx echo.Context) error {
 	err := ctx.Bind(&app)
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
 			"error": "Invalid application data",
 		})
@@ -34,6 +35,7 @@ func APISubmitApplication(ctx echo.Context) error {
 	err = app.Process()
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
 			"error": "Could not process application data",
 		})
@@ -72,4 +74,34 @@ func APIGetApplication(ctx echo.Context) error {
 	}
 
 	return err
+}
+
+//APIUpdateApplicationStatus Update the status of a list of Applications
+func APIUpdateApplicationStatus(ctx echo.Context) error {
+	type req struct {
+		List []ApplicationMinimal `json:"list"`
+	}
+
+	data := &req{}
+	err := ctx.Bind(&data)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+			"error": "Invalid data received.",
+		})
+	}
+
+	for _, app := range data.List {
+		err := database.UpdateApplication(app.ID, "status", app.Status)
+
+		if err != nil {
+			ctx.Logger().Error(err)
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"status": "Could not update application status.",
+			})
+		}
+	}
+
+	return ctx.NoContent(http.StatusOK)
 }

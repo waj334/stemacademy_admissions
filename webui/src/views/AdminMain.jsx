@@ -12,6 +12,7 @@ const testData = [
         fname: 'Justin',
         lname: 'Wilson',
         email: 'waj334@gmail.com',
+        status: 'Rejected',
     },
     {
         id: 1,
@@ -20,6 +21,7 @@ const testData = [
         fname: 'Karen',
         lname: 'Craig',
         email: 'kcraig@gmail.com',
+        status: 'Accepted'
     }
 ]
 
@@ -49,14 +51,10 @@ class AdminMain extends Component {
                         </Menu.Item>
                     </Sidebar>
                     <Sidebar.Pusher>
-                            <Segment.Group style={{minHeight:"100vh"}}>
-                                <Segment padded>
-                                    <Header dividing>Unnapproved Applicants</Header>
-                                    <UserListComponent id='0' type={1} />
-                                </Segment>
+                            <Segment.Group style={{minHeight:"100vh", marginRight: 150}}>
                                 <Segment padded>
                                     <Header dividing>Applications</Header>
-                                    <ApplicationListComponent data={testData} />
+                                    <ApplicationListComponent data={testData} id='0' />
                                 </Segment>
                             </Segment.Group>
                     </Sidebar.Pusher>

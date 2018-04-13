@@ -16,7 +16,7 @@ func VerificationMessage(email string, url string, token string, buffer *bytes.B
 <html>
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
     </head>
     <body>
         <div class="ui basic very padded segment">
@@ -26,15 +26,15 @@ func VerificationMessage(email string, url string, token string, buffer *bytes.B
                         <h3 class="ui header">Email Verification</h3>
                     </div>
                     <div class="ui segment very padded">
-                        <p>Please click the following button to confirm that `)
+                        <p>Please click the following link to confirm that `)
 	hero.EscapeHTML(email, buffer)
-	buffer.WriteString(` is your email address</p>
+	buffer.WriteString(` is your email address:</p>
                         <h3 class="ui dividing header"></h3>
-                        <button onclick="window.open('`)
+                        <a class="ui button" href="`)
 	hero.EscapeHTML(url, buffer)
 	buffer.WriteString(`/user/verify/`)
 	hero.EscapeHTML(token, buffer)
-	buffer.WriteString(`');" class="ui button">Confirm</button>
+	buffer.WriteString(`">Confirm</a>
                     </div>
                 </div>
             </div>

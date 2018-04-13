@@ -13,7 +13,7 @@ import (
 )
 
 var configPath *string
-var config Configuration
+var config *Configuration
 var database *Database
 
 func main() {
@@ -24,19 +24,20 @@ func main() {
 		"Path to configuration json file",
 	)
 
-	config, err := getConfig()
+	var err error
+	config, err = GetConfig()
 
 	if err == nil {
 
 		//Initialize API
-		e, err := InitAPI()
+		e, err := InitAPI(config)
 
 		//Initialize reCAPTCHA
 		recaptcha.Init(config.RecaptchaKey)
 
 		if err == nil {
 			//Open database connection
-			database, err = ConnectDB(&config)
+			database, err = ConnectDB(config)
 
 			if err == nil {
 				//Create database tables
