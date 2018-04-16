@@ -105,15 +105,35 @@ export function GetApplicationList() {
 export function UpdateApplicationStatus(list) {
     var url = Url('/admin/app/status/update');
 
+    var payload = JSON.stringify({
+        list: list
+    })
+
     return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': AuthHeader()
         },
-        body: JSON.stringify({
-            list: list
-        })
+        body: payload
+    })
+    .then(checkStatus);
+}
+
+export function GetApplicationData(id) {
+    var url = Url('/admin/app/get');
+
+    var payload = JSON.stringify({
+        id: id.toString()
+    })
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
     })
     .then(checkStatus)
     .then(resp => resp.json());

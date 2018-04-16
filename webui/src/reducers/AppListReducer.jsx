@@ -24,7 +24,7 @@ export default function AppListReducer(state = initialState, action) {
                 [action.id]: {
                     ...initialItemState,
                     error: action.error,
-                    data: {}
+                    data: []
                 }
             };
         case AppListActions. ACTION_APPLICATION_LIST_DONE:

@@ -249,12 +249,12 @@ func (db *Database) GetApplicationList() ([]ApplicationMinimal, *pq.Error) {
 }
 
 //GetApplication Gets a single application from the database
-func (db *Database) GetApplication(id string) (*Application, *pq.Error) {
+func (db *Database) GetApplication(id string) (*Application, error) {
 	app := Application{}
 	err := db.db.Get(&app, "SELECT * FROM application WHERE id=$1", id)
 
 	if err != nil {
-		return nil, err.(*pq.Error)
+		return nil, err
 	}
 
 	return &app, nil

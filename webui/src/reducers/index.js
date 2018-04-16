@@ -4,6 +4,7 @@ import ApplicationReducer from './ApplicationReducer.jsx';
 import SignupReducer from './SignupReducer.jsx';
 import UserListReducer from './UserListReducer.jsx';
 import AppListReducer from './AppListReducer.jsx';
+import ApiReducer from './ApiReducer.jsx';
 
 const reducers = combineReducers({
     loginReducer: LoginReducer,
@@ -11,6 +12,7 @@ const reducers = combineReducers({
     signupReducer: SignupReducer,
     userListReducer: UserListReducer,
     appListReducer: AppListReducer,
+    apiReducer: ApiReducer,
 })
 
 export default reducers;

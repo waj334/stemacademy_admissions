@@ -41,7 +41,6 @@ export function getApplicationList(id) {
             }
         })
         .then((data) =>{
-            
             dispatch(actionApplicationListDone(id, data));
         })
     }

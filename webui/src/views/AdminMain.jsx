@@ -1,31 +1,61 @@
 import React, {Component} from 'react';
+import { connect} from 'react-redux';
 import {Sidebar, Menu, Icon, Segment, Header, Grid, Container} from 'semantic-ui-react';
 
 import ApplicationListComponent from '../components/ApplicationListComponent.jsx';
 import UserListComponent from '../components/UserListComponent.jsx';
 
-const testData = [
-    {
-        id: 0,
-        type: 'student',
-        date: '09-03-1993',
-        fname: 'Justin',
-        lname: 'Wilson',
-        email: 'waj334@gmail.com',
-        status: 'Rejected',
-    },
-    {
-        id: 1,
-        type: 'teacher',
-        date: '09-03-1973',
-        fname: 'Karen',
-        lname: 'Craig',
-        email: 'kcraig@gmail.com',
-        status: 'Accepted'
-    }
-]
+import * as API from '../api/Api.jsx';
+import * as ApiActions from '../actions/ApiActions.jsx';
 
+function mapStateToProps(state, props) {
+    return {
+        apiData: {
+            ...props.apiData,
+            ...state.apiReducer,
+        }
+    }
+}
+
+function mapDispatchToProps(dispatch, props) {
+    return {
+        apiCall: (id, apiFunc, payload, thenFunc=(data) => {}, catchFunc=(e) => {return 'error'}) => dispatch(ApiActions.APICall(id, apiFunc, payload, thenFunc, catchFunc)),
+    }
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 class AdminMain extends Component {
+    constructor(props) {
+        super(props);
+
+        this.AppList = this.AppList.bind(this);
+        this.UpdateApp = this.UpdateApp.bind(this);
+        this.GetApp = this.GetApp.bind(this);
+    }
+
+    AppList() {
+        if (this.props.apiData["0"] !== undefined) {
+            if (this.props.apiData["0"].state === 'success') {
+                return <ApplicationListComponent getApp={this.GetApp} updateApp={this.UpdateApp} appData={this.props.apiData["2"]} data={this.props.apiData["0"].data} />
+            }
+        }
+
+        return <div />
+    }
+
+    UpdateApp(list) {
+        this.props.apiCall("1", API.UpdateApplicationStatus, list, (data) => {
+            this.props.apiCall("0", API.GetApplicationList, null)
+        })
+    }
+
+    GetApp(id) {
+        this.props.apiCall("2", API.GetApplicationData, id)
+    }
+
+    componentDidMount() {
+        this.props.apiCall("0", API.GetApplicationList, null)
+    }
     render() {
         return (
             <div>
@@ -52,9 +82,9 @@ class AdminMain extends Component {
                     </Sidebar>
                     <Sidebar.Pusher>
                             <Segment.Group style={{minHeight:"100vh", marginRight: 150}}>
-                                <Segment padded>
+                                <Segment padded loading={this.props.isFetchingAppData}>
                                     <Header dividing>Applications</Header>
-                                    <ApplicationListComponent data={testData} id='0' />
+                                    <this.AppList />
                                 </Segment>
                             </Segment.Group>
                     </Sidebar.Pusher>

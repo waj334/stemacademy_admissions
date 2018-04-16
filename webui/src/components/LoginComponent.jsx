@@ -21,12 +21,14 @@ export default class LoginComponent extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    onChange(e, {name, value}) {
-        this.setState(
-            {
-                [name]: value
-            }
-        );
+    onChange(e, data) {
+        if (data !== undefined) {
+            this.setState(
+                {
+                    [data.name]: data.value
+                }
+            );
+        }
     }
 
     onSubmit() {

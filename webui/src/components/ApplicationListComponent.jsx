@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import TableHeader, { Segment, Accordion, Table, Button, Select, Loader } from 'semantic-ui-react';
+import TableHeader, { Segment, Accordion, Table, Button, Select, Loader, Header } from 'semantic-ui-react';
 import StudentConfirmationForm from '../views/StudentConfirmationForm.jsx';
 import TeachConfirmationForm from '../views/TeacherConfirmationForm.jsx';
 
 import * as Helpers from '../Helpers.jsx';
-
-import * as AppListActions from '../actions/AppListActions.jsx';
+import TableRow from 'semantic-ui-react';
 
 class UpdateField extends Component {
     constructor(props) {
@@ -64,32 +63,6 @@ class UpdateField extends Component {
         )
     }
 }
-
-function mapStateToProps(state, props) {
-    if (props.id in state.appListReducer)
-        return {
-            isFetching: state.appListReducer[props.id].isFetching,
-            isDone: state.appListReducer[props.id].isDone,
-            error: state.appListReducer[props.id].error,
-            data: state.appListReducer[props.id].data
-        }
-    else
-        return {
-            isFetching: true,
-            isDone: false,
-            error: null,
-            data: {}
-        }
-}
-
-function mapDispatchToProps(dispatch, props) {
-    return {
-        getList: () => dispatch(AppListActions.getApplicationList(props.id)),
-        updateApp: (list) => dispatch(AppListActions.updateApplication(props.id, list)),
-    }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
 export default class ApplicationListComponent extends Component {
     constructor(props) {
         super(props)
@@ -111,10 +84,6 @@ export default class ApplicationListComponent extends Component {
         this.onUpdateAll = this.onUpdateAll.bind(this);
     }
 
-    componentDidMount() {
-        this.props.getList();
-    }
-
     title(props) {
         var date = new Date(props.date);
 
@@ -130,11 +99,30 @@ export default class ApplicationListComponent extends Component {
 
     content(props) {
         //Display body when done loading
+        if (this.props.appData !== undefined) {
+            if (this.props.appData.state === 'success') {
+                return (
+                    <Accordion.Content style={{backgroundColor:'#FFFFFF'}} as={Table.Row} active={props.index === this.state.activeIndex} index={props.index} style={{display:props.index === this.state.activeIndex ? 'table-row':'none'}}>
+                        <Table.Cell colspan="6">
+                            <StudentConfirmationForm data={this.props.appData.data} disableButton/>
+                        </Table.Cell>
+                    </Accordion.Content>
+                )
+            } else if (this.props.appData.state === 'fetching') {
+                return (
+                    <Accordion.Content style={{backgroundColor:'#FFFFFF'}} as={Table.Row} active={props.index === this.state.activeIndex} index={props.index} style={{display:props.index === this.state.activeIndex ? 'table-row':'none'}}>
+                        <Table.Cell colspan="6">
+                            <Loader active />
+                        </Table.Cell>
+                    </Accordion.Content>
+                )
+            }
+        }
 
         return (
             <Accordion.Content style={{backgroundColor:'#FFFFFF'}} as={Table.Row} active={props.index === this.state.activeIndex} index={props.index} style={{display:props.index === this.state.activeIndex ? 'table-row':'none'}}>
                 <Table.Cell colspan="6">
-                    <StudentConfirmationForm disableButton/>
+                    <Header centered size='small'>No Data</Header>
                 </Table.Cell>
             </Accordion.Content>
         )
@@ -156,6 +144,8 @@ export default class ApplicationListComponent extends Component {
             const { index } = titleProps;
             const { activeIndex } = this.state;
             const newIndex = activeIndex === index ? -1 : index;
+
+            this.props.getApp(newIndex);
 
             this.setState({
                 activeIndex: newIndex
@@ -209,41 +199,33 @@ export default class ApplicationListComponent extends Component {
     }
 
     render() {
-        if (this.props.isFetching) {
-            return (
-                <Loader active />
-            )
-        } else {
-            if (this.props.error == null) {
-                return (
-                    <Table singleLine structured basic='very' columns="6">
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Application ID</Table.HeaderCell>
-                                <Table.HeaderCell>Name</Table.HeaderCell>
-                                <Table.HeaderCell>Email</Table.HeaderCell>
-                                <Table.HeaderCell>Date Submitted</Table.HeaderCell>
-                                <Table.HeaderCell>Status</Table.HeaderCell>
-                                <Table.HeaderCell>Action</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Accordion as={Table.Body} fluid styled>
-                            <this.list />
-                        </Accordion>
-                        <Table.Footer>
-                            <Table.Row>
-                                <Table.HeaderCell colSpan='6'>
-                                    <Button floated='right' primary onClick={this.onUpdateAll}>Update All</Button>
-                                </Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Footer>
-                    </Table>
-                )
-            }
-        }
-
         return (
-            <div>Error</div>
+            <Table singleLine structured basic='very' columns="6">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Application ID</Table.HeaderCell>
+                        <Table.HeaderCell>Name</Table.HeaderCell>
+                        <Table.HeaderCell>Email</Table.HeaderCell>
+                        <Table.HeaderCell>Date Submitted</Table.HeaderCell>
+                        <Table.HeaderCell>Status</Table.HeaderCell>
+                        <Table.HeaderCell>Action</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Accordion as={Table.Body} fluid styled>
+                    <this.list />
+                </Accordion>
+                <Table.Footer>
+                    <Table.Row>
+                        <Table.HeaderCell colSpan='6'>
+                            <Button floated='right' primary onClick={this.onUpdateAll}>Update All</Button>
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Footer>
+            </Table>
         )
     }
+}
+
+ApplicationListComponent.defaultProps = {
+    data: []
 }
