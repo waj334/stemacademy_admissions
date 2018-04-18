@@ -55,3 +55,7 @@ export function login(creds) {
         });
     }
 }
+
+export function logout() {
+    localStorage.setItem('token', '');
+}

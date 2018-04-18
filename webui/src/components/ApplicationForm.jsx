@@ -80,7 +80,8 @@ class ApplicationForm extends Component {
 
 ApplicationForm.defaultProps = {
     readOnly: false,
-    disableButton: false
+    disableButton: false,
+    disableMessage: false,
 }
 
 export default ApplicationForm;

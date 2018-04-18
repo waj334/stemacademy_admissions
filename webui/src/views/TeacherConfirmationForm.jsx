@@ -20,10 +20,10 @@ class TeacherConfirmationForm extends ApplicationForm {
     form() {
         return (
             <div>
-                <Message info>
+                <Message info hidden={this.props.disableMessage}>
                     Click above to return to any previous section.
                 </Message>
-                <Header dividing>Your Personal Information</Header>
+                <Header dividing>Personal Information</Header>
                 <PersonalInfoForm id={0} data={this.props.data} disableButton readOnly={true} />
                 <Header dividing>Emergency Contact</Header>
                 <ContactInfoForm id={1} data={this.props.data} count={this.props.count} disableButton readOnly={true} />

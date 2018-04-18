@@ -6,6 +6,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+	"github.com/lib/pq"
 	"github.com/sony/sonyflake"
 )
 
@@ -68,12 +69,27 @@ func APIGetApplication(ctx echo.Context) error {
 	if err == nil {
 		app, err := database.GetApplication(data.ID)
 
-		if err == nil {
-			return ctx.JSON(http.StatusOK, app)
+		if err != nil {
+			ctx.Logger().Error(err)
+
+			switch err.(type) {
+			case *pq.Error:
+				return ctx.JSON(http.StatusInternalServerError, map[string]string{
+					"error": "Unexpected database error.",
+				})
+			default:
+				return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+					"error": "Unexpected database column.",
+				})
+			}
 		}
+
+		return ctx.JSON(http.StatusOK, app)
 	}
 
-	return err
+	return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+		"error": "Unexpected invalid input data.",
+	})
 }
 
 //APIUpdateApplicationStatus Update the status of a list of Applications

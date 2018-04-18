@@ -70,7 +70,6 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			gender				integer	not null,
 			ethnicity			integer	not null,
 			citizenship			integer not null,
-			phone_no			text,
 			contact_fname		text 	not null,
 			contact_lname		text 	not null,
 			contact_phone_no	text 	not null,

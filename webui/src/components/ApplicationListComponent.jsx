@@ -74,6 +74,7 @@ export default class ApplicationListComponent extends Component {
         }
 
         this.title = this.title.bind(this);
+        this.form = this.form.bind(this);
         this.content = this.content.bind(this);
         this.list = this.list.bind(this);
         this.onClick = this.onClick.bind(this);
@@ -97,6 +98,17 @@ export default class ApplicationListComponent extends Component {
             ]
     }
 
+    form(props) {
+        switch (props.type) {
+            case 0:
+                return <StudentConfirmationForm data={this.props.appData.data} disableButton disableMessage />
+            case 1:
+                return <TeachConfirmationForm data={this.props.appData.data} disableButton disableMessage />
+            default:
+                return <div />
+        } 
+    }
+
     content(props) {
         //Display body when done loading
         if (this.props.appData !== undefined) {
@@ -104,7 +116,7 @@ export default class ApplicationListComponent extends Component {
                 return (
                     <Accordion.Content style={{backgroundColor:'#FFFFFF'}} as={Table.Row} active={props.index === this.state.activeIndex} index={props.index} style={{display:props.index === this.state.activeIndex ? 'table-row':'none'}}>
                         <Table.Cell colspan="6">
-                            <StudentConfirmationForm data={this.props.appData.data} disableButton/>
+                            <this.form type={props.type} />
                         </Table.Cell>
                     </Accordion.Content>
                 )
@@ -134,7 +146,7 @@ export default class ApplicationListComponent extends Component {
                 <Accordion.Title key={i} as={Table.Row} active={i === this.state.activeIndex} index={i} onClick={this.onClick}>
                     <this.title id={v.id} type={v.type} fname={v.fname} lname={v.lname} email={v.email} date={v.date} status={v.status} />
                 </Accordion.Title>,
-                <this.content index={i} id={v.id} />
+                <this.content index={i} id={v.id} type={v.type} />
             ]
         }, this)
     }
@@ -145,7 +157,9 @@ export default class ApplicationListComponent extends Component {
             const { activeIndex } = this.state;
             const newIndex = activeIndex === index ? -1 : index;
 
-            this.props.getApp(newIndex);
+            if (newIndex != -1) {
+                this.props.getApp(this.props.data[newIndex].id);
+            }
 
             this.setState({
                 activeIndex: newIndex

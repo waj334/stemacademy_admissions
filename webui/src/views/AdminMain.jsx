@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
+import { withRouter } from 'react-router';
 import { connect} from 'react-redux';
-import {Sidebar, Menu, Icon, Segment, Header, Grid, Container} from 'semantic-ui-react';
+import { Route, Link, Switch } from 'react-router-dom';
+import {Sidebar, Menu, Icon, Segment, Header, Grid, Container, Divider } from 'semantic-ui-react';
 
 import ApplicationListComponent from '../components/ApplicationListComponent.jsx';
 import UserListComponent from '../components/UserListComponent.jsx';
@@ -23,6 +25,7 @@ function mapDispatchToProps(dispatch, props) {
     }
 }
 
+@withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 class AdminMain extends Component {
     constructor(props) {
@@ -31,6 +34,10 @@ class AdminMain extends Component {
         this.AppList = this.AppList.bind(this);
         this.UpdateApp = this.UpdateApp.bind(this);
         this.GetApp = this.GetApp.bind(this);
+
+        this.AppView = this.AppView.bind(this);
+        this.RosterView = this.RosterView.bind(this);
+        this.UserView = this.UserView.bind(this);
     }
 
     AppList() {
@@ -53,6 +60,31 @@ class AdminMain extends Component {
         this.props.apiCall("2", API.GetApplicationData, id)
     }
 
+    AppView() {
+        return (
+            <div>
+                <Header dividing>Applications</Header>
+                <this.AppList />
+            </div>
+        )
+    }
+
+    RosterView() {
+        return (
+            <div>
+                Roster View
+            </div>
+        )
+    }
+
+    UserView() {
+        return (
+            <div>
+                User AppView
+            </div>
+        )
+    }
+    
     componentDidMount() {
         this.props.apiCall("0", API.GetApplicationList, null)
     }
@@ -62,19 +94,27 @@ class AdminMain extends Component {
                 <Sidebar.Pushable as={Segment} fluid>
 
                     <Sidebar as={Menu} visible={true} animation='push' vertical inverted width='thin' icon='labeled'>
-                        <Menu.Item name='home'>
-                            <Icon name='home'/>
-                            Home
-                        </Menu.Item>
-                        <Menu.Item name='Registration'>
-                            Registration
-                        </Menu.Item>
-                        <Menu.Item name='Roster'>
-                            Roster
-                        </Menu.Item>
-                        <Menu.Item name='settings'>
-                            Settings
-                        </Menu.Item>
+                        <Link to={this.props.match.url}>
+                            <Menu.Item name='apps'>
+                                <Icon name='wordpress forms'/>
+                                Applications
+                            </Menu.Item>
+                        </Link>
+                        <Divider/>
+                        <Link to={this.props.match.url+'/roster'}>
+                            <Menu.Item name='roster'>
+                                <Icon name='users' />
+                                Roster
+                            </Menu.Item>
+                        </Link>
+                        <Divider/>
+                        <Link to={this.props.match.url+'/users'}>
+                            <Menu.Item name='users'>
+                                <Icon name='user' />
+                                Users
+                            </Menu.Item>
+                        </Link>
+                        <Divider/>
                         <Menu.Item name='logout'>
                             <Icon name='sign out'/>
                             Logout
@@ -83,8 +123,11 @@ class AdminMain extends Component {
                     <Sidebar.Pusher>
                             <Segment.Group style={{minHeight:"100vh", marginRight: 150}}>
                                 <Segment padded loading={this.props.isFetchingAppData}>
-                                    <Header dividing>Applications</Header>
-                                    <this.AppList />
+                                    <Switch>
+                                        <Route exact path={this.props.match.url+'/roster'} component={this.RosterView} />
+                                        <Route exact path={this.props.match.url+'/users'} component={this.UserView} />
+                                        <Route exact path={this.props.match.url+'/'} component={this.AppView} />
+                                    </Switch>
                                 </Segment>
                             </Segment.Group>
                     </Sidebar.Pusher>
