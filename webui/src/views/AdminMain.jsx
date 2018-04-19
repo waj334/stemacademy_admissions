@@ -31,6 +31,10 @@ class AdminMain extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            activeView: 'apps'
+        }
+
         this.AppList = this.AppList.bind(this);
         this.UpdateApp = this.UpdateApp.bind(this);
         this.GetApp = this.GetApp.bind(this);
@@ -38,6 +42,9 @@ class AdminMain extends Component {
         this.AppView = this.AppView.bind(this);
         this.RosterView = this.RosterView.bind(this);
         this.UserView = this.UserView.bind(this);
+        this.View = this.View.bind(this);
+
+        this.onSelectView = this.onSelectView.bind(this);
     }
 
     AppList() {
@@ -84,6 +91,25 @@ class AdminMain extends Component {
             </div>
         )
     }
+
+    View() {
+        switch (this.state.activeView) {
+            case 'apps':
+                return (<this.AppView />)
+            case 'roster':
+                return (<this.RosterView />)
+            case 'users':
+                return (<this.UserView />)
+            default:
+                return <div />
+        }
+    }
+
+    onSelectView(e, { name }) {
+        this.setState({
+            activeView: name
+        })
+    }
     
     componentDidMount() {
         this.props.apiCall("0", API.GetApplicationList, null)
@@ -94,27 +120,20 @@ class AdminMain extends Component {
                 <Sidebar.Pushable as={Segment} fluid>
 
                     <Sidebar as={Menu} visible={true} animation='push' vertical inverted width='thin' icon='labeled'>
-                        <Link to={this.props.match.url}>
-                            <Menu.Item name='apps'>
-                                <Icon name='wordpress forms'/>
-                                Applications
-                            </Menu.Item>
-                        </Link>
-                        <Divider/>
-                        <Link to={this.props.match.url+'/roster'}>
-                            <Menu.Item name='roster'>
-                                <Icon name='users' />
-                                Roster
-                            </Menu.Item>
-                        </Link>
-                        <Divider/>
-                        <Link to={this.props.match.url+'/users'}>
-                            <Menu.Item name='users'>
-                                <Icon name='user' />
-                                Users
-                            </Menu.Item>
-                        </Link>
-                        <Divider/>
+                        <Menu.Item name='apps' active={this.state.activeView === 'apps'} onClick={this.onSelectView} >
+                            <Icon name='wordpress forms'/>
+                            Applications
+                        </Menu.Item>
+
+                        <Menu.Item name='roster' active={this.state.activeView === 'roster'} onClick={this.onSelectView} >
+                            <Icon name='users' />
+                            Roster
+                        </Menu.Item>
+
+                        <Menu.Item name='users' active={this.state.activeView === 'users'} onClick={this.onSelectView} >
+                            <Icon name='user' />
+                            Users
+                        </Menu.Item>
                         <Menu.Item name='logout'>
                             <Icon name='sign out'/>
                             Logout
@@ -124,9 +143,7 @@ class AdminMain extends Component {
                             <Segment.Group style={{minHeight:"100vh", marginRight: 150}}>
                                 <Segment padded loading={this.props.isFetchingAppData}>
                                     <Switch>
-                                        <Route exact path={this.props.match.url+'/roster'} component={this.RosterView} />
-                                        <Route exact path={this.props.match.url+'/users'} component={this.UserView} />
-                                        <Route exact path={this.props.match.url+'/'} component={this.AppView} />
+                                        <this.View />
                                     </Switch>
                                 </Segment>
                             </Segment.Group>
