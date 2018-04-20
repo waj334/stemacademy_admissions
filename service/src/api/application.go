@@ -47,6 +47,17 @@ type ApplicationMinimal struct {
 	Status          string    `json:"status" db:"status"`
 }
 
+//RosterEntry Structure used for roster
+type RosterEntry struct {
+	ID              string `json:"id" db:"id"`
+	FName           string `json:"fname" db:"fname"`
+	LName           string `json:"lname" db:"lname"`
+	Email           string `json:"email" db:"email"`
+	ApplicationType int    `json:"type" db:"type"`
+	GroupName       string `json:"group_name" db:"group_name"`
+	Room            string `json:"room" db:"room"`
+}
+
 //UpdateStatus Updates the application status
 func (app *Application) UpdateStatus(status string) {
 	app.Status = status

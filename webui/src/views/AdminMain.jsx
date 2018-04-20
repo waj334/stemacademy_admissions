@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router';
 import { connect} from 'react-redux';
 import { Route, Link, Switch } from 'react-router-dom';
-import {Sidebar, Menu, Icon, Segment, Header, Grid, Container, Divider } from 'semantic-ui-react';
+import { Sidebar, Menu, Icon, Segment, Header, Grid, Container, Divider, Loader } from 'semantic-ui-react';
 
 import ApplicationListComponent from '../components/ApplicationListComponent.jsx';
 import UserListComponent from '../components/UserListComponent.jsx';
+import RosterComponent from '../components/RosterComponent.jsx';
 
 import * as API from '../api/Api.jsx';
 import * as ApiActions from '../actions/ApiActions.jsx';
@@ -77,11 +78,19 @@ class AdminMain extends Component {
     }
 
     RosterView() {
-        return (
-            <div>
-                Roster View
-            </div>
-        )
+        if (this.props.apiData['3'] !== undefined) {
+            if (this.props.apiData['3'].state === 'success') {
+                return (
+                    <div>
+                        <RosterComponent data={this.props.apiData['3'].data} />
+                    </div>
+                )
+            }
+        } else {
+            this.props.apiCall('3', API.GetRoster, null);
+        }
+
+        return <Loader active />
     }
 
     UserView() {
@@ -106,6 +115,7 @@ class AdminMain extends Component {
     }
 
     onSelectView(e, { name }) {
+        this.props.apiCall('3', API.GetRoster, null);
         this.setState({
             activeView: name
         })

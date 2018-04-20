@@ -94,6 +94,14 @@ var routes = RouteArray{
 		MiddlewareList{},
 		APIUpdateApplicationStatus,
 	},
+	{
+		"Roster List",
+		"/roster/list",
+		"GET",
+		"admin",
+		MiddlewareList{},
+		APIGetRoster,
+	},
 }
 
 //InitAPI Initialize the API router
@@ -126,7 +134,7 @@ func InitAPI(config *Configuration) (*echo.Echo, error) {
 
 	//Create groups
 	//TODO: Use signing certificate to sign JWT
-	ga := e.Group("/admin", jwtMW /*, MiddleWareAdminCheck*/) //Requires admin rights
+	ga := e.Group("/admin", jwtMW, MiddleWareAdminCheck) //Requires admin rights
 	gu := e.Group("/user", jwtMW)
 
 	for _, route := range routes {

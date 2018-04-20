@@ -54,6 +54,7 @@ func APIGetApplicationList(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, list)
 	}
 
+	ctx.Logger().Error(err)
 	return err
 }
 
@@ -120,4 +121,17 @@ func APIUpdateApplicationStatus(ctx echo.Context) error {
 	}
 
 	return ctx.NoContent(http.StatusOK)
+}
+
+//APIGetRoster Get room assignments for applicants
+func APIGetRoster(ctx echo.Context) error {
+	roster, err := database.GetRoster()
+
+	if err == nil {
+		return ctx.JSON(http.StatusOK, roster)
+	}
+
+	ctx.Logger().Error(err)
+	return err
+
 }

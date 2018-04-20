@@ -48,10 +48,12 @@ export function login(creds) {
         .then(data => {
             //Extract token
             const token = data.token;
+            const type = parseInt(data.type);
 
             //Store JWT
-            dispatch(receiveLogin(history.history))
             localStorage.setItem('token', token);
+            localStorage.setItem('account-type', type);
+            dispatch(receiveLogin(history.history))
         });
     }
 }

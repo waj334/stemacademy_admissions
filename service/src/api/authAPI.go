@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -15,7 +16,7 @@ func APIAuthenticateUser(ctx echo.Context) (err error) {
 	}
 
 	//Attempt authentication
-	token, err := AuthenticateUser(authInfo.Username, authInfo.Password)
+	token, ty, err := AuthenticateUser(authInfo.Username, authInfo.Password)
 
 	if err != nil {
 		switch e := err.(type) {
@@ -37,6 +38,7 @@ func APIAuthenticateUser(ctx echo.Context) (err error) {
 	if err == nil {
 		return ctx.JSON(http.StatusOK, map[string]string{
 			"token": signedToken,
+			"type":  fmt.Sprint(ty),
 		})
 	}
 

@@ -233,15 +233,15 @@ func (db *Database) UpdateApplication(id string, column string, val string) erro
 }
 
 //GetApplicationList Gets minimal infomation about all applications in database
-func (db *Database) GetApplicationList() ([]ApplicationMinimal, *pq.Error) {
+func (db *Database) GetApplicationList() ([]ApplicationMinimal, error) {
 	list := []ApplicationMinimal{}
 	err := db.db.Select(&list,
 		`SELECT users.fname, users.lname, users.email, users.type, application.date, application.id, application.status
 		FROM users
-		INNER JOIN application ON users.email = application.user_id;`)
+		INNER JOIN application ON users.email = application.user_id`)
 
 	if err != nil {
-		return nil, err.(*pq.Error)
+		return nil, err
 	}
 
 	return list, nil
@@ -267,4 +267,21 @@ func (db *Database) InsertFile(owner string, appID string, id string) error {
 		`, id, appID, owner)
 
 	return err
+}
+
+//GetRoster Gets room assignments for applicants
+func (db *Database) GetRoster() ([]RosterEntry, error) {
+	list := []RosterEntry{}
+	err := db.db.Select(&list,
+		`SELECT users.fname, users.lname, users.email, users.type, application.id, application.room, application.group_name
+		FROM users
+		INNER JOIN application ON users.email = application.user_id
+		WHERE application.status='accepted'
+		ORDER BY users.lname, users.fname ASC`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }

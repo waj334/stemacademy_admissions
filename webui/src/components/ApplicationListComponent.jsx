@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import TableHeader, { Segment, Accordion, Table, Button, Select, Loader, Header } from 'semantic-ui-react';
+import TableHeader, { Segment, Accordion, Table, Button, Select, Loader, Header, Form } from 'semantic-ui-react';
 import StudentConfirmationForm from '../views/StudentConfirmationForm.jsx';
 import TeachConfirmationForm from '../views/TeacherConfirmationForm.jsx';
 
@@ -141,6 +141,17 @@ export default class ApplicationListComponent extends Component {
     }
 
     list() {
+        if (this.props.data.length === 0) {
+            return (
+                <Table.Row>
+                    <Table.Cell colspan='3'>
+                        <Container textAlign='center'>
+                            <Header>Empty</Header>
+                        </Container>
+                    </Table.Cell>
+                </Table.Row>
+            )
+        }
         return this.props.data.map( (v, i) => {
             return [ 
                 <Accordion.Title key={i} as={Table.Row} active={i === this.state.activeIndex} index={i} onClick={this.onClick}>

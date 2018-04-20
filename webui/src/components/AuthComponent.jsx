@@ -38,7 +38,16 @@ export default class AuthComponent extends Component {
         if (!this.props.isAuthenticated) {
             return <LoginView />
         } else {
-            return <this.props.view {...this.props} history={history} />
+            if (localStorage.getItem('account-type') >= this.props.accessLevel) {
+                return <this.props.view {...this.props} history={history} />
+            }
         }
+
+        history.back();
+        return <div /> //Goto 403 page
     }
+}
+
+AuthComponent.defaultProps = {
+    'accessLevel': 2
 }

@@ -18,7 +18,7 @@ type UserJWTClaims struct {
 }
 
 //AuthenticateUser Authenticates user login info and returns jwt
-func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
+func AuthenticateUser(user string, pwd string) (*jwt.Token, int, error) {
 	//Get information about this user
 	userinfo, err := database.GetUserInfo(user)
 
@@ -27,7 +27,7 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 		if bcrypt.CompareHashAndPassword([]byte(userinfo.Password), []byte(pwd)) == nil {
 			//Check if user has been verified
 			if !userinfo.Verified {
-				return nil, &ErrAuthUserNotVerified{
+				return nil, -1, &ErrAuthUserNotVerified{
 					"User has not been verfied",
 				}
 			}
@@ -43,17 +43,17 @@ func AuthenticateUser(user string, pwd string) (*jwt.Token, error) {
 			}
 
 			//Generate and return JWT
-			return jwt.NewWithClaims(jwt.SigningMethodHS256, claims), nil
+			return jwt.NewWithClaims(jwt.SigningMethodHS256, claims), userinfo.Type, nil
 		}
 
 		//Password was incorrect
-		return nil, &ErrAuthInvalidPassword{
+		return nil, -1, &ErrAuthInvalidPassword{
 			"Invalid Login. Check your username/password and try again.",
 		}
 	}
 
 	//Username does not exist
-	return nil, err
+	return nil, -1, err
 }
 
 //ReadPasswd Read the password file

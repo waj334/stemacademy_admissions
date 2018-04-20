@@ -33,7 +33,7 @@ class App extends Component {
         <Switch>
           <Route path='/admin/login' history={history} component={LoginView} />
           <Route path ='/admin/main'  render={() =><AuthComponent view={AdminMain} /> } />
-          <Route path='/app/student' history={history} render={() =><AuthComponent view={StudentApplication} /> } />
+          <Route path='/app/student' history={history} render={() =><AuthComponent accessLevel={0} view={StudentApplication} /> } />
           <Route path='/app/teacher' component={TeacherApplication} />
           <Route path='/signup' component={SignupView} />
           <Route path='/' component={FrontPageView} />

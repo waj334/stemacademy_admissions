@@ -138,3 +138,17 @@ export function GetApplicationData(id) {
     .then(checkStatus)
     .then(resp => resp.json());
 }
+
+export function GetRoster() {
+    var url = Url('/admin/roster/list');
+
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        }
+    })
+    .then(checkStatus)
+    .then(resp => resp.json());
+}
