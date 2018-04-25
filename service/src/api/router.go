@@ -102,6 +102,30 @@ var routes = RouteArray{
 		MiddlewareList{},
 		APIGetRoster,
 	},
+	{
+		"Set Assignment",
+		"/app/assign",
+		"POST",
+		"admin",
+		MiddlewareList{},
+		APISetAssignment,
+	},
+	{
+		"Request Password Reset",
+		"/user/reset/request",
+		"POST",
+		"",
+		MiddlewareList{},
+		APIRequestPasswordReset,
+	},
+	{
+		"Reset Password",
+		"/user/reset",
+		"POST",
+		"",
+		MiddlewareList{},
+		APIResetUserPassword,
+	},
 }
 
 //InitAPI Initialize the API router

@@ -152,3 +152,52 @@ export function GetRoster() {
     .then(checkStatus)
     .then(resp => resp.json());
 }
+
+export function postAssignments(list) {
+    var url = Url('/admin/app/assign');
+    var payload = JSON.stringify(list)
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
+    })
+    .then(checkStatus)
+}
+
+export function DeleteUser(email) {
+    var url = Url('/admin/user/delete');
+    var payload = JSON.stringify({
+        email: email
+    })
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
+    })
+    .then(checkStatus)
+}
+
+export function ResetPassword(email) {
+    var url = Url('/admin/user/reset');
+    var payload = JSON.stringify({
+        email: email
+    })
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
+    })
+    .then(checkStatus)
+}

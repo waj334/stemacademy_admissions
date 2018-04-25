@@ -39,6 +39,7 @@ class AdminMain extends Component {
         this.AppList = this.AppList.bind(this);
         this.UpdateApp = this.UpdateApp.bind(this);
         this.GetApp = this.GetApp.bind(this);
+        this.UpdateAssignments = this.UpdateAssignments.bind(this);
 
         this.AppView = this.AppView.bind(this);
         this.RosterView = this.RosterView.bind(this);
@@ -46,6 +47,8 @@ class AdminMain extends Component {
         this.View = this.View.bind(this);
 
         this.onSelectView = this.onSelectView.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+        this.onReset = this.onReset.bind(this);
     }
 
     AppList() {
@@ -61,17 +64,22 @@ class AdminMain extends Component {
     UpdateApp(list) {
         this.props.apiCall("1", API.UpdateApplicationStatus, list, (data) => {
             this.props.apiCall("0", API.GetApplicationList, null)
-        })
+        });
     }
 
     GetApp(id) {
-        this.props.apiCall("2", API.GetApplicationData, id)
+        this.props.apiCall("2", API.GetApplicationData, id);
+    }
+
+    UpdateAssignments(list) {
+        this.props.apiCall('4', API.postAssignments, list, (data) => {
+            this.props.apiCall('3', API.GetRoster, null);
+        });
     }
 
     AppView() {
         return (
             <div>
-                <Header dividing>Applications</Header>
                 <this.AppList />
             </div>
         )
@@ -82,7 +90,7 @@ class AdminMain extends Component {
             if (this.props.apiData['3'].state === 'success') {
                 return (
                     <div>
-                        <RosterComponent data={this.props.apiData['3'].data} />
+                        <RosterComponent data={this.props.apiData['3'].data} onUpdate={this.UpdateAssignments}/>
                     </div>
                 )
             }
@@ -94,21 +102,44 @@ class AdminMain extends Component {
     }
 
     UserView() {
-        return (
-            <div>
-                User AppView
-            </div>
-        )
+        if (this.props.apiData['5'] !== undefined) {
+            if (this.props.apiData['5'].state === 'success') {
+                return (
+                    <div>
+                        <UserListComponent data={this.props.apiData['5'].data} onDelete={this.onDelete} onReset={this.onReset}/>
+                    </div>
+                )
+            }
+        } else {
+            this.props.apiCall('5', API.GetUsers, -1);
+        }
+
+        return <Loader active />
     }
 
     View() {
         switch (this.state.activeView) {
             case 'apps':
-                return (<this.AppView />)
+                return (
+                <div>
+                    <Header dividing>Applications</Header>
+                    <this.AppView />
+                </div>
+                )
             case 'roster':
-                return (<this.RosterView />)
+                return (
+                <div>
+                    <Header dividing>Roster</Header>
+                    <this.RosterView />
+                </div>
+            )
             case 'users':
-                return (<this.UserView />)
+                return (
+                <div>
+                    <Header dividing>Users</Header>
+                    <this.UserView />
+                </div>
+            )
             default:
                 return <div />
         }
@@ -119,6 +150,14 @@ class AdminMain extends Component {
         this.setState({
             activeView: name
         })
+    }
+
+    onDelete(email) {
+        this.props.apiCall('6', API.DeleteUser, email);
+    }
+
+    onReset(email) {
+        this.props.apiCall('7', API.ResetPassword, email);
     }
     
     componentDidMount() {

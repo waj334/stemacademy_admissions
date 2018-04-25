@@ -138,7 +138,9 @@ export default class SignupForm extends Component {
                             <this.error name='fname' message='Empty or invalid name entered!' />
                             <Form.Input name='lname' placeholder='Doe' label ='Last Name' onChange={this.onChange} error={this.state.invalid.indexOf('lname') != -1} />
                             <this.error name='lname' message='Empty or invalid name entered!' />
+                            {this.props.admin ? <div />:                        
                             <Form.Select name='teacher' options={opts} label='Are you a teacher?' onChange={this.onChange} />
+                            }
                             <Form.Input name='email' placeholder='email@example.com' label='Email' onChange={this.onChange} error={this.state.invalid.indexOf('email') != -1} />
                             <this.error name='email' message='Empty or invalid email entered!' />
                             <Form.Input name='phone_no' placeholder='(123) 456-9123' label='Phone Number' onChange={this.onChange} error={this.state.invalid.indexOf('phone_no') != -1} />
@@ -148,27 +150,40 @@ export default class SignupForm extends Component {
                             <Form.Input name='cpassword' placeholder='Confirm Password' label='Confirm Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('cpassword') != -1} />
                             <this.error name='cpassword' message='Passwords do not match!' />
                             
+                            {this.props.admin ? <div />: <div>
                             <Divider dividing> Please check the box below </Divider>
                             <ReCAPTCHA ref='recaptcha' sitekey='6Lc7XlEUAAAAAEL3vtJka2Uxhs_AzUEyaX7UlfFM' onChange={this.onRecaptcha} />
                             <Divider dividing />
+                            </div>
+                            }
                             
-                            <Form.Button disabled={this.state.recaptcha == null}>Sign Up</Form.Button>
+                            <Form.Button disabled={admin ? false:this.state.recaptcha == null}>Sign Up</Form.Button>
                         </Segment>
                     </Form>
                 </div>
             )
         else
-            return (
-                <Container textAlign='center'>
-                    <Segment basic>
-                        <Header textAlign='center' size='huge'>Email verification sent.</Header>
-                    </Segment>
-                    <Segment basic>
-                        <Icon name='check' size='huge' />
-                    </Segment>
-                    <Segment basic>
-                        <Header textAlign='center' size='huge'>You will be contacted shortly!</Header>
-                    </Segment>
-                </Container>
-            )}
+            if (!this.props.admin)
+                return (
+                    <Container textAlign='center'>
+                        <Segment basic>
+                            <Header textAlign='center' size='huge'>Email verification sent.</Header>
+                        </Segment>
+                        <Segment basic>
+                            <Icon name='check' size='huge' />
+                        </Segment>
+                        <Segment basic>
+                            <Header textAlign='center' size='huge'>You will be contacted shortly!</Header>
+                        </Segment>
+                    </Container>
+                )
+            else
+                return (
+                    <div />
+                )
+    }
+}
+
+SignupForm.defaultProps = {
+    admin: false
 }

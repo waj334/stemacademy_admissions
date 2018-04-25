@@ -113,9 +113,13 @@ func (db *Database) CreateUserTable() *pq.Error {
 			email		text	not null,
 			phone_no	text	not null,
 			hash		text	not null,
+			reset_token text,
+			verify_token text,
 			primary key(email),
 			unique(email),
-			unique(hash)
+			unique(hash),
+			unique(reset_token),
+			unique(verify_token)
 		)`)
 
 	if err != nil {
@@ -149,7 +153,18 @@ func (db *Database) AddUser(user *User) error {
 		VALUES (:email, :phone_no, :fname, :lname, :hash, :type, FALSE)`, user)
 
 	if err != nil {
-		return err.(*pq.Error)
+		return err
+	}
+
+	return nil
+}
+
+//RemoveUser Remove user from database
+func (db *Database) RemoveUser(email string) error {
+	_, err := db.db.Exec(`DELETE FROM users where email=$1 CASCADE`, email)
+
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -171,16 +186,24 @@ func (db *Database) GetUserInfo(user string) (*User, error) {
 //GetUsers Gets all user of type (Type)
 func (db *Database) GetUsers(Type int) ([]User, error) {
 	users := []User{}
-	err := db.db.Select(&users, `SELECT * FROM users WHERE type=$1`, Type)
+	var err error
+
+	if Type == -1 {
+		err = db.db.Select(&users, `SELECT * FROM users
+			ORDER BY users.lname, users.fname, users.type DESC`)
+	} else {
+		err = db.db.Select(&users, `SELECT * FROM users WHERE type=$1
+			ORDER BY users.lname, users.fname, users.type DESC`, Type)
+	}
 
 	if err != nil {
-		return nil, err.(*pq.Error)
+		return nil, err
 	}
 
 	return users, nil
 }
 
-//ChangeUserApprovalStatus Changes user type
+//ChangeUserVerifiedStatus Changes user verifiaction status
 func (db *Database) ChangeUserVerifiedStatus(user string, approved bool) error {
 	_, err := db.db.Exec(
 		`UPDATE users
@@ -284,4 +307,42 @@ func (db *Database) GetRoster() ([]RosterEntry, error) {
 	}
 
 	return list, nil
+}
+
+//UpdateVerifyToken Updates token used for email verification
+func (db *Database) UpdateVerifyToken(email string, token string) error {
+	_, err := db.db.Exec(`UPDATE users 
+		SET verify_token=$1
+		WHERE email=$2`, token, email)
+
+	return err
+}
+
+//UpdateResetToken Updates token used for password reset
+func (db *Database) UpdateResetToken(email string, token string) error {
+	_, err := db.db.Exec(`UPDATE users 
+		SET reset_token=$1
+		WHERE email=$2`, token, email)
+
+	return err
+}
+
+//UpdateVerificationByToken Changes verification status to true if token exists in database
+func (db *Database) UpdateVerificationByToken(token string) error {
+	_, err := db.db.Exec(`UPDATE users
+		SET verfied=TRUE,
+		SET verify_token=''
+		WHERE verify_token=$1`, token)
+
+	return err
+}
+
+//UpdatePasswordByToken Changes password if token exists in database
+func (db *Database) UpdatePasswordByToken(token string, hash string) error {
+	_, err := db.db.Exec(`UPDATE users
+		SET hash=$1,
+		SET reset_token=''
+		WHERE reset_token=$1`, hash, token)
+
+	return err
 }

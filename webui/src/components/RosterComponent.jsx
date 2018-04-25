@@ -7,11 +7,38 @@ export default class RosterComponent extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            data: props.data
+        }
+
+        this.onChange = this.onChange.bind(this);
+        this.onUpdate = this. onUpdate.bind(this);
         this.content = this.content.bind(this);
     }
 
+    onChange(e, {name, value}) {
+        var id = name.slice(1);
+        var index =  this.state.data.findIndex((e) => {
+            return e.id === id
+        })
+
+        if (index != -1) {
+            if (name[0] === 'g') {
+                this.state.data[index].group_name = value;
+            } else {
+                this.state.data[index].room = value;
+            }
+        }
+
+        this.setState(this.state);
+    }
+
+    onUpdate() {
+        this.props.onUpdate(this.state.data);
+    }
+
     content() {
-        if (this.props.data.length === 0) {
+        if (this.state.data.length === 0) {
             return (
                 <Table.Row>
                     <Table.Cell colspan='3'>
@@ -22,17 +49,17 @@ export default class RosterComponent extends Component {
                 </Table.Row>
             )
         }
-        return this.props.data.map( (v, i) => {
+        return this.state.data.map( (v, i) => {
             return [
                 <Table.Row>
                     <Table.Cell>
                         {v.lname+', '+v.fname}
                     </Table.Cell>
                     <Table.Cell>
-                        <Input name={'g'+v.id} value={v.group_name} />
+                        <Input name={'g'+v.id} value={v.group_name} onChange={this.onChange} />
                     </Table.Cell>
                     <Table.Cell>
-                        <Input name={'r'+v.id} value={v.room} />
+                        <Input name={'r'+v.id} value={v.room} onChange={this.onChange} />
                     </Table.Cell>
                 </Table.Row>
             ]
@@ -61,7 +88,7 @@ export default class RosterComponent extends Component {
                 <Table.Footer>
                     <Table.Row>
                         <Table.Cell colspan='3'>
-                            <Button>Update</Button>
+                            <Button onClick={this.onUpdate}>Update</Button>
                         </Table.Cell>
                     </Table.Row>
                 </Table.Footer>

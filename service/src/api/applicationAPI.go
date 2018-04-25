@@ -135,3 +135,37 @@ func APIGetRoster(ctx echo.Context) error {
 	return err
 
 }
+
+//APISetAssignment sets group and room for applicant
+func APISetAssignment(ctx echo.Context) error {
+	type req struct {
+		ID    string `json:"id"`
+		Group string `json:"group_name"`
+		Room  string `json:"room"`
+	}
+
+	assigns := []req{}
+	ctx.Bind(&assigns)
+
+	for _, assign := range assigns {
+		err := database.UpdateApplication(assign.ID, "group_name", assign.Group)
+
+		if err != nil {
+			ctx.Logger().Error(err)
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Unexpected database error.",
+			})
+		}
+
+		database.UpdateApplication(assign.ID, "room", assign.Room)
+
+		if err != nil {
+			ctx.Logger().Error(err)
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Unexpected database error.",
+			})
+		}
+	}
+
+	return ctx.NoContent(http.StatusOK)
+}

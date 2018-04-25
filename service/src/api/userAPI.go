@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
-	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	recaptcha "github.com/dpapathanasiou/go-recaptcha"
 	"github.com/labstack/echo"
+	"github.com/lib/pq"
+	"github.com/sony/sonyflake"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //APICreateUser API call for creating a new user
@@ -72,19 +74,9 @@ func APICreateUser(ctx echo.Context) error {
 	}
 
 	//Send email verification
-	//Generate token using JWT
-	claims := &UserJWTClaims{
-		r.User.Email,
-		r.User.Type,
-		r.User.Verified,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-		},
-	}
-
-	//Generate JWT
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte("supersecure"))
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+	token, _ := flake.NextID()
+	tokenStr := fmt.Sprint(token)
 
 	if err != nil {
 		ctx.Logger().Error(err)
@@ -93,8 +85,11 @@ func APICreateUser(ctx echo.Context) error {
 		})
 	}
 
+	//Set token in users table
+	database.UpdateVerifyToken(r.User.Email, tokenStr)
+
 	buffer := new(bytes.Buffer)
-	VerificationMessage(r.User.Email, config.APIURL, signedToken, buffer)
+	VerificationMessage(r.User.Email, config.APIURL, tokenStr, buffer)
 
 	//Send Email
 	err = SendEmail(r.User.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
@@ -106,7 +101,35 @@ func APICreateUser(ctx echo.Context) error {
 		})
 	}
 
-	return ctx.NoContent(http.StatusAccepted)
+	return ctx.JSON(http.StatusOK, map[string]string{})
+}
+
+//APIRemoveUser API call the removes user from database
+func APIRemoveUser(ctx echo.Context) error {
+	type req struct {
+		Email string `json:"email"`
+	}
+
+	r := &req{}
+	err := ctx.Bind(&r)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+			"error": "Invalid input data received.",
+		})
+	}
+
+	err = database.RemoveUser(r.Email)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unexpected database error",
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{})
 }
 
 //APIGetUsers Get users from database
@@ -146,38 +169,131 @@ func APIGetUsers(ctx echo.Context) error {
 //APIVerifyUser Verifies the user associated wit the token param value
 func APIVerifyUser(ctx echo.Context) error {
 	//Extract info from JWT
-	token, err := jwt.ParseWithClaims(ctx.Param("token"), &UserJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("supersecure"), nil
-	})
+	token := ctx.Param("token")
+
+	//Update verifaction status if token exists
+	err := database.UpdateVerificationByToken(token)
 
 	if err != nil {
 		ctx.Logger().Error(err)
-		return ctx.JSON(http.StatusForbidden, map[string]string{
-			"error": "Invalid token",
-		})
+
+		switch err.(type) {
+		case *pq.Error:
+			return ctx.JSON(http.StatusUnauthorized, map[string]string{
+				"error": "No user associated with the given link.",
+			})
+		default:
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Unexpected error occurred.",
+			})
+		}
 	}
 
-	claims := token.Claims.(*UserJWTClaims)
+	return ctx.JSON(http.StatusOK, map[string]string{})
+}
 
-	//Check database info
-	userInfo, err := database.GetUserInfo(claims.Email)
+//APIRequestPasswordReset Sends password reset link to email if present in database
+func APIRequestPasswordReset(ctx echo.Context) error {
+	type req struct {
+		Email string `json:"email"`
+	}
+
+	r := &req{}
+	err := ctx.Bind(&r)
 
 	if err != nil {
 		ctx.Logger().Error(err)
-		return ctx.JSON(http.StatusForbidden, map[string]string{
-			"error": "Could not verify email",
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+			"error": "Invalid request data.",
 		})
 	}
 
-	//Change verified status
-	err = database.ChangeUserVerifiedStatus(userInfo.Email, true)
+	//Get user info from database
+	user, err := database.GetUserInfo(r.Email)
 
 	if err != nil {
 		ctx.Logger().Error(err)
-		return ctx.JSON(http.StatusForbidden, map[string]string{
-			"error": "Unexpected database error.",
+		return ctx.JSON(http.StatusNotFound, map[string]string{
+			"error": "No user associated with the given email.",
 		})
 	}
 
-	return ctx.Redirect(http.StatusOK, fmt.Sprintf("%s/verificationSuccess", config.ClientURL))
+	//Send email verification
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+	token, _ := flake.NextID()
+	tokenStr := fmt.Sprint(token)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unexpected error occurred. (EMAIL_TOKEN)",
+		})
+	}
+
+	//Set token in users table
+	database.UpdateResetToken(user.Email, tokenStr)
+
+	//Generate reset message
+	buffer := new(bytes.Buffer)
+	ResetMessage(config.APIURL, tokenStr, buffer)
+
+	//Send Email
+	err = SendEmail(user.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unexpected error occurred. (EMAIL_SEND)",
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{})
+}
+
+//APIResetUserPassword Resets password of user associated with the given token
+func APIResetUserPassword(ctx echo.Context) error {
+	type req struct {
+		Token    string `json:"token"`
+		Password string `json:"password"`
+	}
+
+	r := &req{}
+	err := ctx.Bind(&r)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+			"error": "Invalid data received.",
+		})
+	}
+
+	//Hash password
+	hash, err := bcrypt.GenerateFromPassword([]byte(r.Password), 10)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unexpected error occurred",
+		})
+	}
+
+	//Update database if token exists
+	err = database.UpdatePasswordByToken(r.Token, string(hash))
+
+	if err != nil {
+		ctx.Logger().Error(err)
+
+		switch err.(type) {
+		case *pq.Error:
+			return ctx.JSON(http.StatusUnauthorized, map[string]string{
+				"error": "No user associated with the given link.",
+			})
+		default:
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Unexpected error occurred.",
+			})
+		}
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{})
 }

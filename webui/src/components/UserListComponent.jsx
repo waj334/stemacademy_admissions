@@ -1,81 +1,89 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-import { Segment, Button, Table, Loader, Message } from 'semantic-ui-react';
-
-import * as UserListActions from '../actions/UserListActions.jsx';
-
-function mapStateToProps(state, props) {
-    if (props.id in state.userListReducer)
-        return {
-            isFetching: state.userListReducer[props.id].isFetching,
-            isDone: state.userListReducer[props.id].isDone,
-            error: state.userListReducer[props.id].error,
-            data: state.userListReducer[props.id].data
-        }
-    else
-        return {
-            isFetching: true,
-            isDone: false,
-            error: null,
-            data: {}
-        }
-}
-
-function mapDispatchToProps(dispatch, props) {
-    return {
-        getList: (id, type) => dispatch(UserListActions.getUserList(id, type))
-    }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
+import { Segment, Button, Table, Loader, Message, Icon, Modal, Header } from 'semantic-ui-react';
 export default class UserListComponent extends Component {
     constructor(props) {
         super(props)
 
+        this.state = {
+            showDeleteModal: false,
+            showResetModal: false,
+            index: -1
+        }
+
         this.row = this.row.bind(this);
         this.list = this.list.bind(this);
-        this.onClick = this.onClick.bind(this);
-    }
-
-    componentDidMount() {
-        this.props.getList(this.props.id, this.props.type);
+        this.onDelete = this.onDelete.bind(this);
+        this.onReset = this.onReset.bind(this);
     }
 
     row(props) {
+        var icon;
+
+        if (props.type === 0)
+            icon = 'student';
+        else if (props.type === 1)
+            icon = 'book';
+        else
+            icon = 'user';
+
         return (
             <Table.Row>
+                <Table.Cell><Icon name={icon} /></Table.Cell>
                 <Table.Cell>{props.email}</Table.Cell>
                 <Table.Cell>{props.fname}</Table.Cell>
                 <Table.Cell>{props.lname}</Table.Cell>
-                <Table.Cell><Button>Approve</Button></Table.Cell>
+                <Table.Cell>
+                    <Button color='blue' onClick={() => {this.setState({showResetModal:true, index: props.index})}}>Reset Password</Button>
+                    <Button color='red' onClick={() => {this.setState({showDeleteModal:true, index: props.index})}}>Delete</Button>
+                </Table.Cell>
             </Table.Row>
         )
     }
 
     list() {
         return this.props.data.map( (v, i) => {
-            return (
-                <this.row email={v.email} fname={v.fname} lname={v.lname} />
-            )
+            if (v.email !== localStorage.getItem('user-id')) {
+                return (<this.row index={i} email={v.email} fname={v.fname} lname={v.lname} type={v.type}/>)
+            }
         }, this)
     }
 
-    onClick(e, titleProps) {
+    onDelete() {
+        this.props.onDelete(his.props.data[this.state.index].email)
+    }
 
+    onReset() {
+        this.props.onReset(his.props.data[this.state.index].email)
     }
 
     render() {
-        if (this.props.isFetching == true) {
-            return (
-                <Loader active/>
-            )
-        }
-        else if (this.props.isDone) {
-            return (
+        return (
+            <div>
+                <Modal open={this.state.showDeleteModal} onClose={()=>{this.setState({showDeleteModal: false, index: -1})}}>
+                    <Header content='Delete user?' />
+                    <Modal.Content>
+                        <p>This action cannot be undone. All application data associated with this user will be deleted as well.</p>
+                        <p>Do you wish to continue?</p>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button color='red' onClick={()=>{this.setState({showDeleteModal: false, index: -1})}}>No</Button>
+                        <Button color='green' onClick={this.onDelete}>Yes</Button>
+                    </Modal.Actions>
+                </Modal>
+                <Modal open={this.state.showResetModal} onClose={()=>{this.setState({showResetModal: false, index: -1})}}>
+                    <Header content='Reset password?' />
+                    <Modal.Content>
+                        <p>Send this user a password reset link?</p>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button color='red' onClick={()=>{this.setState({showResetModal: false, index: -1})}}>No</Button>
+                        <Button color='green' onClick={this.onReset}>Yes</Button>
+                    </Modal.Actions>
+                </Modal>
                 <Table singleLine basic='very'>
                     <Table.Header>
                         <Table.Row>
+                            <Table.HeaderCell />
                             <Table.HeaderCell>Email</Table.HeaderCell>
                             <Table.HeaderCell>First Name</Table.HeaderCell>
                             <Table.HeaderCell>Last Name</Table.HeaderCell>
@@ -86,10 +94,11 @@ export default class UserListComponent extends Component {
                         <this.list />
                     </Table.Body>
                 </Table>
-            )
-        }
-
-        //There was some error
-        return <Message error content={this.props.error} />
+            </div>
+        )
     }
+}
+
+UserListComponent.defaultProps = {
+    data: []
 }
