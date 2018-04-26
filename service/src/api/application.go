@@ -10,7 +10,7 @@ type Application struct {
 	ApplicationType  string    `json:"type" db:"type"`
 	Date             time.Time `json:"date" db:"date"`
 	Email            string    `json:"email" db:"user_id"`
-	Age              int       `json:"age" db:"age"`
+	DOB              time.Time `json:"dob" db:"dob"`
 	Gender           int       `json:"gender" db:"gender"`
 	Ethnicity        int       `json:"ethnicity" db:"ethnicity"`
 	Citizenship      int       `json:"citizenship" db:"citizenship"`

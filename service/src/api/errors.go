@@ -35,3 +35,12 @@ type ErrAuthUserNotVerified struct {
 func (e *ErrAuthUserNotVerified) Error() string {
 	return e.message
 }
+
+// ErrTokenNotAssociated Token is not associated with any user
+type ErrTokenNotAssociated struct {
+	message string
+}
+
+func (e *ErrTokenNotAssociated) Error() string {
+	return e.message
+}

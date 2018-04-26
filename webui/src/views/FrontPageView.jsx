@@ -7,10 +7,15 @@ export default class FrontPageView extends Component {
     constructor(props) {
         super(props);
         this.onApply = this.onApply.bind(this);
+        this.onLogin = this.onLogin.bind(this);
     }
 
     onApply() {
         this.props.history.push('/signup');
+    }
+
+    onLogin() {
+        this.props.history.push('/app');
     }
 
     render() {
@@ -165,12 +170,20 @@ export default class FrontPageView extends Component {
                                 </Segment.Group>
                             </Segment>
                             <Segment>
-                                <Grid relaxed stretched verticalAlign='middle' style={{height:'100%'}}>
+                                <Grid stretched verticalAlign='middle' style={{height:'100%'}} columns='2'>
                                     <Grid.Row>
                                         <Grid.Column>
+                                            <p>Register to gain access to application</p>
                                             <Button onClick={this.onApply}>
                                                 <Icon fitted name='signup'/>
                                                 Apply now!
+                                            </Button>
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                            <p>Already Registered?</p>
+                                            <Button onClick={this.onLogin}>
+                                                <Icon fitted name='login' />
+                                                Login
                                             </Button>
                                         </Grid.Column>
                                     </Grid.Row>

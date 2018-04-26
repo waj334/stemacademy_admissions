@@ -168,17 +168,28 @@ func APIGetUsers(ctx echo.Context) error {
 
 //APIVerifyUser Verifies the user associated wit the token param value
 func APIVerifyUser(ctx echo.Context) error {
-	//Extract info from JWT
-	token := ctx.Param("token")
+	type req struct {
+		Token string `json:"token"`
+	}
+
+	r := &req{}
+	err := ctx.Bind(&r)
+
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.JSON(http.StatusUnprocessableEntity, map[string]string{
+			"error": "Invalid request data.",
+		})
+	}
 
 	//Update verifaction status if token exists
-	err := database.UpdateVerificationByToken(token)
+	err = database.UpdateVerificationByToken(r.Token)
 
 	if err != nil {
 		ctx.Logger().Error(err)
 
 		switch err.(type) {
-		case *pq.Error:
+		case *ErrTokenNotAssociated:
 			return ctx.JSON(http.StatusUnauthorized, map[string]string{
 				"error": "No user associated with the given link.",
 			})

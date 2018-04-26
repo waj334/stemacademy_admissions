@@ -43,7 +43,9 @@ func APISubmitApplication(ctx echo.Context) error {
 	}
 
 	//Application processed ok
-	return ctx.String(http.StatusOK, "{}")
+	return ctx.JSON(http.StatusOK, map[string]string{
+		"appId": app.ID,
+	})
 }
 
 //APIGetApplicationList API call that gets basic information on all applications in the database

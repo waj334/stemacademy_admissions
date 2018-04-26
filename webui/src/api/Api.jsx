@@ -165,7 +165,7 @@ export function postAssignments(list) {
         },
         body: payload
     })
-    .then(checkStatus)
+    .then(checkStatus);
 }
 
 export function DeleteUser(email) {
@@ -182,11 +182,28 @@ export function DeleteUser(email) {
         },
         body: payload
     })
-    .then(checkStatus)
+    .then(checkStatus);
 }
 
-export function ResetPassword(email) {
-    var url = Url('/admin/user/reset');
+export function VerifyUser(token) {
+    var url = Url('/user/verify');
+    var payload = JSON.stringify({
+        token: token
+    });
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
+    })
+    .then(checkStatus);
+}
+
+export function RequestPasswordReset(email) {
+    var url = Url('/user/reset/request');
     var payload = JSON.stringify({
         email: email
     })
@@ -195,6 +212,41 @@ export function ResetPassword(email) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
+    })
+    .then(checkStatus)
+}
+
+export function ResetPassword(token, password) {
+    var url = Url('/user/reset');
+    var payload = JSON.stringify({
+        token: token,
+        password: password
+    })
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader()
+        },
+        body: payload
+    })
+    .then(checkStatus)
+}
+
+export function UploadAppAttachment(file, appId) {
+    var url = Url('/user/app/upload');
+    var payload = new FormData();
+    payload.append('file', file);
+    payload.append('appId', appId);
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data',
             'Authorization': AuthHeader()
         },
         body: payload

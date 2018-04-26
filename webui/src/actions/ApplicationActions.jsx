@@ -79,7 +79,22 @@ export function submit(data, type, page, progress) {
                 dispatch(actionApplicationSubmitErr('Could not contact service. Try again later.', page, progress));
             }
         })
-        .then( () => {
+        .then( (data) => {
+            //Upload files
+            for (file in data.files) {
+                API.UploadAppAttachment(file, data.appId)
+                .catch( e => {
+                    err = true;
+                    if (e.hasOwnProperty('response')) {
+                        dispatch(actionApplicationSubmitErr(_translateErr(e.response), page, progress));
+                    } else if (e.hasOwnProperty('message')) {
+                        dispatch(actionApplicationSubmitErr(e.message, page, progress));
+                    } else {
+                        dispatch(actionApplicationSubmitErr('Could not contact service. Try again later.', page, progress));
+                    }
+                })
+            }
+
             if (!err)
                 dispatch(actionApplicationSubmitSuccess(page+1, progress+1));
         });

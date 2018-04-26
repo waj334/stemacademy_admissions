@@ -66,7 +66,7 @@ func (db *Database) CreateApplicationTable() *pq.Error {
 			user_id				text	not null references users(email) ON DELETE CASCADE,
 			type				integer not null,
 			date				timestamp with time zone not null,
-			age					integer	not null,
+			dob					timestamp with time zone not null,
 			gender				integer	not null,
 			ethnicity			integer	not null,
 			citizenship			integer not null,
@@ -174,7 +174,7 @@ func (db *Database) RemoveUser(email string) error {
 func (db *Database) GetUserInfo(user string) (*User, error) {
 	//TODO: Enforce password policy here
 	u := new(User)
-	err := db.db.Get(u, `SELECT * FROM users WHERE email=$1`, user) //Need * for marshalling to work properly
+	err := db.db.Get(u, `SELECT type, verified, email, lname, fname, hash, phone_no FROM users WHERE email=$1`, user) //Need * for marshalling to work properly
 
 	if err == nil {
 		return u, nil
@@ -285,7 +285,7 @@ func (db *Database) GetApplication(id string) (*Application, error) {
 //InsertFile Create a database record for an uploaded file
 func (db *Database) InsertFile(owner string, appID string, id string) error {
 	_, err := db.db.Exec(
-		`INSERT INTO files (id, appId, owner)
+		`INSERT INTO file (id, appId, owner)
 		VALUES ($1, $2, $3)
 		`, id, appID, owner)
 
@@ -329,20 +329,36 @@ func (db *Database) UpdateResetToken(email string, token string) error {
 
 //UpdateVerificationByToken Changes verification status to true if token exists in database
 func (db *Database) UpdateVerificationByToken(token string) error {
-	_, err := db.db.Exec(`UPDATE users
-		SET verfied=TRUE,
-		SET verify_token=''
+	r, err := db.db.Exec(`UPDATE users
+		SET verified=TRUE,
+		    verify_token=''
 		WHERE verify_token=$1`, token)
+
+	rowsAffected, err := r.RowsAffected()
+
+	if rowsAffected == 0 {
+		return &ErrTokenNotAssociated{
+			message: "No associated user",
+		}
+	}
 
 	return err
 }
 
 //UpdatePasswordByToken Changes password if token exists in database
 func (db *Database) UpdatePasswordByToken(token string, hash string) error {
-	_, err := db.db.Exec(`UPDATE users
+	r, err := db.db.Exec(`UPDATE users
 		SET hash=$1,
-		SET reset_token=''
+		    reset_token=''
 		WHERE reset_token=$1`, hash, token)
+
+	rowsAffected, err := r.RowsAffected()
+
+	if rowsAffected == 0 {
+		return &ErrTokenNotAssociated{
+			message: "No associated user",
+		}
+	}
 
 	return err
 }

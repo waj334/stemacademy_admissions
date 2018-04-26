@@ -26,7 +26,7 @@ class ApplicationForm extends Component {
         return false;
     }
 
-    validate(data) {
+    validate() {
         return true;
     }
 
@@ -39,12 +39,14 @@ class ApplicationForm extends Component {
     }
 
     onNext() {
-        if (this.props.readOnly == false) {
-            delete this.state['err'];   //Strip err list from state
-            this.props.onCommit(this.props.id, this.state);
-        }
+        if (this.validate(this.state.data)) {
+            if (this.props.readOnly == false) {
+                delete this.state['err'];   //Strip err list from state
+                this.props.onCommit(this.props.id, this.state);
+            }
 
-        this.props.onNext();
+            this.props.onNext();
+        }
     }
 
     form() {

@@ -11,6 +11,7 @@ var regexAge = '^(0?[1-9]|[1-9][0-9])$';
 var regexGender = '^(m|f)$';
 var regexEthnicity = '^(aa|a|c|l|na|nh|o)$';
 var regexCitizenship = '^(uc|dc|nc)$';
+var regexZip = '^[0-9]{5}(-{1}[0-9]{4}){0,1}$';
 
 //at least 1 number, capital letter nd special character. 8 to 15 characters
 var regexPassword = '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$';
@@ -27,7 +28,7 @@ export function checkInput(str, type) {
             regex = regexCitizenship;
             break;
         case 'ethnicity':
-            regexEthnicity = regexEthnicity;
+            regex = regexEthnicity;
             break;
         case 'gender':
             regex = regexGender;
@@ -46,6 +47,9 @@ export function checkInput(str, type) {
             break;
         case 'username':
             regex = regexUsername;
+            break;
+        case 'zip':
+            regex = regexZip;
             break;
         default:
             return false;

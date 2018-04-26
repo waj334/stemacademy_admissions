@@ -48,8 +48,8 @@ var routes = RouteArray{
 	},
 	{
 		"User Verification",
-		"/user/verify/:token",
-		"GET",
+		"/user/verify",
+		"POST",
 		"",
 		MiddlewareList{},
 		APIVerifyUser,
@@ -125,6 +125,14 @@ var routes = RouteArray{
 		"",
 		MiddlewareList{},
 		APIResetUserPassword,
+	},
+	{
+		"Upload Application Attachment",
+		"/app/upload",
+		"POST",
+		"user",
+		MiddlewareList{},
+		APIUploadFile,
 	},
 }
 

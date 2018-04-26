@@ -19,10 +19,10 @@ const forms = [
 ];
 
 var data = {
-    age: '',
-    gender: '',
-    ethnicity: '',
-    citizenship: '',
+    dob: undefined,
+    gender: -1,
+    ethnicity: -1,
+    citizenship: -1,
     street: '',
     city: '',
     state: '',

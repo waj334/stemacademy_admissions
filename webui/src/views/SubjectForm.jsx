@@ -9,10 +9,15 @@ class SubjectForm extends ApplicationForm {
 
     }
 
+    validate() {
+        if (this.state.subjects.length === 0) {
+            this.state.err.push('subjects');
+        }
+    }
     form() {
         return (
             <Form>
-                <Form.Input name='subjects' label='Subjects' placeholder='Computer Science, Pre Algebra, Chemistry...' value={this.state.subjects} onChange={this.onChange} readOnly={this.props.readOnly} />
+                <Form.Input name='subjects' label='Subjects' placeholder='Computer Science, Pre Algebra, Chemistry...' value={this.state.subjects} onChange={this.onChange} readOnly={this.props.readOnly} error={this.state.err.includes('subjects')} />
             </Form>
         )
     }

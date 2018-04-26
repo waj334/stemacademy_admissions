@@ -10,8 +10,7 @@ import './App.css';
 
 //Views
 import MainPage from './views/MainPage.jsx';
-import StudentApplication from './views/StudentApplication.jsx';
-import TeacherApplication from './views/TeacherApplication.jsx';
+import AppComponent from './components/AppComponent.jsx';
 import LoginView from './views/LoginView.jsx';
 import AdminMain from './views/AdminMain.jsx';
 import SignupView from './views/SignupView.jsx';
@@ -32,10 +31,8 @@ class App extends Component {
     <Provider store={store}>
       <Router history={history}>
         <Switch>
-          <Route path='/admin/login' history={history} component={LoginView} />
           <Route path ='/admin/main'  render={() =><AuthComponent view={AdminMain} /> } />
-          <Route path='/app/student' history={history} render={() =><AuthComponent accessLevel={0} view={StudentApplication} /> } />
-          <Route path='/app/teacher' component={TeacherApplication} />
+          <Route path='/app' history={history} render={() =><AuthComponent accessLevel={0} view={AppComponent} /> } />
           <Route path='/signup' component={SignupView} />
           <Route path='/email/verification/:token'component={EmailVerificationView} />
           <Route path='/' component={FrontPageView} />
