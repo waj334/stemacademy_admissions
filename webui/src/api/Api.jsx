@@ -219,12 +219,9 @@ export function RequestPasswordReset(email) {
     .then(checkStatus)
 }
 
-export function ResetPassword(token, password) {
+export function ResetPassword(data) {
     var url = Url('/user/reset');
-    var payload = JSON.stringify({
-        token: token,
-        password: password
-    })
+    var payload = JSON.stringify(data)
 
     return fetch(url, {
         method: 'POST',

@@ -7,7 +7,7 @@
     "servicePort": "8081",
     "logHttp": true,
     "recaptchaKey": "6Lc7XlEUAAAAAPTgql0igCE4j697EC0MH5QTKWeA",
-    "clientURL": "http://localhost:8080",
+    "clientURL": "http://localhost:8080/public/#",
     "apiURL": "http://localhost:8081",
     "SmtpHost": "smtp.gmail.com",
     "SmtpPort": 587,

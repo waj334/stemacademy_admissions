@@ -157,7 +157,7 @@ class AdminMain extends Component {
     }
 
     onReset(email) {
-        this.props.apiCall('7', API.ResetPassword, email);
+        this.props.apiCall('7', API.RequestPasswordReset, email);
     }
     
     componentDidMount() {

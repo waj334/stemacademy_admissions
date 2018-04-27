@@ -89,7 +89,7 @@ func APICreateUser(ctx echo.Context) error {
 	database.UpdateVerifyToken(r.User.Email, tokenStr)
 
 	buffer := new(bytes.Buffer)
-	VerificationMessage(r.User.Email, config.APIURL, tokenStr, buffer)
+	VerificationMessage(r.User.Email, config.ClientURL, tokenStr, buffer)
 
 	//Send Email
 	err = SendEmail(r.User.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
@@ -246,10 +246,10 @@ func APIRequestPasswordReset(ctx echo.Context) error {
 
 	//Generate reset message
 	buffer := new(bytes.Buffer)
-	ResetMessage(config.APIURL, tokenStr, buffer)
+	ResetMessage(config.ClientURL, tokenStr, buffer)
 
 	//Send Email
-	err = SendEmail(user.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
+	err = SendEmail(user.Email, "STEM Summer Academy Account Password Reset", string(buffer.Bytes()))
 
 	if err != nil {
 		ctx.Logger().Error(err)
@@ -269,7 +269,7 @@ func APIResetUserPassword(ctx echo.Context) error {
 	}
 
 	r := &req{}
-	err := ctx.Bind(&r)
+	err := ctx.Bind(r)
 
 	if err != nil {
 		ctx.Logger().Error(err)

@@ -189,10 +189,10 @@ func (db *Database) GetUsers(Type int) ([]User, error) {
 	var err error
 
 	if Type == -1 {
-		err = db.db.Select(&users, `SELECT * FROM users
+		err = db.db.Select(&users, `SELECT type, verified, email, lname, fname, hash, phone_no FROM users
 			ORDER BY users.lname, users.fname, users.type DESC`)
 	} else {
-		err = db.db.Select(&users, `SELECT * FROM users WHERE type=$1
+		err = db.db.Select(&users, `SELECT type, verified, email, lname, fname, hash, phone_no FROM users WHERE type=$1
 			ORDER BY users.lname, users.fname, users.type DESC`, Type)
 	}
 
@@ -350,7 +350,7 @@ func (db *Database) UpdatePasswordByToken(token string, hash string) error {
 	r, err := db.db.Exec(`UPDATE users
 		SET hash=$1,
 		    reset_token=''
-		WHERE reset_token=$1`, hash, token)
+		WHERE reset_token=$2`, hash, token)
 
 	rowsAffected, err := r.RowsAffected()
 

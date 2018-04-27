@@ -49,11 +49,13 @@ export default class UserListComponent extends Component {
     }
 
     onDelete() {
-        this.props.onDelete(his.props.data[this.state.index].email)
+        this.props.onDelete(this.props.data[this.state.index].email);
+        this.setState({showDeleteModal: false, index: -1});
     }
 
     onReset() {
-        this.props.onReset(his.props.data[this.state.index].email)
+        this.props.onReset(this.props.data[this.state.index].email);
+        this.setState({showResetModal: false, index: -1});
     }
 
     render() {

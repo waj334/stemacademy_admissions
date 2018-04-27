@@ -16,6 +16,7 @@ import AdminMain from './views/AdminMain.jsx';
 import SignupView from './views/SignupView.jsx';
 import FrontPageView from './views/FrontPageView.jsx';
 import EmailVerificationView from './views/EmailVerificationView.jsx';
+import PasswordResetView from './views/PasswordResetView.jsx';
 
 import AuthComponent from './components/AuthComponent.jsx';
 
@@ -35,6 +36,7 @@ class App extends Component {
           <Route path='/app' history={history} render={() =><AuthComponent accessLevel={0} view={AppComponent} /> } />
           <Route path='/signup' component={SignupView} />
           <Route path='/email/verification/:token'component={EmailVerificationView} />
+          <Route path='/user/reset/:token' component={PasswordResetView} />
           <Route path='/' component={FrontPageView} />
         </Switch>
       </Router>
