@@ -157,7 +157,7 @@ export default class SignupForm extends Component {
                             </div>
                             }
                             
-                            <Form.Button disabled={admin ? false:this.state.recaptcha == null}>Sign Up</Form.Button>
+                            <Form.Button disabled={this.props.admin ? false:this.state.recaptcha == null}>Sign Up</Form.Button>
                         </Segment>
                     </Form>
                 </div>
