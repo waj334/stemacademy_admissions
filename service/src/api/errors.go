@@ -44,3 +44,12 @@ type ErrTokenNotAssociated struct {
 func (e *ErrTokenNotAssociated) Error() string {
 	return e.message
 }
+
+// ErrDatabaseConnectErr Token is not associated with any user
+type ErrDatabaseConnectErr struct {
+	message string
+}
+
+func (e *ErrDatabaseConnectErr) Error() string {
+	return e.message
+}

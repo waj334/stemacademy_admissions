@@ -36,7 +36,9 @@ func ConnectDB(conf *Configuration) (*Database, error) {
 		}
 	}
 
-	return nil, err
+	return nil, &ErrDatabaseConnectErr{
+		"Credentials were incorrect.",
+	}
 }
 
 //CreateTables Create needed tables in the proper order
