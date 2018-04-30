@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Form} from 'semantic-ui-react';
 
 import ApplicationForm from '../components/ApplicationForm.jsx'
+import * as ValidationHelper from '../ValidationHelper.jsx';
 
 class HighSchoolInfoForm extends ApplicationForm {
     constructor(props) {

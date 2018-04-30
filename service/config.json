@@ -15,5 +15,6 @@
     "email": "no-reply@tuskegee.edu",
     "emailPasswdFile": "C:/Projects/stemacademy_admissions/service/password.smtp",
     "uploadPath": ".",
-    "signingKeyFile": "C:/signing_key"
+    "signingKeyFile": "C:/signing_key",
+    "origins": ["http://localhost:8080", "https://localhost:8080"]
 }
