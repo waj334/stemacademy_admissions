@@ -23,3 +23,4 @@ yarn-error.log*
 apiKey.jsx
 
 /semantic
+/dist
