@@ -22,6 +22,7 @@ type Configuration struct {
 	RecaptchaKey    string   `json:"recaptchaKey"`
 	ClientURL       string   `json:"clientUrl"`
 	APIURL          string   `json:"apiUrl"`
+	Origins         []string `json:"origins"`
 	SMTPHost        string   `json:"SmtpHost"`
 	SMTPPort        int      `json:"SmtpPort"`
 	SMTPUser        string   `json:"SmtpUser"`

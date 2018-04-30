@@ -145,7 +145,7 @@ func InitAPI(config *Configuration) (*echo.Echo, error) {
 	}
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"https://localhost:8080", "http://localhost:8080"},
+		AllowOrigins: config.Origins,
 		AllowHeaders: []string{
 			echo.HeaderOrigin,
 			echo.HeaderContentType,
