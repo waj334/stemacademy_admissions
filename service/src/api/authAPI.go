@@ -32,8 +32,7 @@ func APIAuthenticateUser(ctx echo.Context) (err error) {
 	}
 
 	//Create signed token
-	//TODO: Use signing certificate to sign JWT
-	signedToken, err := token.SignedString([]byte("supersecure"))
+	signedToken, err := token.SignedString(*signingKey)
 
 	if err == nil {
 		return ctx.JSON(http.StatusOK, map[string]string{

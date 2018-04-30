@@ -160,7 +160,7 @@ func InitAPI(config *Configuration) (*echo.Echo, error) {
 
 	//JWT Middleware
 	jwtMW := middleware.JWTWithConfig(middleware.JWTConfig{
-		SigningKey: []byte("supersecure"),
+		SigningKey: *signingKey,
 		Claims:     &UserJWTClaims{},
 	})
 

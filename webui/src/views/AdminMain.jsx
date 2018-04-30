@@ -10,6 +10,7 @@ import RosterComponent from '../components/RosterComponent.jsx';
 
 import * as API from '../api/Api.jsx';
 import * as ApiActions from '../actions/ApiActions.jsx';
+import * as LoginActions from '../actions/LoginActions.jsx';
 
 function mapStateToProps(state, props) {
     return {
@@ -23,6 +24,8 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch, props) {
     return {
         apiCall: (id, apiFunc, payload, thenFunc=(data) => {}, catchFunc=(e) => {return 'error'}) => dispatch(ApiActions.APICall(id, apiFunc, payload, thenFunc, catchFunc)),
+        logout: () => dispatch(LoginActions.logout()),
+
     }
 }
 
@@ -49,6 +52,7 @@ class AdminMain extends Component {
         this.onSelectView = this.onSelectView.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onReset = this.onReset.bind(this);
+        this.onLogout = this.onLogout.bind(this);
     }
 
     AppList() {
@@ -159,6 +163,10 @@ class AdminMain extends Component {
     onReset(email) {
         this.props.apiCall('7', API.RequestPasswordReset, email);
     }
+
+    onLogout() {
+        this.props.logout();
+    }
     
     componentDidMount() {
         this.props.apiCall("0", API.GetApplicationList, null)
@@ -183,7 +191,7 @@ class AdminMain extends Component {
                             <Icon name='user' />
                             Users
                         </Menu.Item>
-                        <Menu.Item name='logout'>
+                        <Menu.Item name='logout' onClick={this.onLogout}>
                             <Icon name='sign out'/>
                             Logout
                         </Menu.Item>

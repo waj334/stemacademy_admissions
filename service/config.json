@@ -14,5 +14,6 @@
     "SmtpUser": "waj334",
     "email": "no-reply@tuskegee.edu",
     "emailPasswdFile": "C:/Projects/stemacademy_admissions/service/password.smtp",
-    "uploadPath": "."
+    "uploadPath": ".",
+    "signingKeyFile": "C:/signing_key"
 }

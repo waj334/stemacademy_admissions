@@ -23,6 +23,12 @@ function loginError(message) {
     }
 }
 
+function actionLogout() {
+    return {
+        type: Constants.LOGOUT_REQUEST,
+    }
+}
+
 function _translateErr(e) {
     if (e.status === 404) {
         return "Service is down. Try again later."
@@ -64,5 +70,10 @@ export function login(creds) {
 }
 
 export function logout() {
-    localStorage.setItem('token', '');
+    return dispatch => {
+        //Clear token
+        localStorage.setItem('token', '');
+        dispatch(actionLogout());
+    }
+    
 }

@@ -28,6 +28,7 @@ type Configuration struct {
 	Email           string   `json:"email"`
 	EmailPasswdFile string   `json:"emailPasswdFile"`
 	UploadPath      string   `json:"uploadPath"`
+	SigningKeyFile  string   `json:"signingKeyFile"`
 }
 
 //GetConfig	Reads configuration file

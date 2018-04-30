@@ -26,6 +26,10 @@ export default function LoginReducer(state = initialState, action) {
                 ...initialState,
                 error: action.error
             }
+        case Constants.LOGOUT_REQUEST:
+            return {
+                ...initialState
+            }
         default:
             return state;
     }

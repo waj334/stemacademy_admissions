@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/pem"
 	"flag"
 	"fmt"
 	"log"
@@ -15,6 +16,7 @@ import (
 var configPath *string
 var config *Configuration
 var database *Database
+var signingKey *[]byte
 
 func main() {
 	//Read configuration
@@ -28,6 +30,22 @@ func main() {
 	config, err = GetConfig()
 
 	if err == nil {
+		//Read Signing Key File
+		key, err := ReadPasswd(config.SigningKeyFile)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		//Decode key
+		block, _ := pem.Decode([]byte(key))
+
+		if block == nil {
+			log.Fatal("Error decoding rsa key!")
+		}
+
+		//Get the bytes
+		signingKey = &block.Bytes
 
 		//Initialize API
 		e, err := InitAPI(config)
