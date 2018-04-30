@@ -92,7 +92,7 @@ validate() {
         const ethnicity_opts = [
             {key: 'aa', text:'African American', value:0},
             {key: 'a', text:'Asian', value:1},
-            {key: 'c', text:'Caucaision', value:2},
+            {key: 'c', text:'Caucaisian', value:2},
             {key: 'l', text:'Hispanic/Latino', value:3},
             {key: 'na', text:'Native American/Alaskan Native', value:4},
             {key: 'nh', text:'Native Hawaiian', value:5},

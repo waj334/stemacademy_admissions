@@ -12,7 +12,10 @@ class SubjectForm extends ApplicationForm {
     validate() {
         if (this.state.subjects.length === 0) {
             this.state.err.push('subjects');
+            return false;
         }
+
+        return true;
     }
     form() {
         return (

@@ -16,9 +16,11 @@ export default class DocumentForm extends ApplicationForm {
     validate() {
         if (this.state.files.length === 0) {
             this.state.err.push('files');
+            return false;
         }
 
         this.setState(this.state);
+        return true;
     }
 
     onDrop(accepted, rejected) {
