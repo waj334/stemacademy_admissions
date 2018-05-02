@@ -1,1 +1,1 @@
-export var Endpoint = 'http://10.41.16.62/api';
+export var Endpoint = 'http://localhost:8081';
