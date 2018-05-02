@@ -54,6 +54,22 @@ export function Signup(data) {
     .then(resp => resp.json());
 }
 
+export function AddUser(data) {
+    var url = Url('/admin/user/add');
+    var payload = JSON.stringify(data);
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthHeader(),
+        },
+        body: payload
+    })
+    .then(checkStatus)
+    .then(resp => resp.json());
+}
+
 export function Login(email, pwd) {
     var url = Url('/login');
     

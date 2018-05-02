@@ -134,6 +134,14 @@ var routes = RouteArray{
 		MiddlewareList{},
 		APIUploadFile,
 	},
+	{
+		"User creation",
+		"/user/add",
+		"POST",
+		"admin",
+		MiddlewareList{},
+		APICreateUser,
+	},
 }
 
 //InitAPI Initialize the API router

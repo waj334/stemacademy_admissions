@@ -53,6 +53,7 @@ class AdminMain extends Component {
         this.onDelete = this.onDelete.bind(this);
         this.onReset = this.onReset.bind(this);
         this.onLogout = this.onLogout.bind(this);
+        this.onAddUser = this.onAddUser.bind(this);
     }
 
     AppList() {
@@ -110,7 +111,7 @@ class AdminMain extends Component {
             if (this.props.apiData['5'].state === 'success') {
                 return (
                     <div>
-                        <UserListComponent data={this.props.apiData['5'].data} onDelete={this.onDelete} onReset={this.onReset}/>
+                        <UserListComponent data={this.props.apiData['5'].data} onDelete={this.onDelete} onReset={this.onReset} onAddUser={this.onAddUser}/>
                     </div>
                 )
             }
@@ -167,9 +168,13 @@ class AdminMain extends Component {
     onLogout() {
         this.props.logout();
     }
+
+    onAddUser(payload) {
+        this.props.apiCall('8', API.AddUser, payload);
+    }
     
     componentDidMount() {
-        this.props.apiCall("0", API.GetApplicationList, null)
+        this.props.apiCall('0', API.GetApplicationList, null);
     }
     render() {
         return (

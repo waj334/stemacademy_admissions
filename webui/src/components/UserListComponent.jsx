@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Segment, Button, Table, Loader, Message, Icon, Modal, Header } from 'semantic-ui-react';
+import { Segment, Button, Table, Loader, Message, Icon, Modal, Header, Grid } from 'semantic-ui-react';
+import SignupComponent from './SignupComponent.jsx';
+
 export default class UserListComponent extends Component {
     constructor(props) {
         super(props)
@@ -7,6 +9,7 @@ export default class UserListComponent extends Component {
         this.state = {
             showDeleteModal: false,
             showResetModal: false,
+            showAddUserModal: false,
             index: -1
         }
 
@@ -14,6 +17,7 @@ export default class UserListComponent extends Component {
         this.list = this.list.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onReset = this.onReset.bind(this);
+        this.onNewAddUser = this.onAddUser.bind(this);
     }
 
     row(props) {
@@ -58,6 +62,11 @@ export default class UserListComponent extends Component {
         this.setState({showResetModal: false, index: -1});
     }
 
+    onAddUser(payload) {
+        this.props.onAddUser(payload);
+        this.setState({showAddUserModal: false});
+    }
+
     render() {
         return (
             <div>
@@ -82,6 +91,14 @@ export default class UserListComponent extends Component {
                         <Button color='green' onClick={this.onReset}>Yes</Button>
                     </Modal.Actions>
                 </Modal>
+                <Modal open={this.state.showAddUserModal} onClose={()=>{this.setState({showAddUserModal: false})}}>
+                    <Header content='Add New User' />
+                    <Modal.Content>
+                        <Grid centered>
+                            <SignupComponent admin buttonText='Add' signup={this.onNewAddUser} />
+                        </Grid>
+                    </Modal.Content>
+                </Modal>
                 <Table singleLine basic='very'>
                     <Table.Header>
                         <Table.Row>
@@ -95,6 +112,13 @@ export default class UserListComponent extends Component {
                     <Table.Body>
                         <this.list />
                     </Table.Body>
+                    <Table.Footer>
+                        <Table.Row>
+                            <Table.Cell colspan='5'>
+                                <Button floated='right' primary onClick={() => {this.setState({showAddUserModal:true})}} content='Add User' />
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Footer>
                 </Table>
             </div>
         )

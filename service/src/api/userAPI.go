@@ -29,30 +29,34 @@ func APICreateUser(ctx echo.Context) error {
 		})
 	} else {
 
-		//Verify reCAPTCH
-		result, err := recaptcha.Confirm(ctx.Request().RemoteAddr, r.Recaptcha)
-
-		if err != nil {
-			ctx.Logger().Error(err)
-			return ctx.JSON(http.StatusUnauthorized, map[string]string{
-				"error": "Could not validate reCAPTCHA",
-			})
-		}
-
-		if result == false {
-			return ctx.JSON(http.StatusUnauthorized, map[string]string{
-				"error": "reCAPTCHA failed",
-			})
-		}
-
-		//Only allow admins to create admins
+		//Only allow admins to create admins. Skip reCaptcha if is admin.
 		if r.User.Type == AccountTypeAdmin {
 			//Check claims for admin flag
 			userClaims := ctx.Get("user").(*jwt.Token)
 			claims := userClaims.Claims.(*UserJWTClaims)
 
 			if claims.AccountType != AccountTypeAdmin {
-				return ctx.NoContent(http.StatusForbidden)
+				return ctx.JSON(http.StatusForbidden, map[string]string{
+					"error": "Action not possible.",
+				})
+			}
+
+		} else {
+
+			//Verify reCAPTCH
+			result, err := recaptcha.Confirm(ctx.Request().RemoteAddr, r.Recaptcha)
+
+			if err != nil {
+				ctx.Logger().Error(err)
+				return ctx.JSON(http.StatusUnauthorized, map[string]string{
+					"error": "Could not validate reCAPTCHA",
+				})
+			}
+
+			if result == false {
+				return ctx.JSON(http.StatusUnauthorized, map[string]string{
+					"error": "reCAPTCHA failed",
+				})
 			}
 		}
 
@@ -73,32 +77,36 @@ func APICreateUser(ctx echo.Context) error {
 		}
 	}
 
-	//Send email verification
-	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
-	token, _ := flake.NextID()
-	tokenStr := fmt.Sprint(token)
+	//Send email verification. Skip if creating admin
+	if !r.User.Verified {
+		flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+		token, _ := flake.NextID()
+		tokenStr := fmt.Sprint(token)
 
-	if err != nil {
-		ctx.Logger().Error(err)
-		return ctx.JSON(http.StatusInternalServerError, map[string]string{
-			"error": "Unexpected error occurred. (EMAIL_TOKEN)",
-		})
-	}
+		if err != nil {
+			ctx.Logger().Error(err)
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Unexpected error occurred. (EMAIL_TOKEN)",
+			})
+		}
 
-	//Set token in users table
-	database.UpdateVerifyToken(r.User.Email, tokenStr)
+		//Set token in users table
+		database.UpdateVerifyToken(r.User.Email, tokenStr)
 
-	buffer := new(bytes.Buffer)
-	VerificationMessage(r.User.Email, config.ClientURL, tokenStr, buffer)
+		buffer := new(bytes.Buffer)
+		VerificationMessage(r.User.Email, config.ClientURL, tokenStr, buffer)
 
-	//Send Email
-	err = SendEmail(r.User.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
+		//Send Email
+		err = SendEmail(r.User.Email, "STEM Summer Academy Email Verification", string(buffer.Bytes()))
 
-	if err != nil {
-		ctx.Logger().Error(err)
-		return ctx.JSON(http.StatusInternalServerError, map[string]string{
-			"error": "Unexpected error occurred. (EMAIL_SEND)",
-		})
+		if err != nil {
+			ctx.Logger().Error(err)
+			return ctx.JSON(http.StatusInternalServerError, map[string]string{
+				"error": "Unexpected error occurred. (EMAIL_SEND)",
+			})
+		}
+	} else {
+		database.ChangeUserVerifiedStatus(r.User.Email, true)
 	}
 
 	return ctx.JSON(http.StatusOK, map[string]string{})

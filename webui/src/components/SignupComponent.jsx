@@ -16,8 +16,12 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, props) {
-    return {
-        signup: (data) => dispatch(SignupActions.signup(data))
+    if (props.admin) {
+        return {}
+    } else {
+        return {
+            signup: (data) => dispatch(SignupActions.signup(data))
+        }
     }
 }
 
@@ -34,7 +38,8 @@ export default class SignupForm extends Component {
             password: '',
             cpassword: '',
             invalid: [],
-            recaptcha: null
+            recaptcha: null,
+            type: null
         }
 
         this.onChange = this.onChange.bind(this);
@@ -63,23 +68,28 @@ export default class SignupForm extends Component {
         var invalid = [];
 
         if (!Validation.checkInput(this.state.fname, 'name')) {
-            invalid.push('fname')
+            invalid.push('fname');
         }
 
         if (!Validation.checkInput(this.state.lname, 'name')) {
-            invalid.push('lname')
+            invalid.push('lname');
         }
 
         if (!Validation.checkInput(this.state.email, 'email')) {
-            invalid.push('email')
+            invalid.push('email');
         }
 
         if (!Validation.checkPhoneNo(this.state.phone_no)) {
-            invalid.push('phone_no')
+            invalid.push('phone_no');
+        }
+
+        if (this.props.admin) {
+            if (this.state.type === null)
+            invalid.push('type');
         }
 
         if (!Validation.checkInput(this.state.password, 'password')) {
-            invalid.push('password')
+            invalid.push('password');
         } else {
             //POST if passwords match and valid
             if (this.state.password === this.state.cpassword) {
@@ -91,16 +101,16 @@ export default class SignupForm extends Component {
                             lname: this.state.lname,
                             email: this.state.email,
                             phone_no: this.state.phone_no,
-                            type: this.state.teacher == true ? Constants.AccountTypes.Teacher:Constants.AccountTypes.Student,
+                            type: this.props.admin ? this.state.type : this.state.teacher == true ? Constants.AccountTypes.Teacher:Constants.AccountTypes.Student,
                             password: this.state.password
                         },
                         recaptcha: this.state.recaptcha
                     }
 
-                    this.props.signup(payload)
+                    this.props.signup(payload);
                 }
             } else {
-                invalid.push('cpassword')
+                invalid.push('cpassword');
             }
         }
 
@@ -128,6 +138,12 @@ export default class SignupForm extends Component {
             {key: 'yes', text:'Yes', value: true}
         ]
 
+        const type_opts = [
+            {key:'student', text:'Student', value:0},
+            {key:'teacher', text:'Teacher', value:1},
+            {key:'admin', text:'Admin', value:2},
+        ]
+
         if (!this.props.isSuccessful)
             return (
                 <div>
@@ -150,14 +166,15 @@ export default class SignupForm extends Component {
                             <Form.Input name='cpassword' placeholder='Confirm Password' label='Confirm Password' type='password' onChange={this.onChange} error={this.state.invalid.indexOf('cpassword') != -1} />
                             <this.error name='cpassword' message='Passwords do not match!' />
                             
-                            {this.props.admin ? <div />: <div>
-                            <Divider dividing> Please check the box below </Divider>
-                            <ReCAPTCHA ref='recaptcha' sitekey='6Lc7XlEUAAAAAEL3vtJka2Uxhs_AzUEyaX7UlfFM' onChange={this.onRecaptcha} />
-                            <Divider dividing />
-                            </div>
+                            {this.props.admin ? <Form.Select name='type' options={type_opts} label='Select Account Type' onChange={this.onChange} />: 
+                                <div>
+                                    <Divider dividing> Please check the box below </Divider>
+                                    <ReCAPTCHA ref='recaptcha' sitekey='6Lc7XlEUAAAAAEL3vtJka2Uxhs_AzUEyaX7UlfFM' onChange={this.onRecaptcha} />
+                                    <Divider dividing />
+                                </div>
                             }
                             
-                            <Form.Button disabled={this.props.admin ? false:this.state.recaptcha == null}>Sign Up</Form.Button>
+                            <Form.Button disabled={this.props.admin ? false:this.state.recaptcha == null}>{this.props.buttonText}</Form.Button>
                         </Segment>
                     </Form>
                 </div>
@@ -185,5 +202,6 @@ export default class SignupForm extends Component {
 }
 
 SignupForm.defaultProps = {
-    admin: false
+    admin: false,
+    buttonText: 'Sign Up',
 }
