@@ -49,8 +49,8 @@ module.exports = {
 	entry: ['whatwg-fetch', 'babel-polyfill', 'abortcontroller-polyfill', APP_DIR + '/index.jsx'],
 
 	output: {
-		filename: '[name].[chunkhash].js',
-		chunkFilename: '[name].[chunkhash].js',
+		filename: 'index.js',
+		chunkFilename: 'index.js',
 		path: path.resolve(__dirname, 'dist')
 	},
 
